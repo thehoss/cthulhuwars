@@ -1,9 +1,20 @@
+"""
+cthulhuWars
+Map Class
+Builds a network of map zones
+
+TODO:
+Replace string nodes with a zone class (TBD)
+Add traversal methods
+Flesh out graph visualization to represent class data
+"""
+
 import networkx as nx
 import pylab as P
 
-class map:
-    # available maps
 
+class Map:
+    # available maps
     # Earth, 3 player, Eastern Hemisphere
     earth3PEH = {
         'Africa': ['South Atlantic', 'North Atlantic', 'Indian Ocean', 'Asia'],
@@ -48,7 +59,7 @@ class map:
         'Arctic Ocean': ['Scandinavia', 'North Asia', 'North Atlantic', 'North Pacific'],
         'North Pacific': ['Arctic Ocean', 'Indian Ocean', 'North Asia', 'South Asia'],
         'Indian Ocean': ['South Atlantic', 'Antarctica', 'North Pacific', 'East Africa', 'South Asia', 'Arabia'],
-        'North Atlantic': ['Artic Ocean', 'South Atlantic', 'West Africa', 'Arabia', 'Europe', 'Scandinavia'],
+        'North Atlantic': ['Arctic Ocean', 'South Atlantic', 'West Africa', 'Arabia', 'Europe', 'Scandinavia'],
         'South Atlantic': ['North Atlantic', 'Antarctica', 'Indian Ocean', 'East Africa', 'West Africa']
     }
 
@@ -73,7 +84,7 @@ class map:
         'Indian Ocean': ['South Atlantic', 'Antarctica', 'North Pacific', 'East Africa', 'South Asia', 'Arabia',
                          'Australia', 'South Pacific', 'New Zealand'],
         'North Atlantic': ['North Pacific', 'South Atlantic', 'North America East', 'Central America',
-                           'South America East', 'Europe'],
+                           'South America East', 'Europe', 'Arctic Ocean'],
         'South Atlantic': ['North Atlantic', 'Antarctica', 'South America East', 'South America West', 'South Pacific']
     }
 
@@ -106,12 +117,16 @@ class map:
         # construct node graphs from dictionary of lists, construct combined node graph with compose()
         self.east = nx.from_dict_of_lists(east_)
         self.west = nx.from_dict_of_lists(west_)
-        self.map  = nx.compose(self.east, self.west)
+        self.map = nx.compose(self.east, self.west)
 
     def show_map(self):
         pos = nx.spring_layout(self.map)
-        nx.draw(self.map, pos, font_size=16, with_labels=False)
+        nx.draw(self.map, pos, font_size=12, with_labels=False)
         for p in pos:  # raise text positions
             pos[p][1] += 0.07
         nx.draw_networkx_labels(self.map, pos)
         P.show()
+
+if __name__ == "__main__":
+    M = Map(5, 'earth5P')
+    M.show_map()
