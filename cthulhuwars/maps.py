@@ -1,4 +1,5 @@
 import networkx as nx
+import pylab as P
 
 class map:
     # available maps
@@ -106,3 +107,11 @@ class map:
         self.east = nx.from_dict_of_lists(east_)
         self.west = nx.from_dict_of_lists(west_)
         self.map  = nx.compose(self.east, self.west)
+
+    def show_map(self):
+        pos = nx.spring_layout(self.map)
+        nx.draw(self.map, pos, font_size=16, with_labels=False)
+        for p in pos:  # raise text positions
+            pos[p][1] += 0.07
+        nx.draw_networkx_labels(self.map, pos)
+        P.show()
