@@ -10,7 +10,7 @@ Flesh out graph visualization to represent class data
 """
 
 import networkx as nx
-import pylab as P
+import matplotlib.pylab as P
 
 
 class Map:
@@ -24,7 +24,7 @@ class Map:
 
         'Arctic Ocean': ['Europe', 'Asia', 'North Atlantic'],
         'Indian Ocean': ['South Atlantic', 'Antarctica', 'Africa', 'Asia'],
-        'North Atlantic': ['South Atlantic', 'Europe', 'Africa'],
+        'North Atlantic': ['Arctic Ocean', 'South Atlantic', 'Europe', 'Africa'],
         'South Atlantic': ['North Atlantic', 'Antarctica', 'Indian Ocean', 'Africa'],
         'North Pacific': ['Asia', 'Arctic Ocean', 'Indian Ocean'],
     }
@@ -39,7 +39,7 @@ class Map:
 
         'Arctic Ocean': ['North America', 'North Atlantic', 'North Pacific'],
         'Indian Ocean': ['South Atlantic', 'Antarctica', 'North Pacific', 'Australia', 'South Pacific'],
-        'North Atlantic': ['North Pacific', 'South Atlantic', 'North America', 'South America'],
+        'North Atlantic': ['Arctic Ocean', 'North Pacific', 'South Atlantic', 'North America', 'South America'],
         'South Atlantic': ['North Atlantic', 'Antarctica', 'Indian Ocean', 'South America', 'South Pacific'],
         'North Pacific': ['North America', 'Arctic Ocean', 'Indian Ocean', 'South America', 'South Pacific'],
         'South Pacific': ['North Pacific', 'Australia', 'South America', 'Antarctica', 'South Atlantic'],
@@ -81,8 +81,7 @@ class Map:
         'North Pacific': ['Central America', 'North America West', 'Arctic Ocean', 'Indian Ocean',
                           'South America West', 'South Pacific'],
         'South Pacific': ['North Pacific', 'New Zealand', 'South America West', 'Antarctica', 'South Atlantic'],
-        'Indian Ocean': ['South Atlantic', 'Antarctica', 'North Pacific', 'East Africa', 'South Asia', 'Arabia',
-                         'Australia', 'South Pacific', 'New Zealand'],
+        'Indian Ocean': ['South Atlantic', 'Antarctica', 'North Pacific', 'Australia', 'South Pacific', 'New Zealand'],
         'North Atlantic': ['North Pacific', 'South Atlantic', 'North America East', 'Central America',
                            'South America East', 'Europe', 'Arctic Ocean'],
         'South Atlantic': ['North Atlantic', 'Antarctica', 'South America East', 'South America West', 'South Pacific']
@@ -128,5 +127,5 @@ class Map:
         P.show()
 
 if __name__ == "__main__":
-    M = Map(5, 'earth5P')
+    M = Map(4, 'earth4Pb')
     M.show_map()
