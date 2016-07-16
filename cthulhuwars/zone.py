@@ -41,7 +41,7 @@ class Zone:
             pass
 
     def setDesecrationState(self, desecrationState):
-        self.desecrationState = desecrationState
+        self.desecration_state = desecrationState
 
     def getZoneState(self):
         zoneState = (self.gate_state, self.gate_unit, self.occupancy_list, self.desecration_state)
