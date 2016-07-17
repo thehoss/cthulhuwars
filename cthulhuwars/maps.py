@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 cthulhuWars
 Map Class
@@ -11,7 +12,7 @@ Flesh out graph visualization to represent class data
 
 import networkx as nx
 import matplotlib.pylab as P
-
+import zone
 
 class Map:
     # available maps
@@ -87,6 +88,8 @@ class Map:
         'South Atlantic': ['North Atlantic', 'Antarctica', 'South America East', 'South America West', 'South Pacific']
     }
 
+    earth_oceans = ['Arctic Ocean', 'North Atlantic', 'South Atlantic', 'Indian Ocean', 'North Pacific', 'South Pacific', ]
+
     # map_names = ['celaeno', 'dreamlands', 'earth', 'primeval earth', 'yuggoth']
 
     def __init__(self, num_players=3, map_name='earth3P'):
@@ -117,20 +120,47 @@ class Map:
         self.east = nx.from_dict_of_lists(east_)
         self.west = nx.from_dict_of_lists(west_)
         self.map = nx.compose(self.east, self.west)
+        self.map.graph['name'] = self.map_name
+
+        # relable nodes with zone objects
+        node_list = self.map.nodes()
+
+        for node_name in node_list:
+            is_ocean = False
+            if node_name in self.earth_oceans:
+                is_ocean = True
+            self.map.node[node_name]['zone'] = zone.Zone(node_name, is_ocean)
+        # ^ map.nodes(data=True) will show the attributes of node label 'blah'
+
+
+        '''
+        # optionally, swap labeled nodes with name-tagged zone objects
+        # warning: you might have to retype this to experiment
+        # 'cos I may have drunkenly added some weird characters
+        node_list = G.nodes()
+        zone_list = []
+
+        for node_name in node_list: 
+            is_ocean = False 
+            if node_name in self.earth_oceans: 
+                is_ocean = True 
+                zone_list.append(zone.Zone(node_name, is_ocean))  
+        mapping = dict(zip(node_list, zone_list))
+         self.map = nx.relabel_nodes(G, mapping)
+        '''
 
     def show_map(self):
-        pos = nx.spring_layout(self.map)
+        pos = nx.spring_layout(self.map, iterations=100)
         nx.draw(self.map, pos, font_size=12, with_labels=False)
         for p in pos:  # raise text positions
             pos[p][1] += 0.07
         nx.draw_networkx_labels(self.map, pos)
         P.show()
 
-
     def move_unit(self, unit, fromeZone, toZone):
 
         pass
 
 if __name__ == "__main__":
-    M = Map(4, 'earth4Pb')
+    M = Map(4, 'earth4Pa')
     M.show_map()
