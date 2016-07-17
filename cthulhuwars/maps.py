@@ -144,7 +144,7 @@ class Map:
             is_ocean = False 
             if node_name in self.earth_oceans: 
                 is_ocean = True 
-                zone_list.append(zone.Zone(node_name, is_ocean))  
+            zone_list.append(zone.Zone(node_name, is_ocean))  
         mapping = dict(zip(node_list, zone_list))
          self.map = nx.relabel_nodes(G, mapping)
         '''
