@@ -126,6 +126,11 @@ class Map:
         nx.draw_networkx_labels(self.map, pos)
         P.show()
 
+
+    def move_unit(self, unit, fromeZone, toZone):
+
+        pass
+
 if __name__ == "__main__":
     M = Map(4, 'earth4Pb')
     M.show_map()
