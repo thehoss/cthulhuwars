@@ -9,7 +9,7 @@ class Player():
         self.__faction = faction
         self.__home_zone = home_zone
         self.__spells = []
-        self.__monsters = []
+        self.__units = []
         self.__power = 8
         self.__doom_points = 0
         self.__elder_points = 0
@@ -27,7 +27,7 @@ class Player():
     def _add_cultist(self, zone):
         if self.__power > 0:
             newCultist = Unit(self.__faction, UnitType.cultist, 0, 1, 1, UnitState.in_play, zone)
-            self.__monsters.append(newCultist)
+            self.__units.append(newCultist)
             self.__power -= 1
             self.__current_cultists += 1
             return newCultist
@@ -95,7 +95,7 @@ class Player():
         print ('faction: %s'%self.__faction)
         print ('home zone: %s' %self.__home_zone)
         print ('spells: %s' %self.__spells)
-        print ('monsters: %s' %self.__monsters)
+        print ('units: %s' %self.__units)
         print ('power: %s' %self.__power)
         print ('doom points: %s' %self.__doom_points)
         print ('elder sign points: %s' %self.__elder_points)
