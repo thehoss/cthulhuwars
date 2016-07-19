@@ -72,7 +72,17 @@ class Unit:
     def set_unit_state(self, unit_state):
         self.__unit_state = unit_state
 
+class Cultist(Unit):
+    def __init__(self):
+        pass
 
+class Monster(Unit):
+    def __init__(self):
+        pass
+
+class GreatOldOne(Unit):
+    def __init__(self):
+        pass
 
 
 
