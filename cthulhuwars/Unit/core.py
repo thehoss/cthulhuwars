@@ -1,12 +1,14 @@
 from enum import Enum
 from cthulhuwars.Zone import Zone, GateState
 
+
 class UnitType(Enum):
     cultist = 'cultist'
     monsterA = 'monsterA'
     monsterB = 'monsterB'
     monsterC = 'monsterC'
     GOO = 'Great Old One'
+
 
 class Faction(Enum):
     cthulhu = 'Cthulhu'
@@ -19,15 +21,17 @@ class Faction(Enum):
     tcho_tcho = 'Tcho Tcho'
     azathoth = 'Azathoth'
 
+
 class UnitState(Enum):
     in_reserve = 0
-    in_play    = 1
-    killed     = 2
-    captured   = 3
+    in_play = 1
+    killed = 2
+    captured = 3
 
 
 class Unit(object):
-    def __init__(self, faction=Faction.cthulhu, unit_type=UnitType.cultist, combat_power=0, cost=1,  base_movement=1,  unit_state=UnitState.in_reserve, unit_zone=Zone('South Pacific',True)):
+    def __init__(self, faction=Faction.cthulhu, unit_type=UnitType.cultist, combat_power=0, cost=1, base_movement=1,
+                 unit_state=UnitState.in_reserve, unit_zone=Zone('South Pacific', True)):
         self.__faction = faction
         self.__unit_type = unit_type
         self.__combat_power = combat_power
@@ -37,7 +41,7 @@ class Unit(object):
         self.__unit_zone = unit_zone
         self.__unit_gate_state = GateState.noGate
 
-        print('New %s unit in %s'%(self.__unit_type, self.__unit_zone.name))
+        print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
 
     def get_faction(self):
         return self.__faction
@@ -72,25 +76,17 @@ class Unit(object):
     def set_unit_state(self, unit_state):
         self.__unit_state = unit_state
 
+
 class Cultist(Unit):
     def __init__(self):
-        super(Cultist,self).__init__()
+        super(Cultist, self).__init__()
+
 
 class Monster(Unit):
     def __init__(self):
         super(Monster, self).__init__()
 
+
 class GreatOldOne(Unit):
     def __init__(self):
         super(GreatOldOne, self).__init__()
-
-
-
-
-
-
-
-
-
-
-

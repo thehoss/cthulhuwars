@@ -25,11 +25,11 @@ class Player(object):
 
     def _add_cultist(self, zone):
         if self.__power > 0:
-            newCultist = Unit(self.__faction, UnitType.cultist, 0, 1, 1, UnitState.in_play, zone)
-            self.__units.append(newCultist)
+            new_cultist = Unit(self.__faction, UnitType.cultist, 0, 1, 1, UnitState.in_play, zone)
+            self.__units.append(new_cultist)
             self.__power -= 1
             self.__current_cultists += 1
-            return newCultist
+            return new_cultist
         elif self.__power < 1:
             # TODO: add failure reporting mechanism
             print ('not enough power to summon cultist!')
@@ -38,7 +38,7 @@ class Player(object):
     def power(self):
         return self.__power
 
-    def __computePower(self):
+    def __compute_power(self):
         self.__power = self.__current_cultists
         self.__power += self.__current_gates * 2
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
@@ -89,7 +89,7 @@ class Player(object):
         pass
 
     def print_state(self):
-        self.__computePower()
+        self.__compute_power()
         print ('name: %s' % self.__name)
         print ('faction: %s' % self.__faction)
         print ('home zone: %s' % self.__home_zone)
