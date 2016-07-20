@@ -21,35 +21,35 @@ class UnitState(Enum):
 class Unit:
     def __init__(self, faction=Faction.cthulhu, combat_power=0, cost=1,  base_movement=1,
                  unit_state=UnitState.in_reserve):
-        self._faction = faction
-        self._combat_power = combat_power
-        self._cost = cost
-        self._base_movement = base_movement
-        self._unit_state = unit_state
+        self.__faction = faction
+        self.__combat_power = combat_power
+        self.__cost = cost
+        self.__base_movement = base_movement
+        self.__unit_state = unit_state
 
     def get_faction(self):
-        return self._faction
+        return self.__faction
 
     def get_combat_power(self):
-        return self._combat_power
+        return self.__combat_power
 
     def get_cost(self):
-        return self._cost
+        return self.__cost
 
     def set_cost(self, cost):
-        self._cost = cost
+        self.__cost = cost
 
     def get_base_movement(self):
-        return self._base_movement
+        return self.__base_movement
 
     def set_base_movement(self, base_movement):
-        self._base_movement = base_movement
+        self.__base_movement = base_movement
 
     def get_unit_state(self):
-        return self._unit_state
+        return self.__unit_state
 
     def set_unit_state(self, unit_state):
-        self._unit_state = unit_state
+        self.__unit_state = unit_state
 
 
 class Cultist(Unit):
