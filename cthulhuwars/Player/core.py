@@ -29,7 +29,7 @@ class Player(object):
 
     def _add_cultist(self, zone):
         if self.__power > 0:
-            new_cultist = Cultist(self.__faction, UnitState.in_play, zone)
+            new_cultist = Cultist(self, zone, UnitState.in_play)
             self.__units.append(new_cultist)
             self.__power -= 1
             self.__current_cultists += 1
@@ -42,7 +42,11 @@ class Player(object):
     def power(self):
         return self.__power
 
-    def __compute_power(self):
+    def add_unit(self, new_unit, unit_cost):
+        self.__units.append(new_unit)
+        self.__power -= unit_cost
+
+    def recompute_power(self):
         self.__power = self.__current_cultists
         self.__power += self.__current_gates * 2
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
@@ -93,7 +97,7 @@ class Player(object):
         pass
 
     def print_state(self):
-        self.__compute_power()
+        print ("**************************************")
         print ('name: %s' % self.__name)
         print ('faction: %s' % self.__faction)
         print ('home zone: %s' % self.__home_zone)
@@ -105,3 +109,4 @@ class Player(object):
         print ('starting cultists: %s' % self.__starting_cultists)
         print ('current cultists: %s' % self.__current_cultists)
         print ('current gates: %s' % self.__current_gates)
+        print ("**************************************")

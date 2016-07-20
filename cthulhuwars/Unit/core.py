@@ -4,9 +4,7 @@ from cthulhuwars.Zone import Zone, GateState
 
 class UnitType(Enum):
     cultist = 'cultist'
-    monsterA = 'monsterA'
-    monsterB = 'monsterB'
-    monsterC = 'monsterC'
+    monster = 'monster'
     GOO = 'Great Old One'
 
 
@@ -30,8 +28,8 @@ class UnitState(Enum):
 
 
 class Unit(object):
-    def __init__(self, faction=Faction.cthulhu, unit_type=UnitType.cultist, combat_power=0, cost=1, base_movement=1,
-                 unit_state=UnitState.in_reserve, unit_zone=Zone('South Pacific', True)):
+    def __init__(self, faction, unit_zone, unit_type=UnitType.cultist, combat_power=0, cost=1, base_movement=1,
+                 unit_state=UnitState.in_reserve):
         self.__faction = faction
         self.__unit_type = unit_type
         self.__combat_power = combat_power
@@ -41,7 +39,10 @@ class Unit(object):
         self.__unit_zone = unit_zone
         self.__unit_gate_state = GateState.noGate
 
-        print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
+        assert isinstance(unit_zone, Zone)
+        unit_zone.add_unit(self)
+
+        #print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
 
     def get_faction(self):
         return self.__faction
@@ -78,15 +79,16 @@ class Unit(object):
 
 
 class Cultist(Unit):
-    def __init__(self, faction, unit_state, unit_zone):
-        super(Cultist, self).__init__(faction, UnitType.cultist, 0, 1, 1, unit_state, unit_zone)
+    def __init__(self, faction, unit_zone, unit_state):
+        super(Cultist, self).__init__(faction, unit_zone, UnitType.cultist, 0, 1, 1, unit_state)
 
 
 class Monster(Unit):
-    def __init__(self):
-        super(Monster, self).__init__()
+    def __init__(self, faction, unit_zone, unit_state):
+        super(Monster, self).__init__(faction, unit_zone, UnitType.monster, 0, 1, 1, unit_state)
 
 
 class GreatOldOne(Unit):
-    def __init__(self):
-        super(GreatOldOne, self).__init__()
+    def __init__(self, faction, unit_zone, unit_state):
+        super(GreatOldOne, self).__init__(faction, unit_zone, UnitType.GOO, 0, 1, 1, unit_state)
+
