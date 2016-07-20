@@ -12,7 +12,7 @@ Flesh out graph visualization to represent class data
 
 import networkx as nx
 import matplotlib.pylab as P
-import zone
+from cthulhuwars.Zone import Zone
 
 class Map:
     # available maps
@@ -129,7 +129,7 @@ class Map:
             is_ocean = False
             if node_name in self.earth_oceans:
                 is_ocean = True
-            self.map.node[node_name]['zone'] = zone.Zone(node_name, is_ocean)
+            self.map.node[node_name]['zone'] = Zone(node_name, is_ocean)
         # ^ map.nodes(data=True) will show the attributes of node label 'blah'
 
 

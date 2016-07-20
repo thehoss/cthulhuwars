@@ -1,5 +1,5 @@
 from enum import Enum
-from cthulhuwars.zone import Zone, GateState
+from cthulhuwars.Zone import Zone, GateState
 
 class UnitType(Enum):
     cultist = 'cultist'
@@ -26,7 +26,7 @@ class UnitState(Enum):
     captured   = 3
 
 
-class Unit:
+class Unit(object):
     def __init__(self, faction=Faction.cthulhu, unit_type=UnitType.cultist, combat_power=0, cost=1,  base_movement=1,  unit_state=UnitState.in_reserve, unit_zone=Zone('South Pacific',True)):
         self.__faction = faction
         self.__unit_type = unit_type
@@ -74,15 +74,15 @@ class Unit:
 
 class Cultist(Unit):
     def __init__(self):
-        pass
+        super(Cultist,self).__init__()
 
 class Monster(Unit):
     def __init__(self):
-        pass
+        super(Monster, self).__init__()
 
 class GreatOldOne(Unit):
     def __init__(self):
-        pass
+        super(GreatOldOne, self).__init__()
 
 
 

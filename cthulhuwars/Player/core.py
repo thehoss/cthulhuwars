@@ -1,10 +1,9 @@
-
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
-from cthulhuwars.zone import Zone, GateState
+from cthulhuwars.Zone import Zone, GateState
 
-class Player():
 
-    def __init__(self, faction=Faction.cthulhu, home_zone = Zone('South Pacific', True), name='Player1' ):
+class Player(object):
+    def __init__(self, faction=Faction.cthulhu, home_zone=Zone('South Pacific', True), name='Player1'):
         self.__name = name
         self.__faction = faction
         self.__home_zone = home_zone
@@ -41,7 +40,7 @@ class Player():
 
     def __computePower(self):
         self.__power = self.__current_cultists
-        self.__power += self.__current_gates*2
+        self.__power += self.__current_gates * 2
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
         pass
 
@@ -91,20 +90,19 @@ class Player():
 
     def print_state(self):
         self.__computePower()
-        print ('name: %s'%self.__name)
-        print ('faction: %s'%self.__faction)
-        print ('home zone: %s' %self.__home_zone)
-        print ('spells: %s' %self.__spells)
-        print ('units: %s' %self.__units)
-        print ('power: %s' %self.__power)
-        print ('doom points: %s' %self.__doom_points)
-        print ('elder sign points: %s' %self.__elder_points)
-        print ('starting cultists: %s' %self.__starting_cultists)
-        print ('current cultists: %s' %self.__current_cultists)
-        print ('current gates: %s' %self.__current_gates)
+        print ('name: %s' % self.__name)
+        print ('faction: %s' % self.__faction)
+        print ('home zone: %s' % self.__home_zone)
+        print ('spells: %s' % self.__spells)
+        print ('units: %s' % self.__units)
+        print ('power: %s' % self.__power)
+        print ('doom points: %s' % self.__doom_points)
+        print ('elder sign points: %s' % self.__elder_points)
+        print ('starting cultists: %s' % self.__starting_cultists)
+        print ('current cultists: %s' % self.__current_cultists)
+        print ('current gates: %s' % self.__current_gates)
 
 
 class BlackGoat(Player):
-
-    def __init__(self, faction=Faction.black_goat, home_zone = Zone('Africa', False), name='Player2'):
-        Player.__init__(self, faction, home_zone, name)
+    def __init__(self, faction=Faction.black_goat, home_zone=Zone('Africa', False), name='Player2'):
+        super(BlackGoat, self).__init__(faction, home_zone, name)
