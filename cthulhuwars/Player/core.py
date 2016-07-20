@@ -109,4 +109,5 @@ class Player(object):
         print ('starting cultists: %s' % self.__starting_cultists)
         print ('current cultists: %s' % self.__current_cultists)
         print ('current gates: %s' % self.__current_gates)
+        print ('total current units: %s' % self.__units.__len__())
         print ("**************************************")
