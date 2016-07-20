@@ -1,7 +1,8 @@
-from core import Player, BlackGoat
+from Cthulhu import Cthulhu
+from BlackGoat import BlackGoat
 
 if __name__ == "__main__":
-    P1 = Player(name='Mrs. Reynolds')
+    P1 = Cthulhu(name='Mrs. Reynolds')
     P1.player_setup()
     print(P1.print_state())
 

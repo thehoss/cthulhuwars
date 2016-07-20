@@ -101,8 +101,3 @@ class Player(object):
         print ('starting cultists: %s' % self.__starting_cultists)
         print ('current cultists: %s' % self.__current_cultists)
         print ('current gates: %s' % self.__current_gates)
-
-
-class BlackGoat(Player):
-    def __init__(self, faction=Faction.black_goat, home_zone=Zone('Africa', False), name='Player2'):
-        super(BlackGoat, self).__init__(faction, home_zone, name)
