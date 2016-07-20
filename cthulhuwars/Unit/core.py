@@ -78,8 +78,8 @@ class Unit(object):
 
 
 class Cultist(Unit):
-    def __init__(self):
-        super(Cultist, self).__init__()
+    def __init__(self, faction, unit_state, unit_zone):
+        super(Cultist, self).__init__(faction, UnitType.cultist, 0, 1, 1, unit_state, unit_zone)
 
 
 class Monster(Unit):

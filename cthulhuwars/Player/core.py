@@ -1,9 +1,13 @@
-from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
+from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
 
+# Generic Player class
+# Overridden by faction specific subclasses
+# home_zone left intentionally without default since the Board needs to pass in the
+# Zone class instance from the map construction
 
 class Player(object):
-    def __init__(self, faction=Faction.cthulhu, home_zone=Zone('South Pacific', True), name='Player1'):
+    def __init__(self, faction, home_zone, name='Player1'):
         self.__name = name
         self.__faction = faction
         self.__home_zone = home_zone
@@ -25,7 +29,7 @@ class Player(object):
 
     def _add_cultist(self, zone):
         if self.__power > 0:
-            new_cultist = Unit(self.__faction, UnitType.cultist, 0, 1, 1, UnitState.in_play, zone)
+            new_cultist = Cultist(self.__faction, UnitState.in_play, zone)
             self.__units.append(new_cultist)
             self.__power -= 1
             self.__current_cultists += 1
