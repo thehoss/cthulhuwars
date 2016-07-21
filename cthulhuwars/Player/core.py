@@ -1,5 +1,6 @@
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
+from cthulhuwars.Maps import Map
 
 # Generic Player class
 # Overridden by faction specific subclasses
@@ -63,8 +64,24 @@ class Player(object):
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
         pass
 
-    def move_action(self):
-        pass
+    def move_action(self, map):
+        assert isinstance(map, Map)
+        # we need to know who can move and to where
+        # power determines how many moves we can make
+        # after moving we also need to check for spell book
+        # availability at 4 6 and 8 unique occupied zones
+        occupied_zones = []
+        candidate_moves = []
+        power = self.power
+        for unit in self.__units:
+            assert isinstance(unit, Unit)
+            occupied_zones.append(unit.unit_zone)
+            # build list of possible moves to neighboring zones
+            neighbors = map.find_neighbors(unit.unit_zone.name)
+            for n in neighbors:
+                candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
+            print(self.__color+'%s %s in %s can make %s moves'%(self.__faction, unit.unit_type, unit.unit_zone.name, neighbors.__len__())+text_colors.ENDC)
+        occupied_zones = list(set(occupied_zones))
 
     def combat_action(self):
         pass

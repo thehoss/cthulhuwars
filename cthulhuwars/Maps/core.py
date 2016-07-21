@@ -149,6 +149,8 @@ class Map:
     def zone_by_name(self, zone):
         return self.map.node[zone]['zone']
 
+    def find_neighbors(self, zone):
+        return self.map.neighbors(zone)
 
     def show_map(self):
         pos = nx.spring_layout(self.map, iterations=100)

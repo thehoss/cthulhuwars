@@ -8,12 +8,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Maps/__init__.py" afterPath="$PROJECT_DIR$/cthulhuwars/Maps/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Maps/core.py" afterPath="$PROJECT_DIR$/cthulhuwars/Maps/core.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Player/BlackGoat.py" afterPath="$PROJECT_DIR$/cthulhuwars/Player/BlackGoat.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Player/CrawlingChaos.py" afterPath="$PROJECT_DIR$/cthulhuwars/Player/CrawlingChaos.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Player/Cthulhu.py" afterPath="$PROJECT_DIR$/cthulhuwars/Player/Cthulhu.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Player/YellowSign.py" afterPath="$PROJECT_DIR$/cthulhuwars/Player/YellowSign.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Player/__init__.py" afterPath="$PROJECT_DIR$/cthulhuwars/Player/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Player/core.py" afterPath="$PROJECT_DIR$/cthulhuwars/Player/core.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cthulhuwars/Unit/core.py" afterPath="$PROJECT_DIR$/cthulhuwars/Unit/core.py" />
     </list>
     <ignored path="cthulhuwars.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,10 +25,10 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/cthulhuwars$core.coverage" NAME="core Coverage Results" MODIFIED="1468606111155" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars/DiceRoller" />
     <SUITE FILE_PATH="coverage/cthulhuwars$__init____1_.coverage" NAME="__init__ (1) Coverage Results" MODIFIED="1468994721307" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars/Player" />
-    <SUITE FILE_PATH="coverage/cthulhuwars$__init____2_.coverage" NAME="__init__ (2) Coverage Results" MODIFIED="1469072484346" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars/Maps" />
+    <SUITE FILE_PATH="coverage/cthulhuwars$__init____2_.coverage" NAME="__init__ (2) Coverage Results" MODIFIED="1469076200227" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars/Maps" />
     <SUITE FILE_PATH="coverage/cthulhuwars$maps.coverage" NAME="maps Coverage Results" MODIFIED="1468799619758" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars" />
     <SUITE FILE_PATH="coverage/cthulhuwars$__init__.coverage" NAME="__init__ Coverage Results" MODIFIED="1468642649200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars/DiceRoller" />
-    <SUITE FILE_PATH="coverage/cthulhuwars$__init____3_.coverage" NAME="__init__ (3) Coverage Results" MODIFIED="1469074983007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars/Board" />
+    <SUITE FILE_PATH="coverage/cthulhuwars$__init____3_.coverage" NAME="__init__ (3) Coverage Results" MODIFIED="1469077808659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cthulhuwars/Board" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -50,11 +46,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="core.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="core.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2279">
-              <caret line="110" column="15" selection-start-line="110" selection-start-column="15" selection-end-line="110" selection-end-column="15" />
+            <state relative-caret-position="330">
+              <caret line="82" column="25" selection-start-line="82" selection-start-column="25" selection-end-line="82" selection-end-column="25" />
               <folding>
                 <element signature="e#0#72#0" expanded="true" />
               </folding>
@@ -85,8 +81,8 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-31">
-              <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+            <state relative-caret-position="363">
+              <caret line="17" column="21" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -97,8 +93,8 @@
       <file leaf-file-name="core.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cthulhuwars/Maps/core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="959">
-              <caret line="149" column="0" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
+            <state relative-caret-position="662">
+              <caret line="152" column="14" selection-start-line="152" selection-start-column="14" selection-end-line="152" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -107,8 +103,8 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cthulhuwars/Maps/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="66">
-              <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
+            <state relative-caret-position="165">
+              <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -127,8 +123,8 @@
       <file leaf-file-name="core.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cthulhuwars/Board/core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="695">
-              <caret line="45" column="32" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+            <state relative-caret-position="794">
+              <caret line="69" column="40" selection-start-line="69" selection-start-column="40" selection-end-line="69" selection-end-column="40" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -136,11 +132,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BlackGoat.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="BlackGoat.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/BlackGoat.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="728">
-              <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+            <state relative-caret-position="431">
+              <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -148,11 +144,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Cthulhu.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/Cthulhu.py">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cthulhuwars/Board/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="660">
-              <caret line="22" column="21" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
+            <state relative-caret-position="264">
+              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -199,16 +195,16 @@
         <option value="$PROJECT_DIR$/cthulhuwars/Uct/__init__.py" />
         <option value="$PROJECT_DIR$/cthulhuwars/Unit/__init__.py" />
         <option value="$PROJECT_DIR$/cthulhuwars/Unit/core.py" />
-        <option value="$PROJECT_DIR$/cthulhuwars/Maps/__init__.py" />
-        <option value="$PROJECT_DIR$/cthulhuwars/Maps/core.py" />
-        <option value="$PROJECT_DIR$/cthulhuwars/Player/__init__.py" />
-        <option value="$PROJECT_DIR$/cthulhuwars/Board/__init__.py" />
-        <option value="$PROJECT_DIR$/cthulhuwars/Player/BlackGoat.py" />
-        <option value="$PROJECT_DIR$/cthulhuwars/Player/core.py" />
         <option value="$PROJECT_DIR$/cthulhuwars/Player/CrawlingChaos.py" />
         <option value="$PROJECT_DIR$/cthulhuwars/Player/Cthulhu.py" />
         <option value="$PROJECT_DIR$/cthulhuwars/Player/YellowSign.py" />
+        <option value="$PROJECT_DIR$/cthulhuwars/Maps/__init__.py" />
+        <option value="$PROJECT_DIR$/cthulhuwars/Maps/core.py" />
+        <option value="$PROJECT_DIR$/cthulhuwars/Player/__init__.py" />
+        <option value="$PROJECT_DIR$/cthulhuwars/Player/BlackGoat.py" />
         <option value="$PROJECT_DIR$/cthulhuwars/Board/core.py" />
+        <option value="$PROJECT_DIR$/cthulhuwars/Board/__init__.py" />
+        <option value="$PROJECT_DIR$/cthulhuwars/Player/core.py" />
       </list>
     </option>
   </component>
@@ -894,7 +890,14 @@
       <option name="project" value="LOCAL" />
       <updated>1468994535743</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Board class creates map and players with properly linked zones">
+      <created>1469075243719</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1469075243719</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -910,13 +913,13 @@
     <frame x="-13" y="-13" width="3226" height="1766" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16195373" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16195373" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937294" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33808553" sideWeight="0.39016896" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3379538" sideWeight="0.39016896" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32959905" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32790223" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25874588" sideWeight="0.4976415" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3379538" sideWeight="0.60983104" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.41980198" sideWeight="0.60983104" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2837746" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -955,7 +958,8 @@
     <MESSAGE value="Merge branch 'master' of codebasehq.com:mountains-of-madness/azathoth/cthulhuwars into martinez&#10;&#10;# Conflicts:&#10;#&#9;cthulhuwars/Unit/core.py&#10;" />
     <MESSAGE value="simple subclasses for factions" />
     <MESSAGE value="attempt to merge martinez back to master&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="attempt to merge martinez back to master&#10;" />
+    <MESSAGE value="Board class creates map and players with properly linked zones" />
+    <option name="LAST_COMMIT_MESSAGE" value="Board class creates map and players with properly linked zones" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1204,22 +1208,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cthulhuwars/Board/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cthulhuwars/Zone/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-250">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/Cthulhu.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="660">
@@ -1228,46 +1216,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cthulhuwars/Maps/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2279">
-          <caret line="110" column="15" selection-start-line="110" selection-start-column="15" selection-end-line="110" selection-end-column="15" />
-          <folding>
-            <element signature="e#0#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/YellowSign.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="561">
           <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-31">
-          <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cthulhuwars/Maps/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="959">
-          <caret line="149" column="0" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1280,22 +1232,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cthulhuwars/Board/core.py">
+    <entry file="file://$PROJECT_DIR$/cthulhuwars/Zone/core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="695">
-          <caret line="45" column="32" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+        <state relative-caret-position="-250">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cthulhuwars/Maps/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="662">
+          <caret line="152" column="14" selection-start-line="152" selection-start-column="14" selection-end-line="152" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cthulhuwars/Maps/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="363">
+          <caret line="17" column="21" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
           <folding>
-            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/BlackGoat.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="728">
-          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+        <state relative-caret-position="431">
+          <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cthulhuwars/Board/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="794">
+          <caret line="69" column="40" selection-start-line="69" selection-start-column="40" selection-end-line="69" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cthulhuwars/Board/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cthulhuwars/Player/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="82" column="25" selection-start-line="82" selection-start-column="25" selection-end-line="82" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#72#0" expanded="true" />
           </folding>
         </state>
       </provider>

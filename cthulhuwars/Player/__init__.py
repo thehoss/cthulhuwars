@@ -7,7 +7,7 @@ from CrawlingChaos import CrawlingChaos
 from cthulhuwars.Zone import Zone
 
 #This will fail without creating the home Zone class instances first!
-if __name__ == "__test__":
+if __name__ == "__main__":
     south_pacific = Zone('South Pacific', isOcean=True)
     P1 = Cthulhu(south_pacific, name='Mrs. Reynolds')
     P1.player_setup()

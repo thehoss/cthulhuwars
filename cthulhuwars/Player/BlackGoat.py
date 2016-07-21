@@ -1,6 +1,7 @@
 from core import Player
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
+from cthulhuwars.Maps import Map
 
 
 # Black Goat
@@ -48,21 +49,6 @@ class BlackGoat(Player):
         for unit in self.__units:
             if unit.get_unit_type() is UnitType.cultist:
                 unit.set_combat_power(1)
-
-    def move_action(self):
-        # we need to know who can move and to where
-        # power determines how many moves we can make
-        # after moving we also need to check for spell book
-        # availability at 4 6 and 8 unique occupied zones
-        occupied_zones = []
-        candidate_moves = []
-        power = self.power
-        for unit in self.__units:
-            occupied_zone.append(unit.unit_zone)
-            # build list of possible moves to neighboring zones
-
-        occupied_zones = list(set(occupied_zones))
-
 
     def print_state(self):
         print (self.__color)
