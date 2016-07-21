@@ -131,8 +131,6 @@ class Map:
                 is_ocean = True
             self.map.node[node_name]['zone'] = Zone(node_name, is_ocean)
         # ^ map.nodes(data=True) will show the attributes of node label 'blah'
-
-
         '''
         # optionally, swap labeled nodes with name-tagged zone objects
         # warning: you might have to retype this to experiment
@@ -148,6 +146,9 @@ class Map:
         mapping = dict(zip(node_list, zone_list))
          self.map = nx.relabel_nodes(G, mapping)
         '''
+    def zone_by_name(self, zone):
+        return self.map.node[zone]['zone']
+
 
     def show_map(self):
         pos = nx.spring_layout(self.map, iterations=100)

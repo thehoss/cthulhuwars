@@ -1,3 +1,4 @@
+from core import Player
 from Cthulhu import Cthulhu
 from BlackGoat import BlackGoat
 from YellowSign import YellowSign
@@ -6,7 +7,7 @@ from CrawlingChaos import CrawlingChaos
 from cthulhuwars.Zone import Zone
 
 #This will fail without creating the home Zone class instances first!
-if __name__ == "__main__":
+if __name__ == "__test__":
     south_pacific = Zone('South Pacific', isOcean=True)
     P1 = Cthulhu(south_pacific, name='Mrs. Reynolds')
     P1.player_setup()

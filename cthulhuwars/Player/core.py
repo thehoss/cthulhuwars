@@ -5,9 +5,19 @@ from cthulhuwars.Zone import Zone, GateState
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
 # Zone class instance from the map construction
+class text_colors:
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 class Player(object):
     def __init__(self, faction, home_zone, name='Player1'):
+        assert isinstance(home_zone, Zone)
+
         self.__name = name
         self.__faction = faction
         self.__home_zone = home_zone
@@ -19,6 +29,7 @@ class Player(object):
         self.__starting_cultists = 6
         self.__current_cultists = 0
         self.__current_gates = 0
+        self.__color = text_colors.GREEN
 
     def player_setup(self):
         # add starting gate and cultist to home zone
@@ -100,7 +111,7 @@ class Player(object):
         print ("**************************************")
         print ('name: %s' % self.__name)
         print ('faction: %s' % self.__faction)
-        print ('home zone: %s' % self.__home_zone)
+        print ('home zone: %s' % self.__home_zone.name)
         print ('spells: %s' % self.__spells)
         print ('units: %s' % self.__units)
         print ('power: %s' % self.__power)
@@ -110,4 +121,4 @@ class Player(object):
         print ('current cultists: %s' % self.__current_cultists)
         print ('current gates: %s' % self.__current_gates)
         print ('total current units: %s' % self.__units.__len__())
-        print ("**************************************")
+        print ("**************************************" + text_colors.ENDC)

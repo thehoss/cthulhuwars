@@ -44,10 +44,16 @@ class Unit(object):
 
         #print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
 
-    def get_faction(self):
+    @property
+    def unit_zone(self):
+        return self.__unit_zone
+
+    @property
+    def faction(self):
         return self.__faction
 
-    def get_unit_type(self):
+    @property
+    def unit_type(self):
         return self.__unit_type
 
     def set_unit_type(self, unit_type):
@@ -56,22 +62,29 @@ class Unit(object):
     def set_unit_gate_state(self, gate_state):
         self.__unit_gate_state = gate_state
 
-    def get_combat_power(self):
+    @property
+    def combat_power(self):
         return self.__combat_power
 
-    def get_cost(self):
+    def set_combat_power(self, combat_power):
+        self.__combat_power = combat_power
+
+    @property
+    def cost(self):
         return self.__cost
 
     def set_cost(self, cost):
         self.__cost = cost
 
-    def get_base_movement(self):
+    @property
+    def base_movement(self):
         return self.__base_movement
 
     def set_base_movement(self, base_movement):
         self.__base_movement = base_movement
 
-    def get_unit_state(self):
+    @property
+    def unit_state(self):
         return self.__unit_state
 
     def set_unit_state(self, unit_state):
