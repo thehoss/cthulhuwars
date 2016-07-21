@@ -1,7 +1,7 @@
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
 from cthulhuwars.Maps import Map
-
+from cthulhuwars.DiceRoller import DiceRoller
 # Generic Player class
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
@@ -30,7 +30,7 @@ class Player(object):
         self.__starting_cultists = 6
         self.__current_cultists = 0
         self.__current_gates = 0
-        self.__color = text_colors.GREEN
+        self._color = text_colors.GREEN
 
     def player_setup(self):
         # add starting gate and cultist to home zone
@@ -64,7 +64,7 @@ class Player(object):
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
         pass
 
-    def move_action(self, map):
+    def find_move_actions(self, map):
         assert isinstance(map, Map)
         # we need to know who can move and to where
         # power determines how many moves we can make
@@ -80,8 +80,35 @@ class Player(object):
             neighbors = map.find_neighbors(unit.unit_zone.name)
             for n in neighbors:
                 candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
-            print(self.__color+'%s %s in %s can make %s moves'%(self.__faction, unit.unit_type, unit.unit_zone.name, neighbors.__len__())+text_colors.ENDC)
+            #print(self._color+'%s %s in %s can make %s moves'%(self.__faction, unit.unit_type, unit.unit_zone.name, neighbors.__len__())+text_colors.ENDC)
+
+            '''
+            RANDOM PLAYOUT
+            roll a die of with sides corresponding to legal moves and pick one
+            will not roll if unit is occupying a gate
+            Awesome AI logic goes here bro
+            '''
+            if unit.gate_state is GateState.occupied:
+                print(self._color + '%s %s in %s is maintaining a gate' % (self.__faction, unit.unit_type, unit.unit_zone.name) + text_colors.ENDC)
+            else:
+                dice = DiceRoller(1,neighbors.__len__()-1)
+                dice_result = int(dice.roll_dice()[0])
+                self.move_action(unit, unit.unit_zone, candidate_moves[dice_result][2])
         occupied_zones = list(set(occupied_zones))
+
+        return candidate_moves
+
+    def move_action(self, unit, from_zone, to_zone):
+        assert isinstance(from_zone, Zone)
+        assert isinstance(to_zone, Zone)
+        '''
+        Handles Zone and power transactions
+        '''
+        if self.power >= 1:
+            print(self._color + '%s %s is moving from %s to %s' % (self.__faction, unit.unit_type, from_zone.name, to_zone.name) + text_colors.ENDC)
+            from_zone.remove_unit(unit)
+            to_zone.add_unit(unit)
+            self.__power -= 1
 
     def combat_action(self):
         pass

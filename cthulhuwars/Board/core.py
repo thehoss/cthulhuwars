@@ -63,12 +63,12 @@ class Board(object):
         for p in self.__players:
             assert isinstance(p, Player)
             p.player_setup()
-        self.print_state()
 
     def test_move_actions(self):
         for p in self.__players:
             assert isinstance(p, Player)
-            p.move_action(self.__map)
+            p.recompute_power()
+            moves = p.find_move_actions(self.__map)
 
     def current_player(self, state):
         # Takes the game state and returns the current player's

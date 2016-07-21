@@ -8,14 +8,15 @@ class DiceRoller:
         self.num_sides = num_sides
         self.dice_results = []
 
-    def roll(self):
+    def __roll(self):
         result = random.randint(1, self.num_sides)
         return result
 
     def roll_dice(self):
         self.dice_results = []
         for _ in range(self.num_dice):
-            self.dice_results.append(self.roll())
+            self.dice_results.append(self.__roll())
+        return self.dice_results
 
     def interpret_dice(self):
         results = []

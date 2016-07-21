@@ -31,6 +31,7 @@ class Zone:
 
     def add_unit(self, unit):
         self.occupancy_list.append(unit)
+        unit.set_unit_zone(self)
 
     def remove_unit(self, unit):
         try:

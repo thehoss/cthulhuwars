@@ -16,8 +16,8 @@ class text_colors:
 class Cthulhu(Player):
     def __init__(self, home_zone, name='Great Cthulhu'):
         super(Cthulhu, self).__init__(Faction.cthulhu, home_zone, name)
-        self.__color = text_colors.GREEN
+        self._color = text_colors.GREEN
 
     def print_state(self):
-        print (self.__color)
+        print (self._color)
         super(Cthulhu,self).print_state()

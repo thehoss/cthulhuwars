@@ -17,8 +17,8 @@ class text_colors:
 class CrawlingChaos(Player):
     def __init__(self, home_zone, name='The Crawling Chaos'):
         super(CrawlingChaos, self).__init__(Faction.crawling_chaos, home_zone, name)
-        self.__color = text_colors.BLUE
+        self._color = text_colors.BLUE
 
     def print_state(self):
-        print (self.__color)
+        print (self._color)
         super(CrawlingChaos,self).print_state()

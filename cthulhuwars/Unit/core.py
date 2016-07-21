@@ -48,6 +48,9 @@ class Unit(object):
     def unit_zone(self):
         return self.__unit_zone
 
+    def set_unit_zone(self, unit_zone):
+        self.__unit_zone = unit_zone
+
     @property
     def faction(self):
         return self.__faction
@@ -58,6 +61,10 @@ class Unit(object):
 
     def set_unit_type(self, unit_type):
         self.__unit_type = unit_type
+
+    @property
+    def gate_state(self):
+        return self.__unit_gate_state
 
     def set_unit_gate_state(self, gate_state):
         self.__unit_gate_state = gate_state
@@ -89,7 +96,6 @@ class Unit(object):
 
     def set_unit_state(self, unit_state):
         self.__unit_state = unit_state
-
 
 class Cultist(Unit):
     def __init__(self, faction, unit_zone, unit_state):

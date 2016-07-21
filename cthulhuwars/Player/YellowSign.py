@@ -16,8 +16,8 @@ class text_colors:
 class YellowSign(Player):
     def __init__(self, home_zone, name='The Yellow Sign'):
         super(YellowSign, self).__init__(Faction.yellow_sign, home_zone, name)
-        self.__color = text_colors.YELLOW
+        self._color = text_colors.YELLOW
 
     def print_state(self):
-        print (self.__color)
+        print (self._color)
         super(YellowSign,self).print_state()

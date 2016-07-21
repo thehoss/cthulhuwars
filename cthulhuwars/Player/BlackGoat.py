@@ -29,7 +29,7 @@ class BlackGoat(Player):
         self.spell_ghroth = False
         self.spell_red_sign = False
         self.spell_blood_sacrifice = False
-        self.__color = text_colors.RED
+        self._color = text_colors.RED
 
     def summon_dark_young(self, unit_zone):
         unit_cost = 3
@@ -51,7 +51,7 @@ class BlackGoat(Player):
                 unit.set_combat_power(1)
 
     def print_state(self):
-        print (self.__color)
+        print (self._color)
         super(BlackGoat,self).print_state()
 
 class DarkYoung(Unit):
