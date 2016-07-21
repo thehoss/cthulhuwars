@@ -54,6 +54,10 @@ class Player(object):
     def power(self):
         return self.__power
 
+    @property
+    def faction(self):
+        return self.__faction
+
     def add_unit(self, new_unit, unit_cost):
         self.__units.append(new_unit)
         self.__power -= unit_cost
@@ -155,7 +159,7 @@ class Player(object):
         print ('faction: %s' % self.__faction)
         print ('home zone: %s' % self.__home_zone.name)
         print ('spells: %s' % self.__spells)
-        print ('units: %s' % self.__units)
+        print ('units: '+', '.join(unit.unit_type for unit in self.__units))
         print ('power: %s' % self.__power)
         print ('doom points: %s' % self.__doom_points)
         print ('elder sign points: %s' % self.__elder_points)

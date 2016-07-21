@@ -64,11 +64,19 @@ class Board(object):
             assert isinstance(p, Player)
             p.player_setup()
 
-    def test_move_actions(self):
+    def gather_power_phase(self):
+        print(text_colors.BOLD + "**Gather Power Phase **" + text_colors.ENDC)
         for p in self.__players:
             assert isinstance(p, Player)
             p.recompute_power()
-            moves = p.find_move_actions(self.__map)
+
+    def test_move_actions(self):
+        for p in self.__players:
+            assert isinstance(p, Player)
+            if p.power is 0:
+                print( text_colors.BOLD+"Player %s is out of power!"%p.faction+text_colors.ENDC )
+            else:
+                moves = p.find_move_actions(self.__map)
 
     def current_player(self, state):
         # Takes the game state and returns the current player's
