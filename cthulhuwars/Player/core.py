@@ -71,9 +71,9 @@ class Player(object):
         # after moving we also need to check for spell book
         # availability at 4 6 and 8 unique occupied zones
         occupied_zones = []
-        candidate_moves = []
         power = self.power
         for unit in self.__units:
+            candidate_moves = []
             assert isinstance(unit, Unit)
             occupied_zones.append(unit.unit_zone)
             # build list of possible moves to neighboring zones
@@ -95,8 +95,6 @@ class Player(object):
                 dice_result = int(dice.roll_dice()[0])
                 self.move_action(unit, unit.unit_zone, candidate_moves[dice_result][2])
         occupied_zones = list(set(occupied_zones))
-
-        return candidate_moves
 
     def move_action(self, unit, from_zone, to_zone):
         assert isinstance(from_zone, Zone)
