@@ -16,13 +16,14 @@ class text_colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+
 class BlackGoat(Player):
     def __init__(self, home_zone, name='The Black Goat'):
         super(BlackGoat, self).__init__(Faction.black_goat, home_zone, name)
         self._dark_young_in_play = 0
         self._fungi_in_play = 0
         self._ghouls_in_play = 0
-        self._shub_nig_in_play = 0
+        self._shub_nig_in_play = False
         self.spell_thousand_young = False
         self.spell_frenzy = False
         self.spell_necrophagy = False
@@ -61,7 +62,7 @@ class BlackGoat(Player):
             if unit_zone.gate_unit.faction == self:
                 if self.current_cultists >= 2:
                     shub_nigg = ShubNiggurath(self, unit_zone)
-                    self.add_unit(shub_nigg,unit_cost)
+                    self.add_unit(shub_nigg, unit_cost)
 
                     for _ in range(2):
                         kill_list = []
@@ -69,17 +70,16 @@ class BlackGoat(Player):
                             if unit.unit_type is UnitType.cultist and unit.unit_state is UnitState.in_play:
                                 if unit.gate_state is not GateState.occupied:
                                     kill_list.append(unit)
-                        print(self._color+'Pick a cultist to sacrifice:')
+                        print(self._color + 'Pick a cultist to sacrifice:')
                         for n in range(kill_list.__len__()):
-                            print('  ['+str(n)+'] Cultist in %s'%kill_list[n].unit_zone.name)
+                            print('  [' + str(n) + '] Cultist in %s' % kill_list[n].unit_zone.name)
                         while True:
                             sacrifice = int(raw_input('Selection:'))
                             if sacrifice < kill_list.__len__():
                                 break
                         self.remove_unit(kill_list[sacrifice])
-
-                    print(text_colors.BOLD+'Shub-Niggurath Successfully Summoned!'+text_colors.ENDC)
-
+                    self._shub_nig_in_play = True
+                    print(text_colors.BOLD + 'Shub-Niggurath Successfully Summoned!' + text_colors.ENDC)
 
     def spell_play_thousand_young(self):
         self.spell_thousand_young = True
@@ -99,38 +99,39 @@ class BlackGoat(Player):
 
     def print_state(self):
         print (self._color)
-        super(BlackGoat,self).print_state()
+        super(BlackGoat, self).print_state()
 
 
 class Ghoul(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost):
         super(Ghoul, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=0, cost=unit_cost,
-                                        base_movement=1,
-                                        unit_state=UnitState.in_reserve)
+                                    base_movement=1,
+                                    unit_state=UnitState.in_reserve)
+
+
 class Fungi(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost):
         super(Fungi, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=1, cost=unit_cost,
-                                        base_movement=1,
-                                        unit_state=UnitState.in_reserve)
+                                    base_movement=1,
+                                    unit_state=UnitState.in_reserve)
+
 
 class DarkYoung(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost):
         super(DarkYoung, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=2, cost=unit_cost,
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)
+
+
 class ShubNiggurath(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=8):
         super(ShubNiggurath, self).__init__(unit_parent, unit_zone, UnitType.GOO, combat_power=0, cost=unit_cost,
-                                        base_movement=1,
-                                        unit_state=UnitState.in_reserve)
+                                            base_movement=1,
+                                            unit_state=UnitState.in_reserve)
+
     @property
     def combat_power(self):
         total_combat_power = self.faction.current_cultists + self.faction.current_gates
         if self.faction.spell_red_sign:
             total_combat_power += self.faction.dark_young_in_play
         return total_combat_power
-
-
-
-
-
