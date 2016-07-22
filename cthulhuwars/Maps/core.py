@@ -149,8 +149,12 @@ class Map:
     def zone_by_name(self, zone):
         return self.map.node[zone]['zone']
 
-    def find_neighbors(self, zone):
-        return self.map.neighbors(zone)
+    def find_neighbors(self, zone, radius=1):
+        if radius == 1:
+            return self.map.neighbors(zone)
+        if radius == 2:
+            ego_graph = nx.ego_graph(self.map, zone, 2, center=False, undirected=True)
+            return ego_graph.nodes()
 
     def show_map(self):
         pos = nx.spring_layout(self.map, iterations=100)
