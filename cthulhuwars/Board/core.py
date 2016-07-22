@@ -78,6 +78,14 @@ class Board(object):
             else:
                 moves = p.find_move_actions(self.__map)
 
+    def test_summon_actions(self):
+        for p in self.__players:
+            assert isinstance(p, Player)
+            if p.power is 0:
+                print( text_colors.BOLD+"Player %s is out of power!"%p.faction+text_colors.ENDC )
+            else:
+                p.summon_action()
+
     def current_player(self, state):
         # Takes the game state and returns the current player's
         # number.

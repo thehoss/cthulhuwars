@@ -30,14 +30,14 @@ class UnitState(Enum):
 class Unit(object):
     def __init__(self, faction, unit_zone, unit_type=UnitType.cultist, combat_power=0, cost=1, base_movement=1,
                  unit_state=UnitState.in_reserve):
-        self.__faction = faction
-        self.__unit_type = unit_type
-        self.__combat_power = combat_power
-        self.__cost = cost
-        self.__base_movement = base_movement
-        self.__unit_state = unit_state
-        self.__unit_zone = unit_zone
-        self.__unit_gate_state = GateState.noGate
+        self._faction = faction
+        self._unit_type = unit_type
+        self._combat_power = combat_power
+        self._cost = cost
+        self._base_movement = base_movement
+        self._unit_state = unit_state
+        self._unit_zone = unit_zone
+        self._unit_gate_state = GateState.noGate
 
         assert isinstance(unit_zone, Zone)
         unit_zone.add_unit(self)
@@ -46,56 +46,56 @@ class Unit(object):
 
     @property
     def unit_zone(self):
-        return self.__unit_zone
+        return self._unit_zone
 
     def set_unit_zone(self, unit_zone):
-        self.__unit_zone = unit_zone
+        self._unit_zone = unit_zone
 
     @property
     def faction(self):
-        return self.__faction
+        return self._faction
 
     @property
     def unit_type(self):
-        return self.__unit_type
+        return self._unit_type
 
     def set_unit_type(self, unit_type):
-        self.__unit_type = unit_type
+        self._unit_type = unit_type
 
     @property
     def gate_state(self):
-        return self.__unit_gate_state
+        return self._unit_gate_state
 
     def set_unit_gate_state(self, gate_state):
-        self.__unit_gate_state = gate_state
+        self._unit_gate_state = gate_state
 
     @property
     def combat_power(self):
-        return self.__combat_power
+        return self._combat_power
 
     def set_combat_power(self, combat_power):
-        self.__combat_power = combat_power
+        self._combat_power = combat_power
 
     @property
     def cost(self):
-        return self.__cost
+        return self._cost
 
     def set_cost(self, cost):
-        self.__cost = cost
+        self._cost = cost
 
     @property
     def base_movement(self):
-        return self.__base_movement
+        return self._base_movement
 
     def set_base_movement(self, base_movement):
-        self.__base_movement = base_movement
+        self._base_movement = base_movement
 
     @property
     def unit_state(self):
-        return self.__unit_state
+        return self._unit_state
 
     def set_unit_state(self, unit_state):
-        self.__unit_state = unit_state
+        self._unit_state = unit_state
 
 class Cultist(Unit):
     def __init__(self, faction, unit_zone, unit_state):

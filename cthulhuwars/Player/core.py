@@ -29,17 +29,18 @@ class Player(object):
         self._elder_points = 0
         self._starting_cultists = 6
         self._current_cultists = 0
+        self._captured_cultists = 0
         self._current_gates = 0
         self._color = text_colors.GREEN
 
     def player_setup(self):
         # add starting gate and cultist to home zone
-        self.build_gate_action(self._add_cultist(self._home_zone), self._home_zone)
+        self.build_gate_action(self.add_cultist(self._home_zone), self._home_zone)
         # add remaining cultists
         for _ in range(1, self._starting_cultists, 1):
-            self._add_cultist(self._home_zone)
+            self.add_cultist(self._home_zone)
 
-    def _add_cultist(self, zone):
+    def add_cultist(self, zone):
         if self._power > 0:
             new_cultist = Cultist(self, zone, UnitState.in_play)
             self._units.append(new_cultist)
@@ -50,6 +51,25 @@ class Player(object):
             # TODO: add failure reporting mechanism
             print ('not enough power to summon cultist!')
 
+    def kill_unit(self, unit):
+        assert isinstance(unit, Unit)
+        if unit.unit_type is UnitType.cultist:
+            unit.faction.remove_cultist()
+        unit.set_unit_state(UnitState.killed)
+
+    def remove_unit(self, unit):
+        assert isinstance(unit, Unit)
+        if unit.unit_type is UnitType.cultist:
+            unit.faction.remove_cultist()
+        unit.set_unit_state(UnitState.in_reserve)
+
+    def capture_unit(self, unit):
+        assert isinstance(unit, Unit)
+        if unit.unit_type is UnitType.cultist:
+            unit.faction.remove_cultist()
+        unit.set_unit_state(UnitState.in_reserve)
+        self._captured_cultists += 1
+
     @property
     def power(self):
         return self._power
@@ -57,6 +77,22 @@ class Player(object):
     @property
     def faction(self):
         return self._faction
+
+    @property
+    def current_cultists(self):
+        return self._current_cultists
+
+    @property
+    def captured_cultists(self):
+        return self._captured_cultists
+
+    @property
+    def current_gates(self):
+        return self._current_gates
+
+
+    def remove_cultist(self):
+        self._current_cultists -= 1
 
     def add_unit(self, new_unit, unit_cost):
         self._units.append(new_unit)
@@ -159,7 +195,7 @@ class Player(object):
         print ('faction: %s' % self._faction)
         print ('home zone: %s' % self._home_zone.name)
         print ('spells: %s' % self._spells)
-        unit_string = ', '.join(unit.unit_type.value for unit in self._units)
+        unit_string = ', '.join( (unit.unit_type.value + ' ('+str(unit.combat_power)+')')  for unit in self._units)
         print ('units: %s'%unit_string)
         print ('power: %s' % self._power)
         print ('doom points: %s' % self._doom_points)

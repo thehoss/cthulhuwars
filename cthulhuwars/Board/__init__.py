@@ -7,6 +7,7 @@ if __name__ == "__main__":
     B.start()
     B.gather_power_phase()
     B.print_state()
+    B.test_summon_actions()
     B.test_move_actions()
     B.test_move_actions()
     B.test_move_actions()
