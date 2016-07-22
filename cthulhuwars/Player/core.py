@@ -19,52 +19,52 @@ class Player(object):
     def __init__(self, faction, home_zone, name='Player1'):
         assert isinstance(home_zone, Zone)
 
-        self.__name = name
-        self.__faction = faction
-        self.__home_zone = home_zone
-        self.__spells = []
-        self.__units = []
-        self.__power = 8
-        self.__doom_points = 0
-        self.__elder_points = 0
-        self.__starting_cultists = 6
-        self.__current_cultists = 0
-        self.__current_gates = 0
+        self._name = name
+        self._faction = faction
+        self._home_zone = home_zone
+        self._spells = []
+        self._units = []
+        self._power = 8
+        self._doom_points = 0
+        self._elder_points = 0
+        self._starting_cultists = 6
+        self._current_cultists = 0
+        self._current_gates = 0
         self._color = text_colors.GREEN
 
     def player_setup(self):
         # add starting gate and cultist to home zone
-        self.build_gate_action(self._add_cultist(self.__home_zone), self.__home_zone)
+        self.build_gate_action(self._add_cultist(self._home_zone), self._home_zone)
         # add remaining cultists
-        for _ in range(1, self.__starting_cultists, 1):
-            self._add_cultist(self.__home_zone)
+        for _ in range(1, self._starting_cultists, 1):
+            self._add_cultist(self._home_zone)
 
     def _add_cultist(self, zone):
-        if self.__power > 0:
+        if self._power > 0:
             new_cultist = Cultist(self, zone, UnitState.in_play)
-            self.__units.append(new_cultist)
-            self.__power -= 1
-            self.__current_cultists += 1
+            self._units.append(new_cultist)
+            self._power -= 1
+            self._current_cultists += 1
             return new_cultist
-        elif self.__power < 1:
+        elif self._power < 1:
             # TODO: add failure reporting mechanism
             print ('not enough power to summon cultist!')
 
     @property
     def power(self):
-        return self.__power
+        return self._power
 
     @property
     def faction(self):
-        return self.__faction
+        return self._faction
 
     def add_unit(self, new_unit, unit_cost):
-        self.__units.append(new_unit)
-        self.__power -= unit_cost
+        self._units.append(new_unit)
+        self._power -= unit_cost
 
     def recompute_power(self):
-        self.__power = self.__current_cultists
-        self.__power += self.__current_gates * 2
+        self._power = self._current_cultists
+        self._power += self._current_gates * 2
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
         pass
 
@@ -76,7 +76,7 @@ class Player(object):
         # availability at 4 6 and 8 unique occupied zones
         occupied_zones = []
         power = self.power
-        for unit in self.__units:
+        for unit in self._units:
             candidate_moves = []
             assert isinstance(unit, Unit)
             occupied_zones.append(unit.unit_zone)
@@ -84,7 +84,7 @@ class Player(object):
             neighbors = map.find_neighbors(unit.unit_zone.name)
             for n in neighbors:
                 candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
-            #print(self._color+'%s %s in %s can make %s moves'%(self.__faction, unit.unit_type, unit.unit_zone.name, neighbors.__len__())+text_colors.ENDC)
+            #print(self._color+'%s %s in %s can make %s moves'%(self._faction, unit.unit_type, unit.unit_zone.name, neighbors._len__())+text_colors.ENDC)
 
             '''
             RANDOM PLAYOUT
@@ -93,7 +93,7 @@ class Player(object):
             Awesome AI logic goes here bro
             '''
             if unit.gate_state is GateState.occupied:
-                print(self._color + '%s %s in %s is maintaining a gate' % (self.__faction, unit.unit_type, unit.unit_zone.name) + text_colors.ENDC)
+                print(self._color + '%s %s in %s is maintaining a gate' % (self._faction, unit.unit_type, unit.unit_zone.name) + text_colors.ENDC)
             else:
                 dice = DiceRoller(1,neighbors.__len__()-1)
                 dice_result = int(dice.roll_dice()[0])
@@ -107,10 +107,10 @@ class Player(object):
         Handles Zone and power transactions
         '''
         if self.power >= 1:
-            print(self._color + '%s %s is moving from %s to %s' % (self.__faction, unit.unit_type, from_zone.name, to_zone.name) + text_colors.ENDC)
+            print(self._color + '%s %s is moving from %s to %s' % (self._faction, unit.unit_type, from_zone.name, to_zone.name) + text_colors.ENDC)
             from_zone.remove_unit(unit)
             to_zone.add_unit(unit)
-            self.__power -= 1
+            self._power -= 1
 
     def combat_action(self):
         pass
@@ -122,8 +122,8 @@ class Player(object):
                 zone.set_gate_state(GateState.occupied)
                 zone.set_gate_unit(unit)
                 unit.set_unit_gate_state(GateState.occupied)
-                self.__current_gates += 1
-                self.__power -= 2
+                self._current_gates += 1
+                self._power -= 2
             else:
                 print ('Not enough power to build gate!')
         else:
@@ -155,17 +155,17 @@ class Player(object):
 
     def print_state(self):
         print ("**************************************")
-        print ('name: %s' % self.__name)
-        print ('faction: %s' % self.__faction)
-        print ('home zone: %s' % self.__home_zone.name)
-        print ('spells: %s' % self.__spells)
-        unit_string = ', '.join(unit.unit_type for unit in self.__units)
+        print ('name: %s' % self._name)
+        print ('faction: %s' % self._faction)
+        print ('home zone: %s' % self._home_zone.name)
+        print ('spells: %s' % self._spells)
+        unit_string = ', '.join(unit.unit_type.value for unit in self._units)
         print ('units: %s'%unit_string)
-        print ('power: %s' % self.__power)
-        print ('doom points: %s' % self.__doom_points)
-        print ('elder sign points: %s' % self.__elder_points)
-        print ('starting cultists: %s' % self.__starting_cultists)
-        print ('current cultists: %s' % self.__current_cultists)
-        print ('current gates: %s' % self.__current_gates)
-        print ('total current units: %s' % self.__units.__len__())
+        print ('power: %s' % self._power)
+        print ('doom points: %s' % self._doom_points)
+        print ('elder sign points: %s' % self._elder_points)
+        print ('starting cultists: %s' % self._starting_cultists)
+        print ('current cultists: %s' % self._current_cultists)
+        print ('current gates: %s' % self._current_gates)
+        print ('total current units: %s' % self._units.__len__())
         print ("**************************************" + text_colors.ENDC)
