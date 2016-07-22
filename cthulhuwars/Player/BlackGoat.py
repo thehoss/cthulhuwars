@@ -79,6 +79,8 @@ class BlackGoat(Player):
                                 break
                         self.remove_unit(kill_list[sacrifice])
                     self._shub_nig_in_play = True
+
+                    shub_nigg.set_unit_state(UnitState.in_play)
                     print(text_colors.BOLD + 'Shub-Niggurath Successfully Summoned!' + text_colors.ENDC)
 
     def spell_play_thousand_young(self):

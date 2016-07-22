@@ -74,7 +74,7 @@ class Board(object):
         for p in self.__players:
             assert isinstance(p, Player)
             if p.power is 0:
-                print( text_colors.BOLD+"Player %s is out of power!"%p.faction+text_colors.ENDC )
+                print( text_colors.BOLD+"Player %s is out of power!"%p.faction.value+text_colors.ENDC )
             else:
                 moves = p.find_move_actions(self.__map)
 
@@ -82,7 +82,7 @@ class Board(object):
         for p in self.__players:
             assert isinstance(p, Player)
             if p.power is 0:
-                print( text_colors.BOLD+"Player %s is out of power!"%p.faction+text_colors.ENDC )
+                print( text_colors.BOLD+"Player %s is out of power!"%p.faction.value+text_colors.ENDC )
             else:
                 p.summon_action()
 

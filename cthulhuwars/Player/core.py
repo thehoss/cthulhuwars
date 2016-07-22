@@ -129,7 +129,7 @@ class Player(object):
             Awesome AI logic goes here bro
             '''
             if unit.gate_state is GateState.occupied:
-                print(self._color + '%s %s in %s is maintaining a gate' % (self._faction, unit.unit_type, unit.unit_zone.name) + text_colors.ENDC)
+                print(self._color + '%s %s in %s is maintaining a gate' % (self._faction.value, unit.unit_type.value, unit.unit_zone.name) + text_colors.ENDC)
             else:
                 dice = DiceRoller(1,neighbors.__len__()-1)
                 dice_result = int(dice.roll_dice()[0])
@@ -143,7 +143,7 @@ class Player(object):
         Handles Zone and power transactions
         '''
         if self.power >= 1:
-            print(self._color + '%s %s is moving from %s to %s' % (self._faction, unit.unit_type, from_zone.name, to_zone.name) + text_colors.ENDC)
+            print(self._color + '%s %s is moving from %s to %s' % (self._faction.value, unit.unit_type.value, from_zone.name, to_zone.name) + text_colors.ENDC)
             from_zone.remove_unit(unit)
             to_zone.add_unit(unit)
             self._power -= 1
@@ -195,8 +195,9 @@ class Player(object):
         print ('faction: %s' % self._faction)
         print ('home zone: %s' % self._home_zone.name)
         print ('spells: %s' % self._spells)
-        unit_string = ', '.join( (unit.unit_type.value + ' ('+str(unit.combat_power)+')')  for unit in self._units)
-        print ('units: %s'%unit_string)
+        print ('units: ')
+        for unit in self._units:
+              print('   '+unit.unit_type.value + ' ('+str(unit.unit_state)+', '+str(unit.combat_power)+', '+str(unit.unit_zone.name)+')')
         print ('power: %s' % self._power)
         print ('doom points: %s' % self._doom_points)
         print ('elder sign points: %s' % self._elder_points)
