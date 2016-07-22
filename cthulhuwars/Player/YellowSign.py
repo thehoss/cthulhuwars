@@ -20,6 +20,12 @@ class YellowSign(Player):
         self._byakhee_in_play = 0
         self._king_in_yellow_in_play = 0
         self._hastur_in_play = 0
+        self._spell_the_third_eye = False
+        self._spell_he_who_is_not_to_be_named = False
+        self._spell_shriek_of_the_byakhee = False
+        self._spell_zingaya = False
+        self._spell_passion = False
+        self._spell_the_screaming_dead = False
         self._color = text_colors.YELLOW
 
     def print_state(self):
