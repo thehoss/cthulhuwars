@@ -1,4 +1,6 @@
 # coding=utf-8
+from __future__ import print_function
+
 """
 cthulhuWars
 Map Class
@@ -12,7 +14,11 @@ Flesh out graph visualization to represent class data
 
 import networkx as nx
 import matplotlib.pylab as P
+import matplotlib.image as mpimg
+import numpy as np
 from cthulhuwars.Zone import Zone
+import os
+
 
 class Map:
     # available maps
@@ -88,7 +94,27 @@ class Map:
         'South Atlantic': ['North Atlantic', 'Antarctica', 'South America East', 'South America West', 'South Pacific']
     }
 
-    earth_oceans = ['Arctic Ocean', 'North Atlantic', 'South Atlantic', 'Indian Ocean', 'North Pacific', 'South Pacific', ]
+    earth_oceans = ['Arctic Ocean', 'North Atlantic', 'South Atlantic', 'Indian Ocean', 'North Pacific',
+                    'South Pacific']
+
+    earth_gate_positions = {'Arctic Ocean': [0.03, 0.9], 'North Atlantic': [-0.23, 0.57],
+                            'South Atlantic': [-0.05, 0.24], 'Indian Ocean': [0.69, 0.21],
+                            'North Pacific':[-0.9, 0.54], 'South Pacific': [-0.53, 0.9],
+                            'North America': [-0.58, 0.7], 'South America': [-0.33, 0.28],
+                            'North America West': [-0.63, 0.75], 'North America East': [-0.36, 0.72],
+                            'South America East': [-0.24, 0.31], 'South America West': [-0.4, 0.29],
+                            'Central America': [-0.66, 0.55], 'Australia': [-0.78, 0.26],
+                            'New Zealand': [-0.69, 0.2], 'Antarctica': [-0.025, 0.06],
+                            'Africa': [0.21, 0.47], 'East Africa': [0.43, 0.25],
+                            'West Africa': [0.21, 0.47], 'Europe': [0.37, 0.71],
+                            'Scandinavia': [0.38, 0.87], 'Arabia': [0.56, 0.47], 'Asia': [0.68, 0.75],
+                            'North Asia': [0.75, 0.79], 'South Asia': [0.85, 0.55]}
+
+
+    earth_map_configs = {'earth3P': ['earth3PWH', 'earth3PEH'], 'earth2Pa': ['earth5PWH', 'earth3PEH'],
+                         'earth4Pa': ['earth5PWH', 'earth3PEH'], 'earth2Pb': ['earth3PWH', 'earth5PEH'],
+                         'earth4Pb': ['earth3PWH', 'earth5PEH'], 'earth5P': ['earth5PWH', 'earth5PEH']
+                         }
 
     # map_names = ['celaeno', 'dreamlands', 'earth', 'primeval earth', 'yuggoth']
 
@@ -97,29 +123,30 @@ class Map:
         self.map_name = map_name
 
         # we allow number of players and n-player map configurations to be in disagreement for experimentation
-        east_ = {}
-        west_ = {}
+        west_map = {}
+        east_map = {}
 
         if self.map_name == 'earth3P':
-            east_ = self.earth3PEH
-            west_ = self.earth3PWH
-
-        if self.map_name == 'earth5P':
-            east_ = self.earth5PEH
-            west_ = self.earth5PWH
+            west_map = self.earth3PWH
+            east_map = self.earth3PEH
 
         if self.map_name == 'earth2Pa' or self.map_name == 'earth4Pa':
-            east_ = self.earth3PEH
-            west_ = self.earth5PWH
+            west_map = self.earth5PWH
+            east_map = self.earth3PEH
 
         if self.map_name == 'earth2Pb' or self.map_name == 'earth4Pb':
-            east_ = self.earth5PEH
-            west_ = self.earth3PWH
+            west_map = self.earth3PWH
+            east_map = self.earth5PEH
 
-        # construct node graphs from dictionary of lists, construct combined node graph with compose()
-        self.east = nx.from_dict_of_lists(east_)
-        self.west = nx.from_dict_of_lists(west_)
-        self.map = nx.compose(self.east, self.west)
+        if self.map_name == 'earth5P':
+            west_map = self.earth5PWH
+            east_map = self.earth5PEH
+
+        # construct node graphs from dictionary of lists
+        self._west_map = nx.from_dict_of_lists(west_map)
+        self._east_map = nx.from_dict_of_lists(east_map)
+        # construct combined node graph with compose()
+        self.map = nx.compose(self._east_map, self._west_map)
         self.map.graph['name'] = self.map_name
 
         # relable nodes with zone objects
@@ -130,6 +157,7 @@ class Map:
             if node_name in self.earth_oceans:
                 is_ocean = True
             self.map.node[node_name]['zone'] = Zone(node_name, is_ocean)
+            self.map.node[node_name]['pos'] = [0.5, 0.5]
         # ^ map.nodes(data=True) will show the attributes of node label 'blah'
         '''
         # optionally, swap labeled nodes with name-tagged zone objects
@@ -157,14 +185,39 @@ class Map:
             return ego_graph.nodes()
 
     def show_map(self):
-        pos = nx.spring_layout(self.map, iterations=100)
+        basepath = '../../tex'
+        file_format = '.png'
+
+        print(self.map_name)
+        west_map_filename = self.earth_map_configs[self.map_name][0] + file_format
+        img_west_path = os.path.join(basepath, west_map_filename)
+        print(img_west_path)
+        img_west = mpimg.imread(img_west_path)
+        print(img_west.shape)
+
+        east_map_filename = self.earth_map_configs[self.map_name][1] + file_format
+        img_east_path = os.path.join(basepath, east_map_filename)
+        print(img_east_path)
+        img_east = mpimg.imread(img_east_path)
+        print(img_east.shape)
+
+
+        img = np.concatenate((img_west, img_east), axis=1)
+
+        P.imshow(img, extent=[-1, 1, 0, 1])
+
+        #pos = nx.spring_layout(self.map, iterations=100)
+
+        pos = {}
         cols = []
         for node in self.map.node:
             cols.append(self.map.node[node]['zone'].compute_color())
+            pos[node] = self.earth_gate_positions[node]
+
         nx.draw(self.map, pos, font_size=12, with_labels=False, node_color=cols)
-        for p in pos:  # raise text positions
-            pos[p][1] += 0.07
-        nx.draw_networkx_labels(self.map, pos)
+        #for p in pos:  # raise text positions
+        #    pos[p][1] += 0.07
+        #nx.draw_networkx_labels(self.map, pos)
         P.show()
 
     def move_unit(self, unit, fromeZone, toZone):
