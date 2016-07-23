@@ -99,16 +99,17 @@ class Map:
 
     earth_gate_positions = {'Arctic Ocean': [0.03, 0.9], 'North Atlantic': [-0.23, 0.57],
                             'South Atlantic': [-0.05, 0.24], 'Indian Ocean': [0.69, 0.21],
-                            'North Pacific':[-0.9, 0.54], 'South Pacific': [-0.53, 0.9],
+                            'North Pacific':[-0.9, 0.54], 'South Pacific': [-0.53, 0.09],
                             'North America': [-0.58, 0.7], 'South America': [-0.33, 0.28],
                             'North America West': [-0.63, 0.75], 'North America East': [-0.36, 0.72],
                             'South America East': [-0.24, 0.31], 'South America West': [-0.4, 0.29],
-                            'Central America': [-0.66, 0.55], 'Australia': [-0.78, 0.26],
-                            'New Zealand': [-0.69, 0.2], 'Antarctica': [-0.025, 0.06],
+                            'Central America': [-0.66, 0.55], 'Australia': [-0.9, 0.2],
+                            'New Zealand': [-0.69, 0.25], 'Antarctica': [-0.025, 0.06],
                             'Africa': [0.21, 0.47], 'East Africa': [0.43, 0.25],
                             'West Africa': [0.21, 0.47], 'Europe': [0.37, 0.71],
                             'Scandinavia': [0.38, 0.87], 'Arabia': [0.56, 0.47], 'Asia': [0.68, 0.75],
-                            'North Asia': [0.75, 0.79], 'South Asia': [0.85, 0.55]}
+                            'North Asia': [0.75, 0.79], 'South Asia': [0.85, 0.55]
+                            }
 
 
     earth_map_configs = {'earth3P': ['earth3PWH', 'earth3PEH'], 'earth2Pa': ['earth5PWH', 'earth3PEH'],
@@ -215,9 +216,9 @@ class Map:
             pos[node] = self.earth_gate_positions[node]
 
         nx.draw(self.map, pos, font_size=12, with_labels=False, node_color=cols)
-        #for p in pos:  # raise text positions
-        #    pos[p][1] += 0.07
-        #nx.draw_networkx_labels(self.map, pos)
+        for p in pos:  # raise text positions
+            pos[p][1] += 0.07
+        nx.draw_networkx_labels(self.map, pos)
         P.show()
 
     def move_unit(self, unit, fromeZone, toZone):
