@@ -70,7 +70,10 @@ class Board(object):
                 self.__players.append(Cthulhu(self.__map.zone_by_name('South Pacific')))
             elif selection is 2:
                 self.black_goat = True
-                self.__players.append(BlackGoat(self.__map.zone_by_name('Africa')))
+                try:
+                    self.__players.append(BlackGoat(self.__map.zone_by_name('Africa')))
+                except KeyError:
+                    self.__players.append(BlackGoat(self.__map.zone_by_name('West Africa')))
             elif selection is 3:
                 self.crawling_chaos = True
                 self.__players.append(CrawlingChaos(self.__map.zone_by_name('Asia')))
