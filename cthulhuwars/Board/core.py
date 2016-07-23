@@ -1,16 +1,15 @@
-from cthulhuwars.Maps import Map
-from cthulhuwars.Player import BlackGoat,CrawlingChaos,Cthulhu,YellowSign,Player
-from enum import Enum
 import random
 
-class text_colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+from enum import Enum
+
+from cthulhuwars.Color import TextColor
+from cthulhuwars.Maps import Map
+from cthulhuwars.Player import BlackGoat
+from cthulhuwars.Player import CrawlingChaos
+from cthulhuwars.Player import Cthulhu
+from cthulhuwars.Player import Player
+from cthulhuwars.Player import YellowSign
+
 
 class Actions(Enum):
     move = 0
@@ -23,6 +22,7 @@ class Actions(Enum):
     control_gate = 7
     abandon_gate = 8
 
+
 class Phase(Enum):
     gather_power = 'gather power'
     first_player = 'first player'
@@ -30,8 +30,8 @@ class Phase(Enum):
     doom = 'doom'
     annihilation = 'annihilation'
 
-class Board(object):
 
+class Board(object):
     def __init__(self):
         num_players = raw_input("Please enter the number of players:")
         self.__map = None
@@ -45,7 +45,7 @@ class Board(object):
         self._round = 0
 
     def build_map(self):
-        print(text_colors.BOLD+"Building The Map"+text_colors.ENDC)
+        print(TextColor.BOLD + "Building The Map" + TextColor.ENDC)
         self.__map = Map(self.__num_players, 'earth4Pa')
 
     def show_map(self):
@@ -53,16 +53,16 @@ class Board(object):
 
     def create_players(self):
         assert isinstance(self.__map, Map)
-        for p in range(1, int(self.__num_players)+1):
-            print('Player %s please select a faction:'%p)
+        for p in range(1, int(self.__num_players) + 1):
+            print('Player %s please select a faction:' % p)
             if self.cthulhu is False:
-                print(text_colors.GREEN + ' [1] The Great Cthulhu' + text_colors.ENDC)
+                print(TextColor.GREEN + ' [1] The Great Cthulhu' + TextColor.ENDC)
             if self.black_goat is False:
-                print(text_colors.RED + ' [2] The Black Goat' + text_colors.ENDC)
+                print(TextColor.RED + ' [2] The Black Goat' + TextColor.ENDC)
             if self.crawling_chaos is False:
-                print(text_colors.BLUE + ' [3] The Crawling Chaos' + text_colors.ENDC)
+                print(TextColor.BLUE + ' [3] The Crawling Chaos' + TextColor.ENDC)
             if self.yellow_sign is False:
-                print(text_colors.YELLOW + ' [4] The Yellow Sign' + text_colors.ENDC)
+                print(TextColor.YELLOW + ' [4] The Yellow Sign' + TextColor.ENDC)
             selection = int(raw_input("Selection: "))
 
             if selection is 1:
@@ -93,7 +93,7 @@ class Board(object):
             p.player_setup()
 
     def gather_power_phase(self):
-        print(text_colors.BOLD + "**Gather Power Phase **" + text_colors.ENDC)
+        print(TextColor.BOLD + "**Gather Power Phase **" + TextColor.ENDC)
         for p in self.__players:
             assert isinstance(p, Player)
             p.recompute_power()
@@ -114,15 +114,15 @@ class Board(object):
         for p in self.__players:
             assert isinstance(p, Player)
             if p.power is 0:
-                print( text_colors.BOLD+"Player %s is out of power!"%p.faction.value+text_colors.ENDC )
+                print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
-                moves = p.find_move_actions(self.__map)
+                p.find_move_actions(self.__map)
 
     def test_summon_actions(self):
         for p in self.__players:
             assert isinstance(p, Player)
             if p.power is 0:
-                print( text_colors.BOLD+"Player %s is out of power!"%p.faction.value+text_colors.ENDC )
+                print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
                 p.summon_action()
 
@@ -130,11 +130,11 @@ class Board(object):
         for p in self.__players:
             assert isinstance(p, Player)
             if p.power is 0:
-                print(text_colors.BOLD + "Player %s is out of power!" % p.faction.value + text_colors.ENDC)
+                print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
                 action = random.randint(0, 1)
                 if action is 0:
-                    moves = p.find_move_actions(self.__map)
+                    p.find_move_actions(self.__map)
                 elif action is 1:
                     p.summon_action()
 
@@ -160,5 +160,3 @@ class Board(object):
         # number.  If the game is still ongoing, return zero.  If
         # the game is tied, return a different distinct value, e.g. -1.
         pass
-
-

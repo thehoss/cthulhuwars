@@ -3,18 +3,12 @@ from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
 from cthulhuwars.Maps import Map
 from cthulhuwars.DiceRoller import DiceRoller
+from cthulhuwars.Color import TextColor, NodeColor
 
 #  Crawling Chaos
 #  Starts in Asia or East Asia
 #
-class text_colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+
 
 class CrawlingChaos(Player):
     def __init__(self, home_zone, name='The Crawling Chaos'):
@@ -29,8 +23,8 @@ class CrawlingChaos(Player):
         self._spell_the_thousand_forms = False
         self._spell_seek_and_destroy = False
         self._spell_invisibility = False
-        self._color = text_colors.BLUE
-        self.node_color = (0.2, 0.2, 0.8)
+        self._color = TextColor.BLUE
+        self.node_color = NodeColor.BLUE
 
     def find_move_actions(self, map):
         assert isinstance(map, Map)
@@ -58,16 +52,13 @@ class CrawlingChaos(Player):
             Awesome AI logic goes here bro
             '''
             if unit.gate_state is GateState.occupied:
-                print(self._color + '%s %s in %s is maintaining a gate' % (self._faction, unit.unit_type, unit.unit_zone.name) + text_colors.ENDC)
+                print(self._color + '%s %s in %s is maintaining a gate' % (self._faction, unit.unit_type, unit.unit_zone.name) + TextColor.ENDC)
             else:
                 dice = DiceRoller(1,neighbors.__len__()-1)
                 dice_result = int(dice.roll_dice()[0])
                 self.move_action(unit, unit.unit_zone, candidate_moves[dice_result][2])
         occupied_zones = list(set(occupied_zones))
 
-    def print_state(self):
-        print (self._color)
-        super(CrawlingChaos,self).print_state()
 
 
 class Nightgaunt(Unit):

@@ -1,17 +1,11 @@
 from core import Player
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
+from cthulhuwars.Color import TextColor, NodeColor
 
 # Yellow Sign
 # Starts in Europe
-class text_colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+
 
 class YellowSign(Player):
     def __init__(self, home_zone, name='The Yellow Sign'):
@@ -26,13 +20,10 @@ class YellowSign(Player):
         self._spell_zingaya = False
         self._spell_passion = False
         self._spell_the_screaming_dead = False
-        self._color = text_colors.YELLOW
+        self._color = TextColor.YELLOW
 
-        self.node_color = (0.8, 0.8, 0.2)
+        self.node_color = NodeColor.YELLOW
 
-    def print_state(self):
-        print (self._color)
-        super(YellowSign,self).print_state()
 
 class Undead(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost):

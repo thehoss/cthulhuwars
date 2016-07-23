@@ -8,6 +8,7 @@ TODO:
 """
 
 from enum import Enum
+from cthulhuwars.Color import NodeColor
 
 class GateState(Enum):
     noGate    = 0
@@ -22,7 +23,7 @@ class Zone:
         self.gate_state = GateState.noGate
         self.gate_unit  = None
         self.occupancy_list = []
-        self.color = (0,0,0)
+        self.color = NodeColor.BLACK
 
     def set_gate_state(self, gateState):
         self.gate_state = gateState

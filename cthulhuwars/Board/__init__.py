@@ -1,6 +1,4 @@
-from core import Board, Actions
-import random
-
+from core import Board, Actions, Phase
 
 if __name__ == "__main__":
     B = Board()

@@ -1,37 +1,48 @@
+"""
+ Black Goat faction class
+ Home Zone is Africa or East Africa:
+ Zone('Africa', False)
+"""
+
+
+# TODO: implement spell conditions
+# TODO: implement Avatar ability for shub-nuggurath
+# TODO: implement Fertility Cult in summoning logic
 from core import Player
+from cthulhuwars.Color import TextColor, NodeColor
+from cthulhuwars.DiceRoller import DiceRoller
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars.DiceRoller import DiceRoller
 
-# Black Goat
-# Home Zone is Africa or East Africa:
-# Zone('Africa', False)
-class text_colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+POOL = Zone('Pool')
 
-NULL_ZONE = Zone('null zone')
 
 class BlackGoat(Player):
     def __init__(self, home_zone, name='The Black Goat'):
         super(BlackGoat, self).__init__(Faction.black_goat, home_zone, name)
+        '''
+        Unit Lists
+        The following lists are conveniences linking the relevant units from self._units
+        '''
         self._dark_young = []
         self._fungi = []
         self._ghouls = []
         self._shub_niggurath = None
+        '''
+        spell flags
+        True = spell has been acquired by player
+        '''
         self.spell_thousand_young = False
         self.spell_frenzy = False
         self.spell_necrophagy = False
         self.spell_ghroth = False
         self.spell_red_sign = False
         self.spell_blood_sacrifice = False
-        self._color = text_colors.RED
-        self.node_color = (0.8, 0.2, 0.2)
+        '''
+        drawing colors
+        '''
+        self._color = TextColor.RED
+        self.node_color = NodeColor.RED
 
     @property
     def dark_young_in_play(self):
@@ -48,6 +59,7 @@ class BlackGoat(Player):
             if dy.unit_state is UnitState.in_play:
                 result += 1
         return result
+
     @property
     def ghouls_in_play(self):
         result = 0
@@ -66,21 +78,21 @@ class BlackGoat(Player):
         n_ghoul = 2
         n_fungi = 4
         for _ in range(n_dark_young):
-            new_dy = DarkYoung(self, NULL_ZONE)
+            new_dy = DarkYoung(self, POOL)
             self.add_unit(new_dy)
             self._dark_young.append(new_dy)
 
         for _ in range(n_ghoul):
-            new_g = Ghoul(self, NULL_ZONE)
+            new_g = Ghoul(self, POOL)
             self.add_unit(new_g)
             self._ghouls.append(new_g)
 
         for _ in range(n_fungi):
-            new_f = Fungi(self, NULL_ZONE)
+            new_f = Fungi(self, POOL)
             self.add_unit(new_f)
             self._fungi.append(new_f)
 
-        self._shub_niggurath = ShubNiggurath(self, NULL_ZONE)
+        self._shub_niggurath = ShubNiggurath(self, POOL)
         self.add_unit(self._shub_niggurath)
 
     def summon_fungi(self, unit_zone):
@@ -91,7 +103,8 @@ class BlackGoat(Player):
             for fungi in self._fungi:
                 if fungi.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
-                        print(self._color + text_colors.BOLD + 'A Fungi From Yuggoth has materialized!' + text_colors.ENDC)
+                        print(
+                            self._color + TextColor.BOLD + 'A Fungi From Yuggoth has materialized!' + TextColor.ENDC)
                         fungi.set_unit_state(UnitState.in_play)
                         fungi.set_unit_zone(unit_zone)
                         return True
@@ -105,7 +118,7 @@ class BlackGoat(Player):
             for ghoul in self._ghouls:
                 if ghoul.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
-                        print(self._color + text_colors.BOLD + 'A Ghoul appears!' + text_colors.ENDC)
+                        print(self._color + TextColor.BOLD + 'A Ghoul appears!' + TextColor.ENDC)
                         ghoul.set_unit_state(UnitState.in_play)
                         ghoul.set_unit_zone(unit_zone)
                         return True
@@ -119,7 +132,7 @@ class BlackGoat(Player):
             for dark_young in self._dark_young:
                 if dark_young.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
-                        print(self._color + text_colors.BOLD + 'A Dark Young has been summoned!' + text_colors.ENDC)
+                        print(self._color + TextColor.BOLD + 'A Dark Young has been summoned!' + TextColor.ENDC)
                         dark_young.set_unit_state(UnitState.in_play)
                         dark_young.set_unit_zone(unit_zone)
                         return True
@@ -127,11 +140,12 @@ class BlackGoat(Player):
 
     def summon_shub_niggurath(self, unit_zone):
         assert isinstance(unit_zone, Zone)
-        print(self._color + text_colors.BOLD + 'The Black Goat is attempting to awaken Shub-Niggurath!' + text_colors.ENDC)
+        print(
+            self._color + TextColor.BOLD + 'The Black Goat is attempting to awaken Shub-Niggurath!' + TextColor.ENDC)
         unit_cost = 8
         # Do we have enough power?
         if self.power >= unit_cost:
-            #is there a gate in the summoning zone, and do we occupy it?
+            # is there a gate in the summoning zone, and do we occupy it?
             if unit_zone.gate_state is GateState.occupied:
                 if unit_zone.gate_unit.faction == self:
                     # make sure we have enough cultists to sacrifice.
@@ -154,12 +168,13 @@ class BlackGoat(Player):
                                 if sacrifice < kill_list.__len__():
                                     break
                             self.remove_unit(kill_list[sacrifice])
-                        #put shub_niggurath on the board, and spend the power
+                        # put shub_niggurath on the board, and spend the power
                         self._shub_niggurath.set_unit_zone(unit_zone)
                         self._shub_niggurath.set_unit_state(UnitState.in_play)
                         self.spend_power(unit_cost)
                         self._elder_points += DiceRoller(1, 3).roll_dice()[0]
-                        print(self._color + text_colors.BOLD + 'Shub-Niggurath Successfully Summoned!' + text_colors.ENDC)
+                        print(
+                            self._color + TextColor.BOLD + 'Shub-Niggurath Successfully Summoned!' + TextColor.ENDC)
                         return True
         return False
 
@@ -192,14 +207,9 @@ class BlackGoat(Player):
             '''RANDOM_PLAYOUT'''
             while True:
                 dice = DiceRoller(1, 5)
-                dice_result = dice.roll_dice()[0]-1
+                dice_result = dice.roll_dice()[0] - 1
                 if summon[dice_result](unit_zone):
                     break
-
-    def print_state(self):
-        print (self._color)
-        super(BlackGoat, self).print_state()
-
 
     def recompute_power(self):
         super(BlackGoat, self).recompute_power()
