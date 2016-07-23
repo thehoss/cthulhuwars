@@ -186,9 +186,24 @@ class BlackGoat(Player):
 
     def spell_play_frenzy(self):
         self.spell_frenzy = True
-        for unit in self._units:
-            if unit.get_unit_type() is UnitType.cultist:
-                unit.set_combat_power(1)
+        for cultist in self._cultists:
+            cultist.set_combat_power(1)
+
+    def spell_play_ghroth(self):
+        self.spell_ghroth = True
+
+    def spell_play_necrophagy(self):
+        self.spell_necrophagy = True
+
+    def take_new_spell(self):
+        # check conditions for taking a new spell:
+        # Have Units in four Areas
+        # Have Units in six Areas
+        # Have Units in eight Areas
+        # As your Action for a Round, eliminate two of your Cultists
+        # Share Areas with all enemies (i.e. both you and your enemy have Units there.)
+        # Awaken Shub-Niggurath
+        pass
 
     def summon_action(self):
         unit_zone = None
@@ -206,9 +221,11 @@ class BlackGoat(Player):
         if unit_zone is not None:
             '''RANDOM_PLAYOUT'''
             while True:
-                dice = DiceRoller(1, 5)
+                dice = DiceRoller(1, summon.__len__()-1)
                 dice_result = dice.roll_dice()[0] - 1
-                if summon[dice_result](unit_zone):
+                if not summon[dice_result](unit_zone):
+                    summon.pop(dice_result)
+                else:
                     break
 
     def recompute_power(self):
