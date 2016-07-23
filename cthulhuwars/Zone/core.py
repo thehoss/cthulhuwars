@@ -32,7 +32,7 @@ class Zone:
 
     def add_unit(self, unit):
         self.occupancy_list.append(unit)
-        unit.set_unit_zone(self)
+        #unit.set_unit_zone(self)
 
     def remove_unit(self, unit):
         try:
@@ -55,4 +55,3 @@ class Zone:
     def get_zone_state(self):
         zoneState = (self.gate_state, self.gate_unit, self.occupancy_list)
         return zoneState
-

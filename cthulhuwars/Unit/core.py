@@ -6,7 +6,22 @@ class UnitType(Enum):
     cultist = 'cultist'
     monster = 'monster'
     GOO = 'Great Old One'
-
+    dark_young = 'dark young'
+    ghoul = 'ghoul'
+    fungi = 'fungi'
+    deep_one = 'deep one'
+    shoggoth = 'shoggoth'
+    star_spawn = 'star spawn'
+    flying_polyp = 'flying polyp'
+    nightgaunt = 'nightgaunt'
+    hunting_horror = 'hunting horror'
+    undead = 'undead'
+    byakhee = 'byakhee'
+    king_in_yellow = 'king_in_yellow'
+    hastur = 'hastur'
+    shub_niggurath = 'shub-niggurath'
+    cthulhu = 'cthulhu'
+    nyarlathotep = 'nyarlathotep'
 
 class Faction(Enum):
     cthulhu = 'Cthulhu'
@@ -39,9 +54,7 @@ class Unit(object):
         self._unit_zone = unit_zone
         self._unit_gate_state = GateState.noGate
 
-        assert isinstance(unit_zone, Zone)
-        unit_zone.add_unit(self)
-
+        self.set_unit_zone(unit_zone)
         #print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
 
     @property
@@ -49,7 +62,9 @@ class Unit(object):
         return self._unit_zone
 
     def set_unit_zone(self, unit_zone):
+        assert isinstance(unit_zone, Zone)
         self._unit_zone = unit_zone
+        unit_zone.add_unit(self)
 
     @property
     def faction(self):
@@ -110,4 +125,3 @@ class Monster(Unit):
 class GreatOldOne(Unit):
     def __init__(self, faction, unit_zone, unit_state):
         super(GreatOldOne, self).__init__(faction, unit_zone, UnitType.GOO, 0, 1, 1, unit_state)
-

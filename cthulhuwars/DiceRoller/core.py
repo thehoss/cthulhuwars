@@ -15,7 +15,7 @@ class DiceRoller:
     def roll_dice(self):
         self.dice_results = []
         for _ in range(self.num_dice):
-            self.dice_results.append(self.__roll())
+            self.dice_results.append(int(self.__roll()))
         return self.dice_results
 
     def interpret_dice(self):

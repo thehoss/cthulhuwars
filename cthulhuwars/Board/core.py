@@ -1,5 +1,7 @@
 from cthulhuwars.Maps import Map
 from cthulhuwars.Player import BlackGoat,CrawlingChaos,Cthulhu,YellowSign,Player
+from enum import Enum
+import random
 
 class text_colors:
     BLUE = '\033[94m'
@@ -9,6 +11,24 @@ class text_colors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+class Actions(Enum):
+    move = 0
+    summon = 1
+    build_gate = 2
+    combat = 3
+    capture = 4
+    special = 5
+    pass_turn = 6
+    control_gate = 7
+    abandon_gate = 8
+
+class Phase(Enum):
+    gather_power = 'gather power'
+    first_player = 'first player'
+    action = 'action'
+    doom = 'doom'
+    annihilation = 'annihilation'
 
 class Board(object):
 
@@ -21,6 +41,8 @@ class Board(object):
         self.yellow_sign = False
         self.__players = []
         self.__num_players = num_players
+        self._phase = Phase.gather_power
+        self._round = 0
 
     def build_map(self):
         print(text_colors.BOLD+"Building The Map"+text_colors.ENDC)
@@ -73,6 +95,18 @@ class Board(object):
             assert isinstance(p, Player)
             p.recompute_power()
 
+    def tally_player_power(self):
+        total_power = 0
+        for p in self.__players:
+            total_power += p.power
+        return total_power
+
+    def is_action_phase(self):
+        if self.tally_player_power() > 0:
+            return True
+        else:
+            return False
+
     def test_move_actions(self):
         for p in self.__players:
             assert isinstance(p, Player)
@@ -88,6 +122,18 @@ class Board(object):
                 print( text_colors.BOLD+"Player %s is out of power!"%p.faction.value+text_colors.ENDC )
             else:
                 p.summon_action()
+
+    def test_actions(self):
+        for p in self.__players:
+            assert isinstance(p, Player)
+            if p.power is 0:
+                print(text_colors.BOLD + "Player %s is out of power!" % p.faction.value + text_colors.ENDC)
+            else:
+                action = random.randint(0, 1)
+                if action is 0:
+                    moves = p.find_move_actions(self.__map)
+                elif action is 1:
+                    p.summon_action()
 
     def current_player(self, state):
         # Takes the game state and returns the current player's

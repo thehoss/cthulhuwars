@@ -2,6 +2,7 @@ from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
 from cthulhuwars.Maps import Map
 from cthulhuwars.DiceRoller import DiceRoller
+
 # Generic Player class
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
@@ -18,12 +19,12 @@ class text_colors:
 class Player(object):
     def __init__(self, faction, home_zone, name='Player1'):
         assert isinstance(home_zone, Zone)
-
         self._name = name
         self._faction = faction
         self._home_zone = home_zone
         self._spells = []
         self._units = []
+        self._cultists = []
         self._power = 8
         self._doom_points = 0
         self._elder_points = 0
@@ -32,25 +33,27 @@ class Player(object):
         self._captured_cultists = 0
         self._current_gates = 0
         self._color = text_colors.GREEN
-        self.node_color = (0,0,0)
+        self.node_color = (0,0.8,0)
 
     def player_setup(self):
         # add starting gate and cultist to home zone
-        self.build_gate_action(self.add_cultist(self._home_zone), self._home_zone)
         # add remaining cultists
-        for _ in range(1, self._starting_cultists, 1):
-            self.add_cultist(self._home_zone)
+        for _ in range(self._starting_cultists):
+            new_cultist = Cultist(self, self._home_zone, UnitState.in_play)
+            self.add_unit(new_cultist)
+            self._cultists.append(new_cultist)
+        self.build_gate_action(self._cultists[0], self._home_zone)
 
-    def add_cultist(self, zone):
-        if self._power > 0:
-            new_cultist = Cultist(self, zone, UnitState.in_play)
-            self._units.append(new_cultist)
-            self._power -= 1
-            self._current_cultists += 1
-            return new_cultist
-        elif self._power < 1:
-            # TODO: add failure reporting mechanism
-            print ('not enough power to summon cultist!')
+    def summon_cultist(self, unit_zone):
+        unit_cost = 1
+        if self.power >= unit_cost:
+            for cultist in self._cultists:
+                if cultist.unit_state is UnitState.in_reserve:
+                    if self.spend_power(unit_cost):
+                        cultist.set_unit_state(UnitState.in_play)
+                        cultist.set_unit_zone(unit_zone)
+                        return True
+        return False
 
     def kill_unit(self, unit):
         assert isinstance(unit, Unit)
@@ -91,15 +94,25 @@ class Player(object):
     def current_gates(self):
         return self._current_gates
 
-
     def remove_cultist(self):
         self._current_cultists -= 1
 
-    def add_unit(self, new_unit, unit_cost):
+    def add_unit(self, new_unit):
         self._units.append(new_unit)
-        self._power -= unit_cost
+
+    def spend_power(self, cost):
+        if self._power >= cost:
+            self._power -= cost
+            return True
+        else:
+            print("Not enough power for action!")
+            return False
 
     def recompute_power(self):
+        self._current_cultists = 0
+        for cultist in self._cultists:
+            if cultist.unit_state is UnitState.in_play:
+                self._current_cultists += 1
         self._power = self._current_cultists
         self._power += self._current_gates * 2
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
@@ -112,29 +125,29 @@ class Player(object):
         # after moving we also need to check for spell book
         # availability at 4 6 and 8 unique occupied zones
         occupied_zones = []
-        power = self.power
         for unit in self._units:
-            candidate_moves = []
-            assert isinstance(unit, Unit)
-            occupied_zones.append(unit.unit_zone)
-            # build list of possible moves to neighboring zones
-            neighbors = map.find_neighbors(unit.unit_zone.name)
-            for n in neighbors:
-                candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
-            #print(self._color+'%s %s in %s can make %s moves'%(self._faction, unit.unit_type, unit.unit_zone.name, neighbors._len__())+text_colors.ENDC)
+            if unit.unit_state is UnitState.in_play:
+                assert isinstance(unit, Unit)
+                candidate_moves = []
+                occupied_zones.append(unit.unit_zone)
+                # build list of possible moves to neighboring zones
+                neighbors = map.find_neighbors(unit.unit_zone.name)
+                for n in neighbors:
+                    candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
+                #print(self._color+'%s %s in %s can make %s moves'%(self._faction, unit.unit_type, unit.unit_zone.name, neighbors._len__())+text_colors.ENDC)
 
-            '''
-            RANDOM PLAYOUT
-            roll a die of with sides corresponding to legal moves and pick one
-            will not roll if unit is occupying a gate
-            Awesome AI logic goes here bro
-            '''
-            if unit.gate_state is GateState.occupied:
-                print(self._color + '%s %s in %s is maintaining a gate' % (self._faction.value, unit.unit_type.value, unit.unit_zone.name) + text_colors.ENDC)
-            else:
-                dice = DiceRoller(1,neighbors.__len__()-1)
-                dice_result = int(dice.roll_dice()[0])
-                self.move_action(unit, unit.unit_zone, candidate_moves[dice_result][2])
+                '''
+                RANDOM PLAYOUT
+                roll a die of with sides corresponding to legal moves and pick one
+                will not roll if unit is occupying a gate
+                Awesome AI logic goes here bro
+                '''
+                if unit.gate_state is GateState.occupied:
+                    print(self._color + '%s %s in %s is maintaining a gate' % (self._faction.value, unit.unit_type.value, unit.unit_zone.name) + text_colors.ENDC)
+                else:
+                    dice = DiceRoller(1,neighbors.__len__()-1)
+                    dice_result = int(dice.roll_dice()[0])
+                    self.move_action(unit, unit.unit_zone, candidate_moves[dice_result][2])
         occupied_zones = list(set(occupied_zones))
 
     def move_action(self, unit, from_zone, to_zone):
@@ -146,23 +159,22 @@ class Player(object):
         if self.power >= 1:
             print(self._color + '%s %s is moving from %s to %s' % (self._faction.value, unit.unit_type.value, from_zone.name, to_zone.name) + text_colors.ENDC)
             from_zone.remove_unit(unit)
-            to_zone.add_unit(unit)
-            self._power -= 1
+            unit.set_unit_zone(to_zone)
+            #to_zone.add_unit(unit)
+            self.spend_power(1)
 
     def combat_action(self):
         pass
 
     def build_gate_action(self, unit, zone):
         zone_state = zone.get_zone_state()
+        action_cost = 2
         if zone_state[0] == GateState.noGate:
-            if self.power >= 2:
+            if self.spend_power(action_cost):
                 zone.set_gate_state(GateState.occupied)
                 zone.set_gate_unit(unit)
                 unit.set_unit_gate_state(GateState.occupied)
                 self._current_gates += 1
-                self._power -= 2
-            else:
-                print ('Not enough power to build gate!')
         else:
             print ('Gate already exists!')
 
