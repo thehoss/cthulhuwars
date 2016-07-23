@@ -35,15 +35,26 @@ class BlackGoat(Player):
 
     @property
     def dark_young_in_play(self):
-        return self._dark_young.__len__()
+        result = 0
+        for dy in self._dark_young:
+            if dy.unit_state is UnitState.in_play:
+                result += 1
+        return result
 
     @property
     def fungi_in_play(self):
-        return self._fungi.__len__()
-
+        result = 0
+        for dy in self._fungi:
+            if dy.unit_state is UnitState.in_play:
+                result += 1
+        return result
     @property
     def ghouls_in_play(self):
-        return self._ghouls.__len__()
+        result = 0
+        for dy in self._ghouls:
+            if dy.unit_state is UnitState.in_play:
+                result += 1
+        return result
 
     @property
     def goo_in_play(self):
@@ -188,6 +199,12 @@ class BlackGoat(Player):
     def print_state(self):
         print (self._color)
         super(BlackGoat, self).print_state()
+
+
+    def recompute_power(self):
+        super(BlackGoat, self).recompute_power()
+        if self.spell_red_sign:
+            self._power += self.dark_young_in_play
 
 
 class Ghoul(Unit):
