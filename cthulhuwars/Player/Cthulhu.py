@@ -27,6 +27,7 @@ class Cthulhu(Player):
         self._spell_absorb = False
         self._spell_submerge = False
         self._color = text_colors.GREEN
+        self.node_color = (0.2,0.8,0.2)
 
     def print_state(self):
         print (self._color)

@@ -28,6 +28,8 @@ class YellowSign(Player):
         self._spell_the_screaming_dead = False
         self._color = text_colors.YELLOW
 
+        self.node_color = (0.8, 0.8, 0.2)
+
     def print_state(self):
         print (self._color)
         super(YellowSign,self).print_state()

@@ -32,6 +32,7 @@ class Player(object):
         self._captured_cultists = 0
         self._current_gates = 0
         self._color = text_colors.GREEN
+        self.node_color = (0,0,0)
 
     def player_setup(self):
         # add starting gate and cultist to home zone

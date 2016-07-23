@@ -26,6 +26,9 @@ class Board(object):
         print(text_colors.BOLD+"Building The Map"+text_colors.ENDC)
         self.__map = Map(self.__num_players, 'earth4Pa')
 
+    def show_map(self):
+        self.__map.show_map()
+
     def create_players(self):
         assert isinstance(self.__map, Map)
         for p in range(1, int(self.__num_players)+1):

@@ -158,7 +158,10 @@ class Map:
 
     def show_map(self):
         pos = nx.spring_layout(self.map, iterations=100)
-        nx.draw(self.map, pos, font_size=12, with_labels=False)
+        cols = []
+        for node in self.map.node:
+            cols.append(self.map.node[node]['zone'].compute_color())
+        nx.draw(self.map, pos, font_size=12, with_labels=False, node_color=cols)
         for p in pos:  # raise text positions
             pos[p][1] += 0.07
         nx.draw_networkx_labels(self.map, pos)

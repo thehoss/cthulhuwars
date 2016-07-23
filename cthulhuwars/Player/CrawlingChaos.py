@@ -30,6 +30,7 @@ class CrawlingChaos(Player):
         self._spell_seek_and_destroy = False
         self._spell_invisibility = False
         self._color = text_colors.BLUE
+        self.node_color = (0.2, 0.2, 0.8)
 
     def find_move_actions(self, map):
         assert isinstance(map, Map)

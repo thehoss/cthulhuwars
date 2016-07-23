@@ -31,6 +31,7 @@ class BlackGoat(Player):
         self.spell_red_sign = False
         self.spell_blood_sacrifice = False
         self._color = text_colors.RED
+        self.node_color = (0.8, 0.2, 0.2)
 
     @property
     def dark_young_in_play(self):

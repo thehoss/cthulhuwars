@@ -22,6 +22,7 @@ class Zone:
         self.gate_state = GateState.noGate
         self.gate_unit  = None
         self.occupancy_list = []
+        self.color = (0,0,0)
 
     def set_gate_state(self, gateState):
         self.gate_state = gateState
@@ -39,6 +40,17 @@ class Zone:
             self.occupancy_list.pop(index)
         except ValueError:
             pass
+
+    def compute_color(self):
+        col = (0,0,0)
+        n = self.occupancy_list.__len__()
+        if n > 0:
+            for unit in self.occupancy_list:
+                unit_color = unit.faction.node_color
+                col = (col[0]+unit_color[0], col[1]+unit_color[1], col[2]+unit_color[2])
+            col = (col[0]/n, col[1]/n, col[2]/n)
+        return col
+
 
     def get_zone_state(self):
         zoneState = (self.gate_state, self.gate_unit, self.occupancy_list)
