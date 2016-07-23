@@ -1,20 +1,16 @@
+"""
+ The Great Cthulhu
+ Starts in South Pacific
+"""
+
 from core import Player
+from cthulhuwars.Color import TextColor, NodeColor
+from cthulhuwars.DiceRoller import DiceRoller
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars.DiceRoller import DiceRoller
 
-# The Great Cthulhu
-# Starts in South Pacific
-class text_colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+POOL = Zone('Pool')
 
-NULL_ZONE = Zone('null zone')
 
 class Cthulhu(Player):
     def __init__(self, home_zone, name='Great Cthulhu'):
@@ -30,12 +26,9 @@ class Cthulhu(Player):
         self._spell_regenerate = False
         self._spell_absorb = False
         self._spell_submerge = False
-        self._color = text_colors.GREEN
-        self.node_color = (0.2,0.8,0.2)
+        self._color = TextColor.GREEN
+        self.node_color = NodeColor.GREEN
 
-    def print_state(self):
-        print (self._color)
-        super(Cthulhu,self).print_state()
 
     def player_setup(self):
         super(Cthulhu, self).player_setup()
@@ -43,21 +36,21 @@ class Cthulhu(Player):
         n_shoggoth = 2
         n_starspawn = 2
         for _ in range(n_deep_ones):
-            new_do = DeepOne(self, NULL_ZONE)
+            new_do = DeepOne(self, POOL)
             self.add_unit(new_do)
             self._deep_ones.append(new_do)
 
         for _ in range(n_shoggoth):
-            new_s = Shoggoth(self, NULL_ZONE)
+            new_s = Shoggoth(self, POOL)
             self.add_unit(new_s)
             self._shoggoth.append(new_s)
 
         for _ in range(n_starspawn):
-            new_s = Starspawn(self, NULL_ZONE)
+            new_s = Starspawn(self, POOL)
             self.add_unit(new_s)
             self._starspawn.append(new_s)
 
-        self._cthulhu= GreatCthulhu(self, NULL_ZONE)
+        self._cthulhu= GreatCthulhu(self, POOL)
         self.add_unit(self._cthulhu)
 
     def summon_deep_one(self, unit_zone):
@@ -66,7 +59,7 @@ class Cthulhu(Player):
             for deep_one in self._deep_ones:
                 if deep_one.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
-                        print(self._color + text_colors.BOLD + 'A Deep One has surfaced!' + text_colors.ENDC)
+                        print(self._color + TextColor.BOLD + 'A Deep One has surfaced!' + TextColor.ENDC)
                         deep_one.set_unit_state(UnitState.in_play)
                         deep_one.set_unit_zone(unit_zone)
                         return True
@@ -78,7 +71,7 @@ class Cthulhu(Player):
             for shog in self._shoggoth:
                 if shog.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
-                        print(self._color + text_colors.BOLD + 'A Shoggoth oozes forth!' + text_colors.ENDC)
+                        print(self._color + TextColor.BOLD + 'A Shoggoth oozes forth!' + TextColor.ENDC)
                         shog.set_unit_state(UnitState.in_play)
                         shog.set_unit_zone(unit_zone)
                         return True
@@ -90,7 +83,7 @@ class Cthulhu(Player):
             for ss in self._starspawn:
                 if ss.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
-                        print(self._color + text_colors.BOLD + 'A Starspawn reveals itself!' + text_colors.ENDC)
+                        print(self._color + TextColor.BOLD + 'A Starspawn reveals itself!' + TextColor.ENDC)
                         ss.set_unit_state(UnitState.in_play)
                         ss.set_unit_zone(unit_zone)
                         return True
@@ -104,7 +97,7 @@ class Cthulhu(Player):
             for cthulhu in self._cthulhu:
                 if cthulhu.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
-                        print(self._color + text_colors.BOLD + 'The Great Cthulhu has emerged!' + text_colors.ENDC)
+                        print(self._color + TextColor.BOLD + 'The Great Cthulhu has emerged!' + TextColor.ENDC)
                         cthulhu.set_unit_state(UnitState.in_play)
                         cthulhu.set_unit_zone(unit_zone)
                         self._immortal = True

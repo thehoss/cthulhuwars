@@ -2,19 +2,14 @@ from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
 from cthulhuwars.Maps import Map
 from cthulhuwars.DiceRoller import DiceRoller
+from cthulhuwars.Color import TextColor
+from cthulhuwars.Color import NodeColor
 
 # Generic Player class
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
 # Zone class instance from the map construction
-class text_colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+
 
 class Player(object):
     def __init__(self, faction, home_zone, name='Player1'):
@@ -32,8 +27,8 @@ class Player(object):
         self._current_cultists = 0
         self._captured_cultists = 0
         self._current_gates = 0
-        self._color = text_colors.GREEN
-        self.node_color = (0,0.8,0)
+        self._color = TextColor.GREEN
+        self.node_color = NodeColor.GREEN
 
     def player_setup(self):
         # add starting gate and cultist to home zone
@@ -143,7 +138,7 @@ class Player(object):
                 Awesome AI logic goes here bro
                 '''
                 if unit.gate_state is GateState.occupied:
-                    print(self._color + '%s %s in %s is maintaining a gate' % (self._faction.value, unit.unit_type.value, unit.unit_zone.name) + text_colors.ENDC)
+                    print(self._color + '%s %s in %s is maintaining a gate' % (self._faction.value, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
                 else:
                     dice = DiceRoller(1,neighbors.__len__()-1)
                     dice_result = int(dice.roll_dice()[0])
@@ -157,7 +152,7 @@ class Player(object):
         Handles Zone and power transactions
         '''
         if self.power >= 1:
-            print(self._color + '%s %s is moving from %s to %s' % (self._faction.value, unit.unit_type.value, from_zone.name, to_zone.name) + text_colors.ENDC)
+            print(self._color + '%s %s is moving from %s to %s' % (self._faction.value, unit.unit_type.value, from_zone.name, to_zone.name) + TextColor.ENDC)
             from_zone.remove_unit(unit)
             unit.set_unit_zone(to_zone)
             #to_zone.add_unit(unit)
@@ -203,6 +198,7 @@ class Player(object):
         pass
 
     def print_state(self):
+        print (self._color)
         print ("**************************************")
         print ('name: %s' % self._name)
         print ('faction: %s' % self._faction)
@@ -218,4 +214,4 @@ class Player(object):
         print ('current cultists: %s' % self._current_cultists)
         print ('current gates: %s' % self._current_gates)
         print ('total current units: %s' % self._units.__len__())
-        print ("**************************************" + text_colors.ENDC)
+        print ("**************************************" + TextColor.ENDC)
