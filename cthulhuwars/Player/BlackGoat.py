@@ -29,6 +29,16 @@ class BlackGoat(Player):
         self._ghouls = []
         self._shub_niggurath = None
         '''
+        Spell Book Conditions
+        True = Spell Conditions have been met
+        '''
+        self.awakened_shub_niggurath = False
+        self.units_in_four_zones = False
+        self.units_in_six_zones = False
+        self.units_in_eight_zones = False
+        self.share_zones_with_all_factions = False
+        self.sacrifice_two_cultists = False
+        '''
         spell flags
         True = spell has been acquired by player
         '''
@@ -81,19 +91,24 @@ class BlackGoat(Player):
             new_dy = DarkYoung(self, POOL)
             self.add_unit(new_dy)
             self._dark_young.append(new_dy)
+            self._monsters.append(new_dy)
 
         for _ in range(n_ghoul):
             new_g = Ghoul(self, POOL)
             self.add_unit(new_g)
             self._ghouls.append(new_g)
+            self._monsters.append(new_g)
 
         for _ in range(n_fungi):
             new_f = Fungi(self, POOL)
             self.add_unit(new_f)
             self._fungi.append(new_f)
+            self._monsters.append(new_f)
 
         self._shub_niggurath = ShubNiggurath(self, POOL)
         self.add_unit(self._shub_niggurath)
+        self._goo.append(self._shub_niggurath)
+        self._monsters.append(self._shub_niggurath)
 
     def summon_fungi(self, unit_zone):
         unit_cost = 2
@@ -173,6 +188,9 @@ class BlackGoat(Player):
                         self._shub_niggurath.set_unit_state(UnitState.in_play)
                         self.spend_power(unit_cost)
                         self._elder_points += DiceRoller(1, 3).roll_dice()[0]
+                        if not self.awakened_shub_niggurath:
+                            self.awakened_shub_niggurath = True
+                            self.take_new_spell()
                         print(
                             self._color + TextColor.BOLD + 'Shub-Niggurath Successfully Summoned!' + TextColor.ENDC)
                         return True

@@ -39,19 +39,24 @@ class Cthulhu(Player):
             new_do = DeepOne(self, POOL)
             self.add_unit(new_do)
             self._deep_ones.append(new_do)
+            self._monsters.append(new_do)
 
         for _ in range(n_shoggoth):
             new_s = Shoggoth(self, POOL)
             self.add_unit(new_s)
             self._shoggoth.append(new_s)
+            self._monsters.append(new_s)
 
         for _ in range(n_starspawn):
-            new_s = Starspawn(self, POOL)
-            self.add_unit(new_s)
-            self._starspawn.append(new_s)
+            new_ss = Starspawn(self, POOL)
+            self.add_unit(new_ss)
+            self._starspawn.append(new_ss)
+            self._monsters.append(new_ss)
 
         self._cthulhu= GreatCthulhu(self, POOL)
         self.add_unit(self._cthulhu)
+        self._goo.append(self._cthulhu)
+        self._monsters.append(self._cthulhu)
 
     def summon_deep_one(self, unit_zone):
         unit_cost = 1

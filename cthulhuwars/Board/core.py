@@ -135,11 +135,14 @@ class Board(object):
             if p.power is 0:
                 print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
+                p.discover_possible_actions(self.__map)
+
                 action = random.randint(0, 1)
                 if action is 0:
                     p.find_move_actions(self.__map)
                 elif action is 1:
                     p.summon_action()
+
 
     def current_player(self, state):
         # Takes the game state and returns the current player's
