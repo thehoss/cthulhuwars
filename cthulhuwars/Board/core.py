@@ -46,7 +46,7 @@ class Board(object):
 
     def build_map(self):
         print(TextColor.BOLD + "Building The Map" + TextColor.ENDC)
-        self.__map = Map(self.__num_players, 'earth4Pa')
+        self.__map = Map(self.__num_players, 'earth5P')
 
     def show_map(self, image='image'):
         self.__map.show_map(image)
@@ -76,7 +76,10 @@ class Board(object):
                     self.__players.append(BlackGoat(self.__map.zone_by_name('West Africa')))
             elif selection is 3:
                 self.crawling_chaos = True
-                self.__players.append(CrawlingChaos(self.__map.zone_by_name('Asia')))
+                try:
+                    self.__players.append(CrawlingChaos(self.__map.zone_by_name('Asia')))
+                except KeyError:
+                    self.__players.append(CrawlingChaos(self.__map.zone_by_name('South Asia')))
             elif selection is 4:
                 self.yellow_sign = True
                 self.__players.append(YellowSign(self.__map.zone_by_name('Europe')))
