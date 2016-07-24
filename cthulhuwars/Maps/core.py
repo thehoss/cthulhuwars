@@ -185,8 +185,9 @@ class Map:
             ego_graph = nx.ego_graph(self.map, zone, 2, center=False, undirected=True)
             return ego_graph.nodes()
 
-    def show_map(self):
+    def show_map(self, image_prefix='image'):
         basepath = '../../tex'
+        imagepath = '../../img'
         file_format = '.png'
 
         print(self.map_name)
@@ -216,10 +217,13 @@ class Map:
             pos[node] = self.earth_gate_positions[node]
 
         nx.draw(self.map, pos, font_size=12, with_labels=False, node_color=cols)
-        for p in pos:  # raise text positions
-            pos[p][1] += 0.07
-        nx.draw_networkx_labels(self.map, pos)
-        P.show()
+        #for p in pos:  # raise text positions
+        #    pos[p][1] += 0.07
+        #nx.draw_networkx_labels(self.map, pos)
+        img_name = imagepath+'/'+image_prefix+file_format
+        P.savefig(img_name)
+        #P.show()
+
 
     def move_unit(self, unit, fromeZone, toZone):
 

@@ -6,7 +6,7 @@ if __name__ == "__main__":
     B.create_players()
     B.start()
     B.print_state()
-   # B.show_map()
+    B.show_map('play.1')
     i = 1
     num_rounds = 3
     for r in range(num_rounds):
@@ -18,11 +18,12 @@ if __name__ == "__main__":
             print('**Round %s, Turn %s **' % (r,i))
             B.test_actions()
             i += 1
+            B.show_map('play.%s'%str(i))
             if not B.is_action_phase():
                 break
         #doom phase
         #annihilation phase
 
-    B.show_map()
+    #B.show_map()
 
 

@@ -48,8 +48,8 @@ class Board(object):
         print(TextColor.BOLD + "Building The Map" + TextColor.ENDC)
         self.__map = Map(self.__num_players, 'earth4Pa')
 
-    def show_map(self):
-        self.__map.show_map()
+    def show_map(self, image='image'):
+        self.__map.show_map(image)
 
     def create_players(self):
         assert isinstance(self.__map, Map)
