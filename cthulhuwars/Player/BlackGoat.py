@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """
  Black Goat faction class
  Home Zone is Africa or East Africa:
@@ -239,11 +241,14 @@ class BlackGoat(Player):
         if unit_zone is not None:
             '''RANDOM_PLAYOUT'''
             while True:
-                dice = DiceRoller(1, summon.__len__()-1)
-                dice_result = dice.roll_dice()[0] - 1
-                if not summon[dice_result](unit_zone):
-                    summon.pop(dice_result)
-                else:
+                try:
+                    dice = DiceRoller(1, summon.__len__())
+                    dice_result = dice.roll_dice()[0] -1
+                    if not summon[dice_result](unit_zone):
+                        summon.pop(dice_result)
+                    else:
+                        break
+                except ValueError:
                     break
 
     def recompute_power(self):

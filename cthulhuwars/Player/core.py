@@ -36,8 +36,11 @@ class Player(object):
     def player_setup(self):
         # add starting gate and cultist to home zone
         # add remaining cultists
+        movement_max_radius = 1
+        if self._faction == Faction.crawling_chaos:
+            movement_max_radius = 2
         for _ in range(self._starting_cultists):
-            new_cultist = Cultist(self, self._home_zone, UnitState.in_play)
+            new_cultist = Cultist(self, self._home_zone, movement_max_radius, UnitState.in_play)
             self.add_unit(new_cultist)
             self._cultists.append(new_cultist)
         self.build_gate_action(self._cultists[0], self._home_zone)
@@ -160,7 +163,7 @@ class Player(object):
                 for monster in self._monsters:
                     if monster.unit_state is UnitState.in_reserve:
                         if self.power >= monster.cost:
-                            summon_actions.append( (monster, unit.unit_zone, None  ))
+                            summon_actions.append((monster, unit.unit_zone, None))
         return summon_actions
 
     def find_capture_actions(self):
@@ -173,7 +176,6 @@ class Player(object):
                     capture_actions.append((unit, unit.unit_zone, None))
                     n += 1
         return capture_actions
-
 
     def find_move_actions(self, map):
         assert isinstance(map, Map)
@@ -189,7 +191,7 @@ class Player(object):
                 candidate_moves = []
                 self._occupied_zones.append(unit.unit_zone)
                 # build list of possible moves to neighboring zones
-                neighbors = map.find_neighbors(unit.unit_zone.name)
+                neighbors = map.find_neighbors(unit.unit_zone.name, unit.base_movement)
                 for n in neighbors:
                     candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
                     all_possible_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
@@ -199,10 +201,10 @@ class Player(object):
                 will not roll if unit is occupying a gate
                 Awesome AI logic goes here bro
                 '''
-                dice = DiceRoller(1,neighbors.__len__()-1)
+                dice = DiceRoller(1, neighbors.__len__()-1)
                 dice_result = int(dice.roll_dice()[0])
                 self.move_action(unit, unit.unit_zone, candidate_moves[dice_result][2])
-            elif  unit.gate_state is GateState.occupied:
+            elif unit.gate_state is GateState.occupied:
                 print(self._color + '%s %s in %s is maintaining a gate' % (
                 self._faction.value, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
         self._occupied_zones = list(set(self._occupied_zones))

@@ -112,9 +112,10 @@ class Unit(object):
     def set_unit_state(self, unit_state):
         self._unit_state = unit_state
 
+
 class Cultist(Unit):
-    def __init__(self, faction, unit_zone, unit_state):
-        super(Cultist, self).__init__(faction, unit_zone, UnitType.cultist, 0, 1, 1, unit_state)
+    def __init__(self, faction, unit_zone, base_movement, unit_state):
+        super(Cultist, self).__init__(faction, unit_zone, UnitType.cultist, 0, 1, base_movement, unit_state)
 
 
 class Monster(Unit):
