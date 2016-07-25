@@ -117,6 +117,97 @@ class CrawlingChaos(Player):
         return False
 
 
+def summon_nyarlathotep(self, unit_zone):
+    assert isinstance(unit_zone, Zone)
+    print(
+        self._color + TextColor.BOLD + 'The Crawling Chaos is attempting to awaken Nyarlathotep!' + TextColor.ENDC)
+    unit_cost = 10
+    # Do we have enough power?
+    if self.power >= unit_cost:
+        # is there a gate in the summoning zone, and do we occupy it?
+        if unit_zone.gate_state is GateState.occupied:
+            if unit_zone.gate_unit.faction == self:
+
+                # put Nyarlathotep on the board, and spend the power
+                self._nyarlathotep.set_unit_zone(unit_zone)
+                self._nyarlathotep.set_unit_state(UnitState.in_play)
+                self.spend_power(unit_cost)
+                self._elder_points += DiceRoller(1, 3).roll_dice()[0]
+                if not self.awakend_nyarlathotep:
+                    self.awakened_nyarlathotep = True
+                    self.take_new_spell()
+                print(
+                    self._color + TextColor.BOLD + 'Nyarlathotep Successfully Summoned!' + TextColor.ENDC)
+                return True
+    return False
+
+
+def spell_emissary_of_the_outer_gods(self):
+    self._spell_emissary_of_the_outer_gods = True
+
+
+def spell_abduct(self):
+    self.spell_abduct = True
+
+
+def spell_madness(self):
+    self.spell_madness = True
+
+
+def spell_the_thousand_forms(self):
+    self.spell_the_thousand_forms = True
+
+
+def spell_seek_and_destroy(self):
+    self.spell_seek_and_destroy = True
+
+
+def spell_invisibility(self):
+    self._spell_invisibility = True
+
+
+def take_new_spell(self):
+    # check conditions for taking a new spell:
+    # Have Units in four Areas
+    # Have Units in six Areas
+    # Have Units in eight Areas
+    # As your Action for a Round, eliminate two of your Cultists
+    # Share Areas with all enemies (i.e. both you and your enemy have Units there.)
+    # Awaken Shub-Niggurath
+    pass
+
+
+def summon_action(self):
+    unit_zone = None
+
+    summon = [self.summon_cultist,
+              self.summon_dark_young,
+              self.summon_fungi,
+              self.summon_ghoul,
+              self.summon_shub_niggurath]
+
+    for cultist in self._cultists:
+        if cultist.gate_state is GateState.occupied:
+            unit_zone = cultist.unit_zone
+
+    if unit_zone is not None:
+        '''RANDOM_PLAYOUT'''
+        while True:
+            try:
+                dice = DiceRoller(1, summon.__len__())
+                dice_result = dice.roll_dice()[0] - 1
+                if not summon[dice_result](unit_zone):
+                    summon.pop(dice_result)
+                else:
+                    break
+            except ValueError:
+                break
+
+
+def recompute_power(self):
+    super(CrawlingChaos, self).recompute_power()
+
+
 class Nightgaunt(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Nightgaunt, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=0, cost=unit_cost,
