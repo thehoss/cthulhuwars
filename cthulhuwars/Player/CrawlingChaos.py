@@ -180,7 +180,7 @@ def take_new_spell(self):
 def summon_action(self):
     unit_zone = None
 
-    summon = [self.summon_cultist,
+    summon = [
               self.summon_dark_young,
               self.summon_fungi,
               self.summon_ghoul,

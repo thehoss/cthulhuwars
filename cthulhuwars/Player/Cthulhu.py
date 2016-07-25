@@ -113,7 +113,7 @@ class Cthulhu(Player):
     def summon_action(self):
         unit_zone = None
 
-        summon = [self.summon_cultist,
+        summon_function = [
                   self.summon_deep_one,
                   self.summon_cthulhu,
                   self.summon_shoggoth,
@@ -126,9 +126,16 @@ class Cthulhu(Player):
 
         if unit_zone is not None:
             '''RANDOM_PLAYOUT'''
-            dice = DiceRoller(1, 5)
-            dice_result = dice.roll_dice()[0]-1
-            summon[dice_result](unit_zone)
+            while True:
+                try:
+                    dice = DiceRoller(1, summon_function.__len__())
+                    dice_result = dice.roll_dice()[0] - 1
+                    if not summon_function[dice_result](unit_zone):
+                        summon_function.pop(dice_result)
+                    else:
+                        break
+                except ValueError:
+                    break
 
 
 class DeepOne(Unit):

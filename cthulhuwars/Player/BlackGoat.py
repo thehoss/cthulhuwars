@@ -18,7 +18,6 @@ from cthulhuwars.Zone import Zone, GateState
 
 POOL = Zone('Pool')
 
-
 class BlackGoat(Player):
     def __init__(self, home_zone, name='The Black Goat'):
         super(BlackGoat, self).__init__(Faction.black_goat, home_zone, name)
@@ -157,11 +156,11 @@ class BlackGoat(Player):
 
     def summon_shub_niggurath(self, unit_zone):
         assert isinstance(unit_zone, Zone)
-        print(
-            self._color + TextColor.BOLD + 'The Black Goat is attempting to awaken Shub-Niggurath!' + TextColor.ENDC)
         unit_cost = 8
         # Do we have enough power?
         if self.power >= unit_cost:
+            print(
+                self._color + TextColor.BOLD + 'The Black Goat is attempting to awaken Shub-Niggurath!' + TextColor.ENDC)
             # is there a gate in the summoning zone, and do we occupy it?
             if unit_zone.gate_state is GateState.occupied:
                 if unit_zone.gate_unit.faction == self:
@@ -226,30 +225,35 @@ class BlackGoat(Player):
         pass
 
     def summon_action(self):
-        unit_zone = None
+        summoners = self._cultists
+        '''
+        SPELL - THE RED SIGN
+        If a dark young is occupying a gate it can summon creatures
+        '''
+        if self.spell_red_sign is True:
+            summoners.append(self._dark_young)
 
-        summon = [self.summon_cultist,
+        summon_function = [
                   self.summon_dark_young,
                   self.summon_fungi,
                   self.summon_ghoul,
                   self.summon_shub_niggurath]
 
-        for cultist in self._cultists:
-            if cultist.gate_state is GateState.occupied:
-                unit_zone = cultist.unit_zone
-
-        if unit_zone is not None:
-            '''RANDOM_PLAYOUT'''
-            while True:
-                try:
-                    dice = DiceRoller(1, summon.__len__())
-                    dice_result = dice.roll_dice()[0] -1
-                    if not summon[dice_result](unit_zone):
-                        summon.pop(dice_result)
-                    else:
-                        break
-                except ValueError:
-                    break
+        for summoner in summoners:
+            if summoner.gate_state is GateState.occupied and summoner.unit_state is UnitState.in_play:
+                unit_zone = summoner.unit_zone
+                if unit_zone is not None:
+                    '''RANDOM_PLAYOUT - summon a random critter  *only black goat can do this*'''
+                    while True:
+                        try:
+                            dice = DiceRoller(1, summon_function.__len__())
+                            dice_result = dice.roll_dice()[0] -1
+                            if not summon_function[dice_result](unit_zone):
+                                summon_function.pop(dice_result)
+                            else:
+                                break
+                        except ValueError:
+                            break
 
     def recompute_power(self):
         super(BlackGoat, self).recompute_power()
