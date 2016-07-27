@@ -18,11 +18,13 @@ class Player(object):
         self._faction = faction
         self._home_zone = home_zone
         self._spells = [6]
+        self._spell_requirements_met = [False] * 6
         self._units = []
         self._cultists = []
         self._monsters = []
         self._goo = []
         self._power = 8
+        self._power_spent = 0
         self._doom_points = 0
         self._elder_points = 0
         self._starting_cultists = 6
@@ -107,7 +109,8 @@ class Player(object):
 
     def spend_power(self, cost):
         if self._power >= cost:
-            self._power -= cost
+            self._power_spent = cost
+            self._power -= self._power_spent
             return True
         else:
             print("Not enough power for action!")

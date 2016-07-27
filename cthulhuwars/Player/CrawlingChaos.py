@@ -132,12 +132,10 @@ def summon_nyarlathotep(self, unit_zone):
                 self._nyarlathotep.set_unit_zone(unit_zone)
                 self._nyarlathotep.set_unit_state(UnitState.in_play)
                 self.spend_power(unit_cost)
-                self._elder_points += DiceRoller(1, 3).roll_dice()[0]
                 if not self.awakend_nyarlathotep:
                     self.awakened_nyarlathotep = True
                     self.take_new_spell()
-                print(
-                    self._color + TextColor.BOLD + 'Nyarlathotep Successfully Summoned!' + TextColor.ENDC)
+                print(self._color + TextColor.BOLD + 'Nyarlathotep Successfully Summoned!' + TextColor.ENDC)
                 return True
     return False
 
@@ -168,13 +166,30 @@ def spell_invisibility(self):
 
 def take_new_spell(self):
     # check conditions for taking a new spell:
-    # Have Units in four Areas
-    # Have Units in six Areas
-    # Have Units in eight Areas
-    # As your Action for a Round, eliminate two of your Cultists
-    # Share Areas with all enemies (i.e. both you and your enemy have Units there.)
-    # Awaken Shub-Niggurath
-    pass
+
+    # As action for a round, pay 4 power
+    if not self._spell_requirment_met[0] and self._power_spent == 4:
+        self._spell_requirment_met[0] = True
+
+    # As action for a round, pay 6 power
+    if not self._spell_requirment_met[1] and self._power_spent == 6:
+        self._spell_requirment_met[1] = True
+
+    # Control 3 gates or have 12 power
+    if not self._spell_requirment_met[2] and self._current_gates == 3 or self._power == 12:
+        self._spell_requirment_met[2] = True
+
+    # Control 4 gates or have 15 power
+    if not self._spell_requirment_met[3] and self._current_gates == 4 or self._power == 15:
+        self._spell_requirment_met[3] = True
+
+    # Capture an enemy Cultist
+    if not self._spell_requirment_met[4] and self._captured_cultists.__len__() > 0:
+        self._spell_requirment_met[4] = True
+
+    # Awaken Nyarlathotep
+    if not self._spell_requirment_met[5] and self._goo.__len__() > 0:
+        self._spell_requirment_met[5] = True
 
 
 def summon_action(self):
