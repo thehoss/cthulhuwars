@@ -176,11 +176,11 @@ def take_new_spell(self):
         self._spell_requirment_met[1] = True
 
     # Control 3 gates or have 12 power
-    if not self._spell_requirment_met[2] and self._current_gates == 3 or self._power == 12:
+    if not self._spell_requirment_met[2] and (self._current_gates == 3 or self._power == 12):
         self._spell_requirment_met[2] = True
 
     # Control 4 gates or have 15 power
-    if not self._spell_requirment_met[3] and self._current_gates == 4 or self._power == 15:
+    if not self._spell_requirment_met[3] and (self._current_gates == 4 or self._power == 15):
         self._spell_requirment_met[3] = True
 
     # Capture an enemy Cultist
