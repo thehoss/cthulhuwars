@@ -97,9 +97,25 @@ class Board(object):
 
     def gather_power_phase(self):
         print(TextColor.BOLD + "**Gather Power Phase **" + TextColor.ENDC)
+        max_power = 0
+        first_player = None
+        if self.cthulhu is True:
+            first_player = [player for player in self.__players if isinstance(player, Cthulhu)]
+
+        first_player_index = 0
         for p in self.__players:
             assert isinstance(p, Player)
             p.recompute_power()
+
+            if p.power > max_power:
+                max_power = p.power
+                first_player = p
+            first_player_index += 1
+        # shift direction can changer here
+        self.__players =self.__players[first_player_index:]+self.__players[:first_player_index]
+
+        print(TextColor.BOLD + "**First Player is %s **"%first_player._name + TextColor.ENDC)
+
 
     def tally_player_power(self):
         total_power = 0

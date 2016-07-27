@@ -188,7 +188,6 @@ class BlackGoat(Player):
                         self._shub_niggurath.set_unit_zone(unit_zone)
                         self._shub_niggurath.set_unit_state(UnitState.in_play)
                         self.spend_power(unit_cost)
-                        self._elder_points += DiceRoller(1, 3).roll_dice()[0]
                         if not self.awakened_shub_niggurath:
                             self.awakened_shub_niggurath = True
                             self.take_new_spell()
