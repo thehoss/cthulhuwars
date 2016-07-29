@@ -17,6 +17,8 @@ import matplotlib.pylab as P
 import matplotlib.image as mpimg
 import numpy as np
 from cthulhuwars.Zone import Zone
+from cthulhuwars import arnoldRender
+
 import os
 
 
@@ -224,6 +226,9 @@ class Map:
         P.savefig(img_name)
         #P.show()
 
+    def render_map(self, image_prefix='image'):
+        ar = arnoldRender.ArnoldRender(image_prefix)
+        ar.do_render(1, self.map)
 
     def move_unit(self, unit, fromeZone, toZone):
 
