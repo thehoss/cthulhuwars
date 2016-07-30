@@ -328,7 +328,7 @@ class Player(object):
 
     def build_gate_action(self, unit, zone):
         zone_state = zone.get_zone_state()
-        action_cost = 2
+        action_cost = 3
         if zone_state[0] == GateState.noGate and unit.unit_state is UnitState.in_play:
             if self.spend_power(action_cost):
                 zone.set_gate_state(GateState.occupied)
