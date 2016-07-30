@@ -21,7 +21,7 @@ import os
 import math
 from arnold import *
 from cthulhuwars import Color
-from cthulhuwars import Zone
+from cthulhuwars.Zone import Zone, GateState
 
 class ArnoldRender(object):
     earth_gate_positions = {'Arctic Ocean': [0.03, 0.9], 'North Atlantic': [-0.23, 0.57],
@@ -51,7 +51,7 @@ class ArnoldRender(object):
         sphere = AiNode('sphere')
         AiNodeSetStr(sphere, 'name', name)
         AiNodeSetPnt(sphere, 'center', position[0], position[1], position[2] )
-        AiNodeSetFlt(sphere, 'radius', 0.075)
+        AiNodeSetFlt(sphere, 'radius', position[3])
 
         shader = AiNode('standard')
         AiNodeSetStr(shader, 'name', 'sphere_mtl_%s'%name)
@@ -63,7 +63,6 @@ class ArnoldRender(object):
         AiNodeSetBool(shader, 'specular_Fresnel', True)
         AiNodeSetFlt(shader, 'Ksn', 0.4)
         AiNodeSetPtr(sphere, "shader", shader)
-
 
     def _boardHalf(self, name, texture, centerX, centerY, centerZ):
         polymesh = AiNode('polymesh')
@@ -145,7 +144,7 @@ class ArnoldRender(object):
         AiNodeSetStr(options, 'texture_searchpath', 'C:/Users/Adam Martinez/PycharmProjects/cthulhuwars/tex')
         camera = AiNode('persp_camera')
         AiNodeSetStr(camera, 'name', 'theCamera')
-        AiNodeSetFlt(camera, 'fov', 80)
+        AiNodeSetFlt(camera, 'fov', 100)
 
         skydome = AiNode("skydome_light")
         AiNodeSetFlt(skydome, 'exposure', 2)
@@ -180,14 +179,35 @@ class ArnoldRender(object):
         driver = AiNode('driver_png')
         AiNodeSetStr(driver, 'name', 'scenerender')
         AiNodeSetStr(driver, 'filename', imageFileName)
-        AiNodeSetPtr(options, 'background', sky)
 
+        filter = AiNode('gaussian_filter')
+        AiNodeSetInt(filter, 'width', 3)
+        AiNodeSetStr(filter, 'name', 'scenefilter')
+        AiNodeSetPtr(options, 'background', sky)
+        outputString = AiArrayAllocate(1, 1, AI_TYPE_STRING)
+        AiArraySetStr(outputString, 0, "RGBA RGBA scenefilter scenerender")
+        AiNodeSetArray(options, 'outputs', outputString )
         self._build_board()
 
         for node in map.node:
             pos = self.earth_gate_positions[node]
-            self.nodesphere(node, map.node[node]['zone'].compute_color(), (pos[0]*2 , 0.1, 1.0-(pos[1]*2) ) )
+            zone = map.node[node]['zone']
+            assert isinstance(zone, Zone)
+            #spherepos is centerX, centerY, centerZ, radius
+            spherepos = (pos[0]*2 , 0.1, 1.0-(pos[1]*2), 0.075)
+            spherecolor = (0, 0, 0)
+            if zone.gate_state is not GateState.noGate:
+                spherecolor = (1,1,1)
+            self.nodesphere(node, spherecolor, spherepos)
+            n = 1
+            for unit in zone.occupancy_list:
+                unitspherepos = (spherepos[0], spherepos[1]+(spherepos[3]*1.5*n), spherepos[2], spherepos[3]*0.5)
+                n += 1
+                self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction.node_color, unitspherepos)
 
-        AiASSWrite(outputFileName, AI_NODE_ALL, False)
+
+
+        #AiASSWrite(outputFileName, AI_NODE_ALL, False)
+        AiRender(AI_RENDER_MODE_CAMERA)
 
         AiEnd()
