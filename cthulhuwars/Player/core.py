@@ -178,7 +178,7 @@ class Player(object):
         possible_captures = self.find_capture_actions()
         possible_summons = self.find_summon_actions()
         possible_recruits = self.find_recruit_actions()
-        #'''
+        '''
         print(self._color)
         print ('possible builds:')
         print possible_builds
@@ -191,7 +191,7 @@ class Player(object):
         print('possible recruits:')
         print possible_recruits
         print(TextColor.ENDC)
-        #'''
+        '''
         '''
         RANDOM PLAYOUT
         roll a die of with sides corresponding to legal moves and pick one
@@ -202,19 +202,19 @@ class Player(object):
         tries = 0
         action_func = []
 
-        if possible_moves.__len__() > 0:
+        if possible_moves.__len__() > 1:
             n = random.randint(0, possible_moves.__len__()-1)
             action_func.append(lambda x: Player.move_action(x, possible_moves[n][0], possible_moves[n][1], possible_moves[n][2]))
-        if possible_summons.__len__() > 0:
-            n = random.randint(0, possible_summons.__len__() - 1)
+        if possible_summons.__len__() > 1:
+            n = random.randint(0, possible_summons.__len__()-1)
             action_func.append(lambda x: Player.summon_action(x, possible_summons[n][0], possible_summons[n][1]))
-        if possible_builds.__len__() > 0:
+        if possible_builds.__len__() > 1:
             n = random.randint(0, possible_builds.__len__() - 1)
             action_func.append(lambda x: Player.build_gate_action(x, possible_builds[n][0], possible_builds[n][1]))
-        if possible_captures.__len__() > 0:
+        if possible_captures.__len__() > 1:
             #n = random.randint(0, possible_captures.__len__() - 1)
             action_func.append(lambda x: Player.capture_unit(x, possible_captures[0][0]))
-        if possible_recruits.__len__() > 0:
+        if possible_recruits.__len__() > 1:
             n = random.randint(0, possible_recruits.__len__() - 1)
             action_func.append(lambda x: Player.recruit_cultist(x, possible_recruits[n][1]))
 
@@ -284,7 +284,7 @@ class Player(object):
             assert isinstance(monster, Unit)
             if monster.unit_state is UnitState.in_play:
                 for unit in monster.unit_zone.occupancy_list:
-                    if unit.unit_type is UnitType.cultist:
+                    if unit.unit_type is UnitType.cultist and unit.unit_state is UnitState.in_play:
                         if unit.faction._name != self._name:
                             capture_actions.append((unit, unit.unit_zone, None))
                             n += 1
