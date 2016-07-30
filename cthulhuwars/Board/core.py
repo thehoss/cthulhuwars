@@ -51,6 +51,9 @@ class Board(object):
     def show_map(self, image='image'):
         self.__map.show_map(image)
 
+    def render_map(self, image='image'):
+        self.__map.render_map(image)
+
     def create_players(self):
         assert isinstance(self.__map, Map)
         for p in range(1, int(self.__num_players) + 1):
