@@ -1,7 +1,8 @@
+from enum import Enum
+import random
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
 from cthulhuwars.Maps import Map
-from cthulhuwars.DiceRoller import DiceRoller
 from cthulhuwars.Color import TextColor
 from cthulhuwars.Color import NodeColor
 
@@ -10,9 +11,20 @@ from cthulhuwars.Color import NodeColor
 # home_zone left intentionally without default since the Board needs to pass in the
 # Zone class instance from the map construction
 
+class possible_actions(Enum):
+    move = 0
+    summon = 1
+    build = 2
+    capture = 3
+    recruit = 4
+    awaken = 5
+    combat = 6
+    passturn = 7
+
+POOL = Zone('Pool')
 
 class Player(object):
-    def __init__(self, faction, home_zone, name='Player1'):
+    def __init__(self, faction, home_zone, board, name='Player1'):
         assert isinstance(home_zone, Zone)
         self._name = name
         self._faction = faction
@@ -33,7 +45,8 @@ class Player(object):
         self._current_gates = 0
         self._occupied_zones = []
         self._color = TextColor.GREEN
-        self.node_color = NodeColor.GREEN
+        self._node_color = NodeColor.GREEN
+        self._board = board
 
     def player_setup(self):
         # add starting gate and cultist to home zone
@@ -60,26 +73,35 @@ class Player(object):
 
     def kill_unit(self, unit):
         assert isinstance(unit, Unit)
-        if unit.unit_type is UnitType.cultist:
-            unit.faction.remove_cultist()
         unit.set_unit_state(UnitState.killed)
+        unit.set_unit_zone(POOL)
+        return True
 
     def remove_unit(self, unit):
         assert isinstance(unit, Unit)
-        if unit.unit_type is UnitType.cultist:
-            unit.faction.remove_cultist()
         unit.set_unit_state(UnitState.in_reserve)
+        unit.set_unit_zone(POOL)
+        return True
 
     def capture_unit(self, unit):
         assert isinstance(unit, Unit)
         if unit.unit_type is UnitType.cultist:
             if self.spend_power(1):
-                unit.faction.remove_cultist()
+                print(self._color + "%s has captured %s %s in %s"%(self._name, unit.faction._name, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
                 unit.set_unit_state(UnitState.captured)
+                unit.set_unit_gate_state(GateState.noGate)
                 self._captured_cultists.append(unit)
+                unit.set_unit_zone(POOL)
                 return True
         return False
 
+    def occupied_zones(self):
+        self._occupied_zones = []
+        for unit in self._units:
+            if unit.unit_state is UnitState.in_play:
+                self._occupied_zones.append(unit.unit_zone)
+        self._occupied_zones = list(set(self._occupied_zones))
+        return self._occupied_zones.__len__()
 
     @property
     def power(self):
@@ -91,6 +113,12 @@ class Player(object):
 
     @property
     def current_cultists(self):
+        cultists = 0
+        for c in self._cultists:
+            assert isinstance(c, Cultist)
+            if c.unit_zone is not POOL and c.unit_state is UnitState.in_play:
+                cultists += 1
+        self._current_cultists = cultists
         return self._current_cultists
 
     @property
@@ -99,10 +127,20 @@ class Player(object):
 
     @property
     def current_gates(self):
+        gates = 0
+        for cultist in self._cultists:
+            if cultist.gate_state is GateState.occupied and cultist.unit_zone is not POOL:
+                gates += 1
+        self._current_gates = gates
         return self._current_gates
 
-    def remove_cultist(self):
-        self._current_cultists -= 1
+    def abandon_gate(self, unit):
+        assert isinstance(unit, Cultist)
+        if unit.gate_state is GateState.occupied:
+            unit.set_unit_gate_state(GateState.noGate)
+            self._current_gates -= 1
+            return True
+        return False
 
     def add_unit(self, new_unit):
         self._units.append(new_unit)
@@ -117,17 +155,14 @@ class Player(object):
             return False
 
     def recompute_power(self):
-        self._current_cultists = 0
-        for cultist in self._cultists:
-            if cultist.unit_state is UnitState.in_play:
-                self._current_cultists += 1
-        self._power = self._current_cultists
-        self._power += self._current_gates * 2
+        self._power = self.current_cultists
+        self._power += self.current_gates * 2
 
         for captive in self._captured_cultists:
             assert isinstance(captive, Unit)
             self._power += 1
             captive.set_unit_state(UnitState.in_reserve)
+            captive.set_unit_zone(POOL)
             self._captured_cultists.remove(captive)
 
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
@@ -139,7 +174,8 @@ class Player(object):
         possible_captures = self.find_capture_actions()
         possible_summons = self.find_summon_actions()
         possible_recruits = self.find_recruit_actions()
-
+        '''
+        print(self._color)
         print ('possible builds:')
         print possible_builds
         print('possible captures:')
@@ -150,9 +186,54 @@ class Player(object):
         print possible_summons
         print('possible recruits:')
         print possible_recruits
+        print(TextColor.ENDC)
+        '''
+        '''
+        RANDOM PLAYOUT
+        roll a die of with sides corresponding to legal moves and pick one
+        will not roll if unit is occupying a gate
+        Awesome AI logic goes here bro
+        '''
+        action_success = False
+        tries = 0
+        while action_success is False:
+            action = random.randint(0, 4)
+
+            if action == 0 and possible_moves.__len__() > 0:
+                n = random.randint(0, possible_moves.__len__()-1)
+                action_success = self.move_action(possible_moves[n][0], possible_moves[n][1], possible_moves[n][2])
+
+            if action == 1 and possible_summons.__len__() > 0:
+                action_success = self.summon_action()
+
+            if action == 2 and possible_builds.__len__() > 0:
+                n = random.randint(0, possible_builds.__len__()-1)
+                action_success = self.build_gate_action(possible_builds[n][0], possible_builds[n][1])
+
+            if action == 3 and possible_captures.__len__() > 0:
+                n = random.randint(0, possible_captures.__len__()-1)
+                action_success = self.capture_unit(possible_captures[n][0])
+
+            if action == 4 and possible_recruits.__len__() > 0:
+                n = random.randint(0, possible_recruits.__len__()-1)
+                action_success = self.recruit_cultist(possible_recruits[n][1])
+
+            if action == 6:
+                action_success = self.combat_action()
+
+            if action == 5:
+                action_success = self.awaken_goo()
+            tries += 1
+
+            if tries > 5:
+                break
+
 
     def summon_action(self):
-        pass
+        return False
+
+    def awaken_goo(self):
+        return False
 
     def find_recruit_actions(self):
         # cultists can be recruited anywhere there is a unit
@@ -188,18 +269,20 @@ class Player(object):
         n = 0
         for monster in self._monsters:
             assert isinstance(monster, Unit)
-            for unit in monster.unit_zone.occupancy_list:
-                if unit.unit_type is UnitType.cultist and unit.faction is not self._faction:
-                    capture_actions.append((unit, unit.unit_zone, None))
-                    n += 1
+            if monster.unit_state is UnitState.in_play:
+                for unit in monster.unit_zone.occupancy_list:
+                    if unit.unit_type is UnitType.cultist and unit.faction is not self._faction:
+                        capture_actions.append((unit, unit.unit_zone, None))
+                        n += 1
         return capture_actions
 
     def find_build_actions(self):
         build_actions = []
         if self.power >= 3:
             for cultist in self._cultists:
-                if cultist.gate_state is GateState.noGate and cultist.unit_zone.gate_state is GateState.noGate:
-                    build_actions.append((cultist, cultist.unit_zone, None))
+                if cultist.unit_state is UnitState.in_play:
+                    if cultist.gate_state is GateState.noGate and cultist.unit_zone.gate_state is GateState.noGate:
+                        build_actions.append((cultist, cultist.unit_zone, None))
         return build_actions
 
     def find_move_actions(self, map):
@@ -207,7 +290,7 @@ class Player(object):
         # we need to know who can move and to where
         # power determines how many moves we can make
         # after moving we also need to check for spell book
-        # availability at 4 6 and 8 unique occupied zones
+        # availability
         all_possible_moves = []
         for unit in self._units:
             if self.power >= 1:
@@ -219,15 +302,7 @@ class Player(object):
                     for n in neighbors:
                         candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
                         all_possible_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
-                    '''
-                    RANDOM PLAYOUT
-                    roll a die of with sides corresponding to legal moves and pick one
-                    will not roll if unit is occupying a gate
-                    Awesome AI logic goes here bro
-                    '''
-                    dice = DiceRoller(1, neighbors.__len__())
-                    dice_result = int(dice.roll_dice()[0])
-                    self.move_action(unit, unit.unit_zone, candidate_moves[dice_result-1][2])
+
                 elif unit.gate_state is GateState.occupied:
                     print(self._color + '%s %s in %s is maintaining a gate' % (
                     self._faction.value, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
@@ -243,22 +318,28 @@ class Player(object):
             print(self._color + '%s %s is moving from %s to %s' % (self._faction.value, unit.unit_type.value, from_zone.name, to_zone.name) + TextColor.ENDC)
             from_zone.remove_unit(unit)
             unit.set_unit_zone(to_zone)
+            return True
+        return False
 
 
     def combat_action(self):
-        pass
+        return False
+
 
     def build_gate_action(self, unit, zone):
         zone_state = zone.get_zone_state()
         action_cost = 2
-        if zone_state[0] == GateState.noGate:
+        if zone_state[0] == GateState.noGate and unit.unit_state is UnitState.in_play:
             if self.spend_power(action_cost):
                 zone.set_gate_state(GateState.occupied)
                 zone.set_gate_unit(unit)
                 unit.set_unit_gate_state(GateState.occupied)
                 self._current_gates += 1
+                return True
         else:
             print ('Gate already exists!')
+            return False
+        return False
 
     def take_spell_book(self):
         pass

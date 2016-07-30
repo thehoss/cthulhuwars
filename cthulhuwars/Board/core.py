@@ -44,6 +44,10 @@ class Board(object):
         self._phase = Phase.gather_power
         self._round = 0
 
+    @property
+    def players(self):
+        return self.__players
+
     def build_map(self):
         print(TextColor.BOLD + "Building The Map" + TextColor.ENDC)
         self.__map = Map(self.__num_players, 'earth5P')
@@ -70,22 +74,22 @@ class Board(object):
 
             if selection is 1:
                 self.cthulhu = True
-                self.__players.append(Cthulhu(self.__map.zone_by_name('South Pacific')))
+                self.__players.append(Cthulhu(self.__map.zone_by_name('South Pacific'),self))
             elif selection is 2:
                 self.black_goat = True
                 try:
-                    self.__players.append(BlackGoat(self.__map.zone_by_name('Africa')))
+                    self.__players.append(BlackGoat(self.__map.zone_by_name('Africa'), self))
                 except KeyError:
-                    self.__players.append(BlackGoat(self.__map.zone_by_name('West Africa')))
+                    self.__players.append(BlackGoat(self.__map.zone_by_name('West Africa'), self))
             elif selection is 3:
                 self.crawling_chaos = True
                 try:
-                    self.__players.append(CrawlingChaos(self.__map.zone_by_name('Asia')))
+                    self.__players.append(CrawlingChaos(self.__map.zone_by_name('Asia'), self))
                 except KeyError:
-                    self.__players.append(CrawlingChaos(self.__map.zone_by_name('South Asia')))
+                    self.__players.append(CrawlingChaos(self.__map.zone_by_name('South Asia'), self))
             elif selection is 4:
                 self.yellow_sign = True
-                self.__players.append(YellowSign(self.__map.zone_by_name('Europe')))
+                self.__players.append(YellowSign(self.__map.zone_by_name('Europe'), self))
 
     def print_state(self):
         for p in self.__players:
@@ -149,19 +153,13 @@ class Board(object):
                 p.summon_action()
 
     def test_actions(self):
+
         for p in self.__players:
             assert isinstance(p, Player)
             if p.power is 0:
                 print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
                 p.discover_possible_actions(self.__map)
-
-                action = random.randint(0, 1)
-                if action is 0:
-                    p.find_move_actions(self.__map)
-                elif action is 1:
-                    p.summon_action()
-
 
     def current_player(self, state):
         # Takes the game state and returns the current player's

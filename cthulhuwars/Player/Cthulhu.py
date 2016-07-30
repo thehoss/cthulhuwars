@@ -13,8 +13,8 @@ POOL = Zone('Pool')
 
 
 class Cthulhu(Player):
-    def __init__(self, home_zone, name='Great Cthulhu'):
-        super(Cthulhu, self).__init__(Faction.cthulhu, home_zone, name)
+    def __init__(self, home_zone, board, name='Great Cthulhu'):
+        super(Cthulhu, self).__init__(Faction.cthulhu, home_zone, board, name)
         self._deep_ones = []
         self._shoggoth = []
         self._starspawn = []
@@ -27,7 +27,7 @@ class Cthulhu(Player):
         self._spell_absorb = False
         self._spell_submerge = False
         self._color = TextColor.GREEN
-        self.node_color = NodeColor.GREEN
+        self._node_color = NodeColor.GREEN
 
 
     def player_setup(self):
@@ -132,10 +132,12 @@ class Cthulhu(Player):
                     dice_result = dice.roll_dice()[0] - 1
                     if not summon_function[dice_result](unit_zone):
                         summon_function.pop(dice_result)
+                        return True
                     else:
                         break
                 except ValueError:
                     break
+        return False
 
 
 class DeepOne(Unit):

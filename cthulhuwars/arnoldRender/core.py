@@ -16,11 +16,7 @@ If you want kick (to render ass files) available at command line
 you will need to add /usr/local/solidangle/arnold/bin to the path
 '''
 
-import sys
-import os
-import math
 from arnold import *
-from cthulhuwars import Color
 from cthulhuwars.Zone import Zone, GateState
 
 class ArnoldRender(object):
@@ -203,7 +199,7 @@ class ArnoldRender(object):
             for unit in zone.occupancy_list:
                 unitspherepos = (spherepos[0], spherepos[1]+(spherepos[3]*1.5*n), spherepos[2], spherepos[3]*0.5)
                 n += 1
-                self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction.node_color, unitspherepos)
+                self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction._node_color, unitspherepos)
 
 
 

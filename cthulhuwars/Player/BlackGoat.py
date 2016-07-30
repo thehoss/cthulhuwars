@@ -10,6 +10,7 @@ from __future__ import print_function
 # TODO: implement spell conditions
 # TODO: implement Avatar ability for shub-nuggurath
 # TODO: implement Fertility Cult in summoning logic
+import random
 from core import Player
 from cthulhuwars.Color import TextColor, NodeColor
 from cthulhuwars.DiceRoller import DiceRoller
@@ -19,8 +20,8 @@ from cthulhuwars.Zone import Zone, GateState
 POOL = Zone('Pool')
 
 class BlackGoat(Player):
-    def __init__(self, home_zone, name='The Black Goat'):
-        super(BlackGoat, self).__init__(Faction.black_goat, home_zone, name)
+    def __init__(self, home_zone, board, name='The Black Goat'):
+        super(BlackGoat, self).__init__(Faction.black_goat, home_zone, board, name)
         '''
         Unit Lists
         The following lists are conveniences linking the relevant units from self._units
@@ -53,7 +54,7 @@ class BlackGoat(Player):
         drawing colors
         '''
         self._color = TextColor.RED
-        self.node_color = NodeColor.RED
+        self._node_color = NodeColor.RED
 
     @property
     def dark_young_in_play(self):
@@ -189,7 +190,6 @@ class BlackGoat(Player):
                         self._shub_niggurath.set_unit_state(UnitState.in_play)
                         self.spend_power(unit_cost)
                         if not self.awakened_shub_niggurath:
-                            self.awakened_shub_niggurath = True
                             self.take_new_spell()
                         print(
                             self._color + TextColor.BOLD + 'Shub-Niggurath Successfully Summoned!' + TextColor.ENDC)
@@ -221,7 +221,52 @@ class BlackGoat(Player):
         # As your Action for a Round, eliminate two of your Cultists
         # Share Areas with all enemies (i.e. both you and your enemy have Units there.)
         # Awaken Shub-Niggurath
+        nzones = self.occupied_zones()
+        if nzones >= 4 and self.units_in_four_zones is False:
+            self.units_in_four_zones = True
+            #pick a spell
+        if nzones >= 6 and self.units_in_six_zones is False:
+            self.units_in_six_zones = True
+            #pick a spell
+        if nzones >= 8 and self.units_in_eight_zones is False:
+            self.units_in_eight_zones = True
+            #pick a spell
+        if self._shub_niggurath is not None and self.awakened_shub_niggurath is False:
+            self.awakened_shub_niggurath = True
+            #pick a spell
+        # check for shared areas condition
+        if self.share_zones_with_all_factions is False:
+            shared = True
+            for player in self._board.players:
+                assert isinstance(player, Player)
+                player.occupied_zones()
+                player_zones = player._occupied_zones
+                if len(set(self._occupied_zones).intersection(player_zones)) <= 0:
+                     shared = False
+            if shared is True:
+                self.share_zones_with_all_factions = True
+                #Pick a spell
+
         pass
+
+    def sacrifice_two_cultists(self):
+        candidates = []
+        for cultist in self._cultists:
+            assert isinstance(cultist, Unit)
+            if cultist.unit_state is UnitState.in_play:
+                if cultist.gate_state is GateState.noGate:
+                    candidates.append(cultist)
+
+        if candidates.__len__() >= 2:
+            # Kills off the first two found
+            # TODO: figure out least valuable cultists in candidate list and sacrifice them
+            for n in range(0,2):
+                self.kill_unit(candidates[n])
+            self.sacrifice_two_cultists = True
+            #Pick a Spell
+            return True
+        else:
+            return False
 
     def summon_action(self):
         summoners = self._cultists
@@ -245,14 +290,15 @@ class BlackGoat(Player):
                     '''RANDOM_PLAYOUT - summon a random critter  *only black goat can do this*'''
                     while True:
                         try:
-                            dice = DiceRoller(1, summon_function.__len__())
-                            dice_result = dice.roll_dice()[0] -1
-                            if not summon_function[dice_result](unit_zone):
-                                summon_function.pop(dice_result)
+                            n = random.randint(0, summon_function.__len__()-1)
+                            if not summon_function[n](unit_zone):
+                                summon_function.pop(n)
+                                return True
                             else:
                                 break
                         except ValueError:
                             break
+        return False
 
     def recompute_power(self):
         super(BlackGoat, self).recompute_power()

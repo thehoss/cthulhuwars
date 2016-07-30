@@ -15,8 +15,8 @@ POOL = Zone('Pool')
 
 
 class CrawlingChaos(Player):
-    def __init__(self, home_zone, name='The Crawling Chaos'):
-        super(CrawlingChaos, self).__init__(Faction.crawling_chaos, home_zone, name)
+    def __init__(self, home_zone, board, name='The Crawling Chaos'):
+        super(CrawlingChaos, self).__init__(Faction.crawling_chaos, home_zone, board, name)
         '''
         Unit Lists
         The following lists are conveniences linking the relevant units from self._units
@@ -39,7 +39,7 @@ class CrawlingChaos(Player):
         drawing colors
         '''
         self._color = TextColor.BLUE
-        self.node_color = NodeColor.BLUE
+        self._node_color = NodeColor.BLUE
 
     @property
     def nightgaunt_in_play(self):
@@ -176,11 +176,11 @@ def take_new_spell(self):
         self._spell_requirment_met[1] = True
 
     # Control 3 gates or have 12 power
-    if not self._spell_requirment_met[2] and (self._current_gates == 3 or self._power == 12):
+    if not self._spell_requirment_met[2] and self.current_gates == 3 or self._power == 12:
         self._spell_requirment_met[2] = True
 
     # Control 4 gates or have 15 power
-    if not self._spell_requirment_met[3] and (self._current_gates == 4 or self._power == 15):
+    if not self._spell_requirment_met[3] and self.current_gates == 4 or self._power == 15:
         self._spell_requirment_met[3] = True
 
     # Capture an enemy Cultist

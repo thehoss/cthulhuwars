@@ -8,8 +8,8 @@ from cthulhuwars.Color import TextColor, NodeColor
 
 
 class YellowSign(Player):
-    def __init__(self, home_zone, name='The Yellow Sign'):
-        super(YellowSign, self).__init__(Faction.yellow_sign, home_zone, name)
+    def __init__(self, home_zone, board, name='The Yellow Sign'):
+        super(YellowSign, self).__init__(Faction.yellow_sign, home_zone, board, name)
         self._undead_in_play = 0
         self._byakhee_in_play = 0
         self._king_in_yellow_in_play = 0
@@ -22,7 +22,7 @@ class YellowSign(Player):
         self._spell_the_screaming_dead = False
         self._color = TextColor.YELLOW
 
-        self.node_color = NodeColor.YELLOW
+        self._node_color = NodeColor.YELLOW
 
 
 class Undead(Unit):
