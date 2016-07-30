@@ -99,15 +99,15 @@ class Cthulhu(Player):
         if self._immortal:
             unit_cost = 4
         if self.power >= unit_cost:
-            for cthulhu in self._cthulhu:
-                if cthulhu.unit_state is UnitState.in_reserve:
-                    if self.spend_power(unit_cost):
-                        print(self._color + TextColor.BOLD + 'The Great Cthulhu has emerged!' + TextColor.ENDC)
-                        cthulhu.set_unit_state(UnitState.in_play)
-                        cthulhu.set_unit_zone(unit_zone)
-                        self._immortal = True
-                        self._elder_points += DiceRoller(1,3).roll_dice()[0]
-                        return True
+            cthulhu = self._cthulhu
+            if cthulhu.unit_state is UnitState.in_reserve:
+                if self.spend_power(unit_cost):
+                    print(self._color + TextColor.BOLD + 'The Great Cthulhu has emerged!' + TextColor.ENDC)
+                    cthulhu.set_unit_state(UnitState.in_play)
+                    cthulhu.set_unit_zone(unit_zone)
+                    self._immortal = True
+                    self._elder_points += DiceRoller(1,3).roll_dice()[0]
+                    return True
         return False
 
     def summon_action(self):
@@ -145,11 +145,28 @@ class DeepOne(Unit):
         super(DeepOne, self).__init__(unit_parent, unit_zone, UnitType.deep_one, combat_power=1, cost=unit_cost,
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)
+
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.035)]
+        }
+        return render_definition
+
 class Shoggoth(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Shoggoth, self).__init__(unit_parent, unit_zone, UnitType.shoggoth, combat_power=2, cost=unit_cost,
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)
+
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+                "params": [("float", "radius", 0.04)]
+        }
+        return render_definition
 
 class Starspawn(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
@@ -157,8 +174,23 @@ class Starspawn(Unit):
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.04)]
+        }
+        return render_definition
+
 class GreatCthulhu(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(GreatCthulhu, self).__init__(unit_parent, unit_zone, UnitType.cthulhu, combat_power=6, cost=unit_cost,
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["procedural"],
+            "name": ["cthulhu_object"],
+            "params": [("string" , "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cthulhu_goo.obj"), ("bool", "load_at_init", 1)]
+        }
+        return render_definition

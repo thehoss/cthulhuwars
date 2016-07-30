@@ -271,9 +271,10 @@ class Player(object):
             assert isinstance(monster, Unit)
             if monster.unit_state is UnitState.in_play:
                 for unit in monster.unit_zone.occupancy_list:
-                    if unit.unit_type is UnitType.cultist and unit.faction is not self._faction:
-                        capture_actions.append((unit, unit.unit_zone, None))
-                        n += 1
+                    if unit.unit_type is UnitType.cultist:
+                        if unit.faction._name != self._name:
+                            capture_actions.append((unit, unit.unit_zone, None))
+                            n += 1
         return capture_actions
 
     def find_build_actions(self):

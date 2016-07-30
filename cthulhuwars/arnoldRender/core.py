@@ -15,9 +15,10 @@ to the "project:cthulhuwars"->"project structure" list of content roots
 If you want kick (to render ass files) available at command line
 you will need to add /usr/local/solidangle/arnold/bin to the path
 '''
-
+import random
 from arnold import *
 from cthulhuwars.Zone import Zone, GateState
+from cthulhuwars.Unit import Unit, UnitState, UnitType
 
 class ArnoldRender(object):
     earth_gate_positions = {'Arctic Ocean': [0.03, 0.9], 'North Atlantic': [-0.23, 0.57],
@@ -43,6 +44,45 @@ class ArnoldRender(object):
         result = AiRender(AI_RENDER_MODE_CAMERA)
         return result
 
+    def render_unit(self, unit, prefix, color, position):
+        assert isinstance(unit, Unit)
+        render_def = unit.render_unit()
+
+        shader = AiNode('standard')
+        shader_name = str(prefix) + '_mtl_' + str(render_def['name'][0])
+        AiNodeSetStr(shader, 'name', shader_name )
+        AiNodeSetRGB(shader, 'Kd_color', unit.faction._node_color[0], unit.faction._node_color[1], unit.faction._node_color[2])
+        AiNodeSetFlt(shader, 'Kd', 2)
+        AiNodeSetFlt(shader, 'Ks', 1)
+        AiNodeSetFlt(shader, 'specular_roughness', 0.15)
+        AiNodeSetBool(shader, 'specular_Fresnel', True)
+        AiNodeSetFlt(shader, 'Ksn', 0.4)
+
+        unit_obj = AiNode(render_def['nodetype'][0])
+        AiNodeSetStr(unit_obj, 'name', prefix + '_' + str(render_def['name'][0]))
+        unit_parameters = render_def['params']
+
+        for param in unit_parameters:
+            param_type = param[0]
+            param_name = param[1]
+            if param_type == 'string':
+                AiNodeSetStr(unit_obj, param_name, str(param[2]))
+            if param_type == 'float':
+                AiNodeSetFlt(unit_obj, param_name, float(param[2]))
+            if param_type == 'bool':
+                AiNodeSetBool(unit_obj, param_name, bool(param[2]))
+            if param_type == 'int':
+                AiNodeSetInt(unit_obj, param_name, int(param[2]))
+
+        AiNodeSetPtr(unit_obj, "shader", shader)
+
+        m = AtMatrix()
+        AiM4Translation(m, AtVector(position[0], 0.015, position[2]))
+        am = AiArrayAllocate(1, 1, AI_TYPE_MATRIX)
+        AiArraySetMtx(am, 0, m)
+        AiNodeSetArray(unit_obj, "matrix", am)
+
+
     def nodesphere(self, name, color, position):
         sphere = AiNode('sphere')
         AiNodeSetStr(sphere, 'name', name)
@@ -55,10 +95,11 @@ class ArnoldRender(object):
         AiNodeSetFlt(shader, 'Kd', 2)
         AiNodeSetFlt(shader, 'Ks', 1)
         AiNodeSetFlt(shader, 'specular_roughness', 0.15)
-
         AiNodeSetBool(shader, 'specular_Fresnel', True)
         AiNodeSetFlt(shader, 'Ksn', 0.4)
         AiNodeSetPtr(sphere, "shader", shader)
+
+
 
     def _boardHalf(self, name, texture, centerX, centerY, centerZ):
         polymesh = AiNode('polymesh')
@@ -119,7 +160,7 @@ class ArnoldRender(object):
 
     def do_render(self, frame, map):
         AiBegin()
-        AiMsgSetConsoleFlags(AI_LOG_INFO)
+        AiMsgSetConsoleFlags(AI_LOG_ALL)
 
         outputFileName = "%s%s" % (self._base_name, self._file_ext)
         imageFileName = "%s%s" % (self._base_name, self._image_ext)
@@ -177,33 +218,41 @@ class ArnoldRender(object):
         AiNodeSetStr(driver, 'filename', imageFileName)
 
         filter = AiNode('gaussian_filter')
-        AiNodeSetInt(filter, 'width', 3)
+        AiNodeSetFlt(filter, 'width', 3)
         AiNodeSetStr(filter, 'name', 'scenefilter')
         AiNodeSetPtr(options, 'background', sky)
         outputString = AiArrayAllocate(1, 1, AI_TYPE_STRING)
         AiArraySetStr(outputString, 0, "RGBA RGBA scenefilter scenerender")
         AiNodeSetArray(options, 'outputs', outputString )
         self._build_board()
-
+        n = 0
         for node in map.node:
             pos = self.earth_gate_positions[node]
             zone = map.node[node]['zone']
             assert isinstance(zone, Zone)
             #spherepos is centerX, centerY, centerZ, radius
-            spherepos = (pos[0]*2 , 0.1, 1.0-(pos[1]*2), 0.075)
+            spherepos = (pos[0]*2 , 0.025, 1.0-(pos[1]*2), 0.05)
             spherecolor = (0, 0, 0)
             if zone.gate_state is not GateState.noGate:
                 spherecolor = (1,1,1)
             self.nodesphere(node, spherecolor, spherepos)
-            n = 1
+            p = 0
             for unit in zone.occupancy_list:
-                unitspherepos = (spherepos[0], spherepos[1]+(spherepos[3]*1.5*n), spherepos[2], spherepos[3]*0.5)
+
+                unitspherepos = (
+                                 spherepos[0] + 0.1*(math.sin(p)),
+                                 0,
+                                 spherepos[2] + 0.1*(math.cos(p))
+                                 )
+
+                #self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction._node_color, unitspherepos)
+                self.render_unit(unit, '%04d'%n, unit.faction._node_color, unitspherepos)
+                p += 1
                 n += 1
-                self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction._node_color, unitspherepos)
 
 
 
-        #AiASSWrite(outputFileName, AI_NODE_ALL, False)
-        AiRender(AI_RENDER_MODE_CAMERA)
+        AiASSWrite(outputFileName, AI_NODE_ALL, False)
+        #AiRender(AI_RENDER_MODE_CAMERA)
 
         AiEnd()

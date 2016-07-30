@@ -112,6 +112,13 @@ class Unit(object):
     def set_unit_state(self, unit_state):
         self._unit_state = unit_state
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s"%(self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.03)]
+        }
+        return render_definition
 
 class Cultist(Unit):
     def __init__(self, faction, unit_zone, base_movement, unit_state):
