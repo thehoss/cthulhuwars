@@ -4,6 +4,7 @@
  Zone('Asia', False)
 """
 
+import random
 from core import Player
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
@@ -116,108 +117,120 @@ class CrawlingChaos(Player):
                         return True
         return False
 
+    def summon_hunting_horror(self, unit_zone):
+        unit_cost = 3
+        if self.power >= unit_cost:
+            for hh in self._hunting_horror:
+                if hh.unit_state is UnitState.in_reserve:
+                    if self.spend_power(unit_cost):
+                        print(self._color + TextColor.BOLD + 'A Hunting Horror descends from above!' + TextColor.ENDC)
+                        hh.set_unit_state(UnitState.in_play)
+                        hh.set_unit_zone(unit_zone)
+                        return True
+        return False
 
-def summon_nyarlathotep(self, unit_zone):
-    assert isinstance(unit_zone, Zone)
-    print(
-        self._color + TextColor.BOLD + 'The Crawling Chaos is attempting to awaken Nyarlathotep!' + TextColor.ENDC)
-    unit_cost = 10
-    # Do we have enough power?
-    if self.power >= unit_cost:
-        # is there a gate in the summoning zone, and do we occupy it?
-        if unit_zone.gate_state is GateState.occupied:
-            if unit_zone.gate_unit.faction == self:
+    def summon_nyarlathotep(self, unit_zone):
+        assert isinstance(unit_zone, Zone)
+        print(
+            self._color + TextColor.BOLD + 'The Crawling Chaos is attempting to awaken Nyarlathotep!' + TextColor.ENDC)
+        unit_cost = 10
+        # Do we have enough power?
+        if self.power >= unit_cost:
+            # is there a gate in the summoning zone, and do we occupy it?
+            if unit_zone.gate_state is GateState.occupied:
+                if unit_zone.gate_unit.faction == self:
 
-                # put Nyarlathotep on the board, and spend the power
-                self._nyarlathotep.set_unit_zone(unit_zone)
-                self._nyarlathotep.set_unit_state(UnitState.in_play)
-                self.spend_power(unit_cost)
-                if not self.awakend_nyarlathotep:
-                    self.awakened_nyarlathotep = True
-                    self.take_new_spell()
-                print(self._color + TextColor.BOLD + 'Nyarlathotep Successfully Summoned!' + TextColor.ENDC)
-                return True
-    return False
-
-
-def spell_emissary_of_the_outer_gods(self):
-    self._spell_emissary_of_the_outer_gods = True
-
-
-def spell_abduct(self):
-    self.spell_abduct = True
-
-
-def spell_madness(self):
-    self.spell_madness = True
-
-
-def spell_the_thousand_forms(self):
-    self.spell_the_thousand_forms = True
+                    # put Nyarlathotep on the board, and spend the power
+                    self._nyarlathotep.set_unit_zone(unit_zone)
+                    self._nyarlathotep.set_unit_state(UnitState.in_play)
+                    self.spend_power(unit_cost)
+                    if not self.awakend_nyarlathotep:
+                        self.awakened_nyarlathotep = True
+                        self.take_new_spell()
+                    print(self._color + TextColor.BOLD + 'Nyarlathotep Successfully Summoned!' + TextColor.ENDC)
+                    return True
+        return False
 
 
-def spell_seek_and_destroy(self):
-    self.spell_seek_and_destroy = True
+    def spell_emissary_of_the_outer_gods(self):
+        self._spell_emissary_of_the_outer_gods = True
 
 
-def spell_invisibility(self):
-    self._spell_invisibility = True
+    def spell_abduct(self):
+        self.spell_abduct = True
 
 
-def take_new_spell(self):
-    # check conditions for taking a new spell:
-
-    # As action for a round, pay 4 power
-    if not self._spell_requirment_met[0] and self._power_spent == 4:
-        self._spell_requirment_met[0] = True
-
-    # As action for a round, pay 6 power
-    if not self._spell_requirment_met[1] and self._power_spent == 6:
-        self._spell_requirment_met[1] = True
-
-    # Control 3 gates or have 12 power
-    if not self._spell_requirment_met[2] and self.current_gates == 3 or self._power == 12:
-        self._spell_requirment_met[2] = True
-
-    # Control 4 gates or have 15 power
-    if not self._spell_requirment_met[3] and self.current_gates == 4 or self._power == 15:
-        self._spell_requirment_met[3] = True
-
-    # Capture an enemy Cultist
-    if not self._spell_requirment_met[4] and self._captured_cultists.__len__() > 0:
-        self._spell_requirment_met[4] = True
-
-    # Awaken Nyarlathotep
-    if not self._spell_requirment_met[5] and self._goo.__len__() > 0:
-        self._spell_requirment_met[5] = True
+    def spell_madness(self):
+        self.spell_madness = True
 
 
-def summon_action(self):
-    unit_zone = None
+    def spell_the_thousand_forms(self):
+        self.spell_the_thousand_forms = True
 
-    summon = [
-              self.summon_dark_young,
-              self.summon_fungi,
-              self.summon_ghoul,
-              self.summon_shub_niggurath]
 
-    for cultist in self._cultists:
-        if cultist.gate_state is GateState.occupied:
-            unit_zone = cultist.unit_zone
+    def spell_seek_and_destroy(self):
+        self.spell_seek_and_destroy = True
 
-    if unit_zone is not None:
-        '''RANDOM_PLAYOUT'''
-        while True:
-            try:
-                dice = DiceRoller(1, summon.__len__())
-                dice_result = dice.roll_dice()[0] - 1
-                if not summon[dice_result](unit_zone):
-                    summon.pop(dice_result)
-                else:
+
+    def spell_invisibility(self):
+        self._spell_invisibility = True
+
+
+    def take_new_spell(self):
+        # check conditions for taking a new spell:
+
+        # As action for a round, pay 4 power
+        if not self._spell_requirment_met[0] and self._power_spent == 4:
+            self._spell_requirment_met[0] = True
+
+        # As action for a round, pay 6 power
+        if not self._spell_requirment_met[1] and self._power_spent == 6:
+            self._spell_requirment_met[1] = True
+
+        # Control 3 gates or have 12 power
+        if not self._spell_requirment_met[2] and self.current_gates == 3 or self._power == 12:
+            self._spell_requirment_met[2] = True
+
+        # Control 4 gates or have 15 power
+        if not self._spell_requirment_met[3] and self.current_gates == 4 or self._power == 15:
+            self._spell_requirment_met[3] = True
+
+        # Capture an enemy Cultist
+        if not self._spell_requirment_met[4] and self._captured_cultists.__len__() > 0:
+            self._spell_requirment_met[4] = True
+
+        # Awaken Nyarlathotep
+        if not self._spell_requirment_met[5] and self._goo.__len__() > 0:
+            self._spell_requirment_met[5] = True
+
+    '''
+    def summon_action(self):
+        unit_zone = None
+
+        summon_function = [
+                  self.summon_nightgaunt,
+                  self.summon_flying_polyp,
+                  self.summon_hunting_horror,
+                  self.summon_nyarlathotep]
+
+        for cultist in self._cultists:
+            if cultist.gate_state is GateState.occupied:
+                unit_zone = cultist.unit_zone
+
+        if unit_zone is not None:
+            #RANDOM_PLAYOUT
+            while True:
+                try:
+                    n = random.randint(0, summon_function.__len__() - 1)
+                    if not summon_function[n](unit_zone):
+                        summon_function.pop(n)
+                        return True
+                    else:
+                        break
+                except ValueError:
                     break
-            except ValueError:
-                break
-
+        return False
+    '''
 
 def recompute_power(self):
     super(CrawlingChaos, self).recompute_power()
@@ -225,27 +238,27 @@ def recompute_power(self):
 
 class Nightgaunt(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
-        super(Nightgaunt, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=0, cost=unit_cost,
+        super(Nightgaunt, self).__init__(unit_parent, unit_zone, UnitType.nightgaunt, combat_power=0, cost=unit_cost,
                                          base_movement=2,
                                          unit_state=UnitState.in_reserve)
 
 
 class FlyingPolyp(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
-        super(FlyingPolyp, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=1, cost=unit_cost,
+        super(FlyingPolyp, self).__init__(unit_parent, unit_zone, UnitType.flying_polyp, combat_power=1, cost=unit_cost,
                                           base_movement=2,
                                           unit_state=UnitState.in_reserve)
 
 
 class HuntingHorror(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
-        super(HuntingHorror, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=2, cost=unit_cost,
+        super(HuntingHorror, self).__init__(unit_parent, unit_zone, UnitType.hunting_horror, combat_power=2, cost=unit_cost,
                                             base_movement=2,
                                             unit_state=UnitState.in_reserve)
 
 
 class Nyarlathotep(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=10):
-        super(Nyarlathotep, self).__init__(unit_parent, unit_zone, UnitType.GOO, combat_power=0, cost=unit_cost,
+        super(Nyarlathotep, self).__init__(unit_parent, unit_zone, UnitType.nyarlathotep, combat_power=0, cost=unit_cost,
                                            base_movement=2,
                                            unit_state=UnitState.in_reserve)

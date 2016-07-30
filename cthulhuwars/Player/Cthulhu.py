@@ -29,7 +29,6 @@ class Cthulhu(Player):
         self._color = TextColor.GREEN
         self._node_color = NodeColor.GREEN
 
-
     def player_setup(self):
         super(Cthulhu, self).player_setup()
         n_deep_ones = 4
@@ -121,8 +120,9 @@ class Cthulhu(Player):
                   ]
 
         for cultist in self._cultists:
-            if cultist.gate_state is GateState.occupied:
-                unit_zone = cultist.unit_zone
+            if cultist.unit_state is UnitState.in_play:
+                if cultist.gate_state is GateState.occupied:
+                    unit_zone = cultist.unit_zone
 
         if unit_zone is not None:
             '''RANDOM_PLAYOUT'''

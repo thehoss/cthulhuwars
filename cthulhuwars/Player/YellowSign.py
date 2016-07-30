@@ -27,11 +27,11 @@ class YellowSign(Player):
 
 class Undead(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost):
-        super(Undead, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=None, cost=unit_cost,
+        super(Undead, self).__init__(unit_parent, unit_zone, UnitType.undead, combat_power=None, cost=unit_cost,
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)
 class Byakhee(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost):
-        super(Byakhee, self).__init__(unit_parent, unit_zone, UnitType.monster, combat_power=None, cost=unit_cost,
+        super(Byakhee, self).__init__(unit_parent, unit_zone, UnitType.byakhee, combat_power=None, cost=unit_cost,
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)

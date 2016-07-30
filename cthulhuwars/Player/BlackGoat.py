@@ -6,18 +6,17 @@ from __future__ import print_function
  Zone('Africa', False)
 """
 
-
 # TODO: implement spell conditions
 # TODO: implement Avatar ability for shub-nuggurath
 # TODO: implement Fertility Cult in summoning logic
 import random
 from core import Player
 from cthulhuwars.Color import TextColor, NodeColor
-from cthulhuwars.DiceRoller import DiceRoller
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
 
 POOL = Zone('Pool')
+
 
 class BlackGoat(Player):
     def __init__(self, home_zone, board, name='The Black Goat'):
@@ -93,19 +92,16 @@ class BlackGoat(Player):
             new_dy = DarkYoung(self, POOL)
             self.add_unit(new_dy)
             self._dark_young.append(new_dy)
-            self._monsters.append(new_dy)
 
         for _ in range(n_ghoul):
             new_g = Ghoul(self, POOL)
             self.add_unit(new_g)
             self._ghouls.append(new_g)
-            self._monsters.append(new_g)
 
         for _ in range(n_fungi):
             new_f = Fungi(self, POOL)
             self.add_unit(new_f)
             self._fungi.append(new_f)
-            self._monsters.append(new_f)
 
         self._shub_niggurath = ShubNiggurath(self, POOL)
         self.add_unit(self._shub_niggurath)
@@ -224,16 +220,16 @@ class BlackGoat(Player):
         nzones = self.occupied_zones()
         if nzones >= 4 and self.units_in_four_zones is False:
             self.units_in_four_zones = True
-            #pick a spell
+            # pick a spell
         if nzones >= 6 and self.units_in_six_zones is False:
             self.units_in_six_zones = True
-            #pick a spell
+            # pick a spell
         if nzones >= 8 and self.units_in_eight_zones is False:
             self.units_in_eight_zones = True
-            #pick a spell
+            # pick a spell
         if self._shub_niggurath is not None and self.awakened_shub_niggurath is False:
             self.awakened_shub_niggurath = True
-            #pick a spell
+            # pick a spell
         # check for shared areas condition
         if self.share_zones_with_all_factions is False:
             shared = True
@@ -242,10 +238,10 @@ class BlackGoat(Player):
                 player.occupied_zones()
                 player_zones = player._occupied_zones
                 if len(set(self._occupied_zones).intersection(player_zones)) <= 0:
-                     shared = False
+                    shared = False
             if shared is True:
                 self.share_zones_with_all_factions = True
-                #Pick a spell
+                # Pick a spell
 
         pass
 
@@ -260,10 +256,10 @@ class BlackGoat(Player):
         if candidates.__len__() >= 2:
             # Kills off the first two found
             # TODO: figure out least valuable cultists in candidate list and sacrifice them
-            for n in range(0,2):
+            for n in range(0, 2):
                 self.kill_unit(candidates[n])
             self.sacrifice_two_cultists = True
-            #Pick a Spell
+            # Pick a Spell
             return True
         else:
             return False
@@ -278,10 +274,10 @@ class BlackGoat(Player):
             summoners.append(self._dark_young)
 
         summon_function = [
-                  self.summon_dark_young,
-                  self.summon_fungi,
-                  self.summon_ghoul,
-                  self.summon_shub_niggurath]
+            self.summon_dark_young,
+            self.summon_fungi,
+            self.summon_ghoul,
+            self.summon_shub_niggurath]
 
         for summoner in summoners:
             if summoner.gate_state is GateState.occupied and summoner.unit_state is UnitState.in_play:
@@ -290,7 +286,7 @@ class BlackGoat(Player):
                     '''RANDOM_PLAYOUT - summon a random critter  *only black goat can do this*'''
                     while True:
                         try:
-                            n = random.randint(0, summon_function.__len__()-1)
+                            n = random.randint(0, summon_function.__len__() - 1)
                             if not summon_function[n](unit_zone):
                                 summon_function.pop(n)
                                 return True
@@ -312,6 +308,14 @@ class Ghoul(Unit):
                                     base_movement=1,
                                     unit_state=UnitState.in_reserve)
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.035)]
+        }
+        return render_definition
+
 
 class Fungi(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
@@ -319,12 +323,28 @@ class Fungi(Unit):
                                     base_movement=1,
                                     unit_state=UnitState.in_reserve)
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.04)]
+        }
+        return render_definition
+
 
 class DarkYoung(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(DarkYoung, self).__init__(unit_parent, unit_zone, UnitType.dark_young, combat_power=2, cost=unit_cost,
                                         base_movement=1,
                                         unit_state=UnitState.in_reserve)
+
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.05)]
+        }
+        return render_definition
 
 
 class ShubNiggurath(Unit):
@@ -339,3 +359,11 @@ class ShubNiggurath(Unit):
         if self.faction.spell_red_sign:
             total_combat_power += self.faction.dark_young_in_play
         return total_combat_power
+
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.055)]
+        }
+        return render_definition

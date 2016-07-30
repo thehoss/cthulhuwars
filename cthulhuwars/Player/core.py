@@ -144,6 +144,10 @@ class Player(object):
 
     def add_unit(self, new_unit):
         self._units.append(new_unit)
+        if new_unit.unit_type is not UnitType.cultist:
+            self._monsters.append(new_unit)
+        if new_unit.unit_type is UnitType.GOO or UnitType.cthulhu or UnitType.shub_niggurath or UnitType.nyarlathotep or UnitType.hastur or UnitType.king_in_yellow:
+            self._goo.append(new_unit)
 
     def spend_power(self, cost):
         if self._power >= cost:
@@ -174,7 +178,7 @@ class Player(object):
         possible_captures = self.find_capture_actions()
         possible_summons = self.find_summon_actions()
         possible_recruits = self.find_recruit_actions()
-        '''
+        #'''
         print(self._color)
         print ('possible builds:')
         print possible_builds
@@ -187,7 +191,7 @@ class Player(object):
         print('possible recruits:')
         print possible_recruits
         print(TextColor.ENDC)
-        '''
+        #'''
         '''
         RANDOM PLAYOUT
         roll a die of with sides corresponding to legal moves and pick one
@@ -196,40 +200,49 @@ class Player(object):
         '''
         action_success = False
         tries = 0
-        while action_success is False:
-            action = random.randint(0, 4)
+        action_func = []
 
-            if action == 0 and possible_moves.__len__() > 0:
-                n = random.randint(0, possible_moves.__len__()-1)
-                action_success = self.move_action(possible_moves[n][0], possible_moves[n][1], possible_moves[n][2])
+        if possible_moves.__len__() > 0:
+            n = random.randint(0, possible_moves.__len__()-1)
+            action_func.append(lambda x: Player.move_action(x, possible_moves[n][0], possible_moves[n][1], possible_moves[n][2]))
+        if possible_summons.__len__() > 0:
+            n = random.randint(0, possible_summons.__len__() - 1)
+            action_func.append(lambda x: Player.summon_action(x, possible_summons[n][0], possible_summons[n][1]))
+        if possible_builds.__len__() > 0:
+            n = random.randint(0, possible_builds.__len__() - 1)
+            action_func.append(lambda x: Player.build_gate_action(x, possible_builds[n][0], possible_builds[n][1]))
+        if possible_captures.__len__() > 0:
+            #n = random.randint(0, possible_captures.__len__() - 1)
+            action_func.append(lambda x: Player.capture_unit(x, possible_captures[0][0]))
+        if possible_recruits.__len__() > 0:
+            n = random.randint(0, possible_recruits.__len__() - 1)
+            action_func.append(lambda x: Player.recruit_cultist(x, possible_recruits[n][1]))
 
-            if action == 1 and possible_summons.__len__() > 0:
-                action_success = self.summon_action()
+        if action_func.__len__() > 1:
+            while action_success is False:
+                action = random.randint(0, action_func.__len__()-1)
+                action_success = action_func[action](self)
+                action_func.pop(action)
+                tries += 1
 
-            if action == 2 and possible_builds.__len__() > 0:
-                n = random.randint(0, possible_builds.__len__()-1)
-                action_success = self.build_gate_action(possible_builds[n][0], possible_builds[n][1])
+                if tries > 5:
+                    print("cannot complete action!")
+                    self.spend_power(self.power)
+                    action_success = True
+        elif action_func.__len__() <= 0:
+            print("No Possible Actions!")
+            self.spend_power(self.power)
+            return False
+        else:
+            return action_func[0](self)
 
-            if action == 3 and possible_captures.__len__() > 0:
-                n = random.randint(0, possible_captures.__len__()-1)
-                action_success = self.capture_unit(possible_captures[n][0])
-
-            if action == 4 and possible_recruits.__len__() > 0:
-                n = random.randint(0, possible_recruits.__len__()-1)
-                action_success = self.recruit_cultist(possible_recruits[n][1])
-
-            if action == 6:
-                action_success = self.combat_action()
-
-            if action == 5:
-                action_success = self.awaken_goo()
-            tries += 1
-
-            if tries > 5:
-                break
-
-
-    def summon_action(self):
+    def summon_action(self, monster, unit_zone):
+        assert isinstance(monster, Unit)
+        if monster.unit_state is UnitState.in_reserve:
+            if self.spend_power(monster.cost):
+                monster.set_unit_state(UnitState.in_play)
+                monster.set_unit_zone(unit_zone)
+                return True
         return False
 
     def awaken_goo(self):
