@@ -150,7 +150,7 @@ class DeepOne(Unit):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.035)]
+            "params": [("float", "radius", 0.025)]
         }
         return render_definition
 
@@ -164,7 +164,7 @@ class Shoggoth(Unit):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-                "params": [("float", "radius", 0.04)]
+                "params": [("float", "radius", 0.030)]
         }
         return render_definition
 
@@ -178,7 +178,7 @@ class Starspawn(Unit):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.04)]
+            "params": [("float", "radius", 0.03)]
         }
         return render_definition
 

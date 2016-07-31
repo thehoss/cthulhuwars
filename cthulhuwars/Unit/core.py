@@ -17,7 +17,7 @@ class UnitType(Enum):
     hunting_horror = 'hunting horror'
     undead = 'undead'
     byakhee = 'byakhee'
-    king_in_yellow = 'king_in_yellow'
+    king_in_yellow = 'king in yellow'
     hastur = 'hastur'
     shub_niggurath = 'shub-niggurath'
     cthulhu = 'cthulhu'
@@ -116,7 +116,7 @@ class Unit(object):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s"%(self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.03)]
+            "params": [("float", "radius", 0.015)]
         }
         return render_definition
 

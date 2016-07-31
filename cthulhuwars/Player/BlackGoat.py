@@ -312,7 +312,7 @@ class Ghoul(Unit):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.035)]
+            "params": [("float", "radius", 0.025)]
         }
         return render_definition
 
@@ -327,7 +327,7 @@ class Fungi(Unit):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.04)]
+            "params": [("float", "radius", 0.03)]
         }
         return render_definition
 
@@ -342,14 +342,14 @@ class DarkYoung(Unit):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.05)]
+            "params": [("float", "radius", 0.035)]
         }
         return render_definition
 
 
 class ShubNiggurath(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=8):
-        super(ShubNiggurath, self).__init__(unit_parent, unit_zone, UnitType.GOO, combat_power=0, cost=unit_cost,
+        super(ShubNiggurath, self).__init__(unit_parent, unit_zone, UnitType.shub_niggurath, combat_power=0, cost=unit_cost,
                                             base_movement=1,
                                             unit_state=UnitState.in_reserve)
 
@@ -364,6 +364,6 @@ class ShubNiggurath(Unit):
         render_definition = {
             "nodetype": ["sphere"],
             "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.055)]
+            "params": [("float", "radius", 0.085)]
         }
         return render_definition

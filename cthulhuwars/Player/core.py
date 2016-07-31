@@ -253,6 +253,7 @@ class Player(object):
             if self.spend_power(monster.cost):
                 monster.set_unit_state(UnitState.in_play)
                 monster.set_unit_zone(unit_zone)
+                print(self._color + "A %s has appeared in %s" % ( monster.unit_type.value, monster.unit_zone.name) + TextColor.ENDC)
                 return True
         return False
 
