@@ -184,7 +184,7 @@ class ArnoldRender(object):
         AiNodeSetFlt(camera, 'fov', 100)
 
         skydome = AiNode("skydome_light")
-        AiNodeSetFlt(skydome, 'exposure', 2)
+        AiNodeSetFlt(skydome, 'exposure', 1.5)
         sky     = AiNode("sky")
         sky_image = AiNode("image")
 
@@ -195,6 +195,7 @@ class ArnoldRender(object):
         AiNodeSetStr(sky_image, "filename", "CGSkies_0061_free.tx")
         AiNodeLink(sky_image, "color", skydome)
         AiNodeLink(sky_image, "color", sky)
+        AiNodeSetRGB(sky_image, "multiply", 1, 1, 1)
         AiNodeSetInt(sky, 'format', 2)
         AiNodeSetInt(skydome, 'format', 2)
 
