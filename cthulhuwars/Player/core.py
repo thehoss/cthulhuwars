@@ -202,33 +202,44 @@ class Player(object):
         tries = 0
         action_func = []
 
-        if possible_moves.__len__() > 1:
+        if possible_moves.__len__() > 0:
             n = random.randint(0, possible_moves.__len__()-1)
-            action_func.append(lambda x: Player.move_action(x, possible_moves[n][0], possible_moves[n][1], possible_moves[n][2]))
-        if possible_summons.__len__() > 1:
+            try:
+                action_func.append(lambda x: Player.move_action(x, possible_moves[n][0], possible_moves[n][1], possible_moves[n][2]))
+            except:
+                print ("fail: move action: %s"%str(n))
+        if possible_summons.__len__() > 0:
             n = random.randint(0, possible_summons.__len__()-1)
-            action_func.append(lambda x: Player.summon_action(x, possible_summons[n][0], possible_summons[n][1]))
-        if possible_builds.__len__() > 1:
+            #print("summon:%s"%str(n))
+            try:
+                action_func.append(lambda x: Player.summon_action(x, possible_summons[n][0], possible_summons[n][1]))
+            except:
+                print ("fail: summon action: %s" % str(n))
+        if possible_builds.__len__() > 0:
             n = random.randint(0, possible_builds.__len__() - 1)
-            action_func.append(lambda x: Player.build_gate_action(x, possible_builds[n][0], possible_builds[n][1]))
-        if possible_captures.__len__() > 1:
+            try:
+                action_func.append(lambda x: Player.build_gate_action(x, possible_builds[n][0], possible_builds[n][1]))
+            except:
+                print ("fail: build action: %s" % str(n))
+        if possible_captures.__len__() > 0:
             #n = random.randint(0, possible_captures.__len__() - 1)
-            action_func.append(lambda x: Player.capture_unit(x, possible_captures[0][0]))
-        if possible_recruits.__len__() > 1:
+            try:
+                action_func.append(lambda x: Player.capture_unit(x, possible_captures[0][0]))
+            except:
+                print ("fail: capture action: %s" % str(n))
+        if possible_recruits.__len__() > 0:
             n = random.randint(0, possible_recruits.__len__() - 1)
-            action_func.append(lambda x: Player.recruit_cultist(x, possible_recruits[n][1]))
-
+            try:
+                action_func.append(lambda x: Player.recruit_cultist(x, possible_recruits[n][1]))
+            except:
+                print ("fail: recruit action: %s" % str(n))
         if action_func.__len__() > 1:
-            while action_success is False:
-                action = random.randint(0, action_func.__len__()-1)
+            action = random.randint(0, action_func.__len__()-1)
+            try:
                 action_success = action_func[action](self)
-                action_func.pop(action)
-                tries += 1
-
-                if tries > 5:
-                    print("cannot complete action!")
-                    self.spend_power(self.power)
-                    action_success = True
+            except:
+                print ("fail: action: %s" % str(action))
+            return action_success
         elif action_func.__len__() <= 0:
             print("No Possible Actions!")
             self.spend_power(self.power)
