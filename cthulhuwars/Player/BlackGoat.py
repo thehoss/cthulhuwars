@@ -15,9 +15,6 @@ from cthulhuwars.Color import TextColor, NodeColor
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
 
-POOL = Zone('Pool')
-
-
 class BlackGoat(Player):
     def __init__(self, home_zone, board, name='The Black Goat'):
         super(BlackGoat, self).__init__(Faction.black_goat, home_zone, board, name)
@@ -54,6 +51,16 @@ class BlackGoat(Player):
         '''
         self._color = TextColor.RED
         self._node_color = NodeColor.RED
+        self.probability_dict = {
+            'capture': 0.3,
+            'build': 0.2,
+            'move': 0.3,
+            'summon': 0.2,
+            'recruit': 0.1,
+            'combat': 0,
+            'awaken': 0,
+            'special': 0
+        }
 
     @property
     def dark_young_in_play(self):
@@ -89,24 +96,52 @@ class BlackGoat(Player):
         n_ghoul = 2
         n_fungi = 4
         for _ in range(n_dark_young):
-            new_dy = DarkYoung(self, POOL)
+            new_dy = DarkYoung(self, self._pool)
             self.add_unit(new_dy)
             self._dark_young.append(new_dy)
 
         for _ in range(n_ghoul):
-            new_g = Ghoul(self, POOL)
+            new_g = Ghoul(self, self._pool)
             self.add_unit(new_g)
             self._ghouls.append(new_g)
 
         for _ in range(n_fungi):
-            new_f = Fungi(self, POOL)
+            new_f = Fungi(self, self._pool)
             self.add_unit(new_f)
             self._fungi.append(new_f)
 
-        self._shub_niggurath = ShubNiggurath(self, POOL)
+        self._shub_niggurath = ShubNiggurath(self, self._pool)
         self.add_unit(self._shub_niggurath)
         self._goo.append(self._shub_niggurath)
         self._monsters.append(self._shub_niggurath)
+
+    def find_build_actions(self):
+        build_actions = []
+        builders = self.cultists_in_play
+        if self.spell_red_sign is True:
+            builders = builders+self._dark_young
+        if self.power >= 3:
+            for cultist in builders:
+                if cultist.unit_state is UnitState.in_play:
+                    if cultist.gate_state is GateState.noGate and cultist.unit_zone.gate_state is GateState.noGate:
+                        build_actions.append((cultist, cultist.unit_zone, None))
+        return build_actions
+
+    def capture_gate(self, unit):
+        can_capture = False
+        if unit.unit_type is UnitType.cultist:
+            can_capture = True
+        if self.spell_red_sign and unit.unit_type is UnitType.dark_young:
+            can_capture = True
+
+        if can_capture is True:
+            if unit.gate_state is not GateState.occupied:
+                if unit.unit_zone.gate_state is GateState.emptyGate:
+                    unit.set_unit_gate_state(GateState.occupied)
+                    unit.unit_zone.set_gate_unit(unit)
+                    self._current_gates += 1
+                    return True
+        return False
 
     def summon_fungi(self, unit_zone):
         unit_cost = 2
@@ -264,36 +299,17 @@ class BlackGoat(Player):
         else:
             return False
 
-    def summon_action(self):
-        summoners = self._cultists
-        '''
-        SPELL - THE RED SIGN
-        If a dark young is occupying a gate it can summon creatures
-        '''
-        if self.spell_red_sign is True:
-            summoners.append(self._dark_young)
-
-        summon_function = [
-            self.summon_dark_young,
-            self.summon_fungi,
-            self.summon_ghoul,
-            self.summon_shub_niggurath]
-
-        for summoner in summoners:
-            if summoner.gate_state is GateState.occupied and summoner.unit_state is UnitState.in_play:
-                unit_zone = summoner.unit_zone
-                if unit_zone is not None:
-                    '''RANDOM_PLAYOUT - summon a random critter  *only black goat can do this*'''
-                    while True:
-                        try:
-                            n = random.randint(0, summon_function.__len__() - 1)
-                            if not summon_function[n](unit_zone):
-                                summon_function.pop(n)
-                                return True
-                            else:
-                                break
-                        except ValueError:
-                            break
+    def summon_action(self, monster, unit_zone):
+        assert isinstance(monster, Unit)
+        if monster.unit_state is UnitState.in_reserve:
+            if monster.unit_type is UnitType.dark_young:
+                return self.summon_dark_young(unit_zone)
+            if monster.unit_type is UnitType.fungi:
+                return self.summon_fungi(unit_zone)
+            if monster.unit_type is UnitType.ghoul:
+                return self.summon_ghoul(unit_zone)
+            if monster.unit_type is UnitType.shub_niggurath:
+                return self.summon_shub_niggurath(unit_zone)
         return False
 
     def recompute_power(self):

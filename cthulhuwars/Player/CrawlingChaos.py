@@ -12,9 +12,6 @@ from cthulhuwars.Maps import Map
 from cthulhuwars.DiceRoller import DiceRoller
 from cthulhuwars.Color import TextColor, NodeColor
 
-POOL = Zone('Pool')
-
-
 class CrawlingChaos(Player):
     def __init__(self, home_zone, board, name='The Crawling Chaos'):
         super(CrawlingChaos, self).__init__(Faction.crawling_chaos, home_zone, board, name)
@@ -76,21 +73,21 @@ class CrawlingChaos(Player):
         n_flying_polyp = 3
         n_hunting_horror = 2
         for _ in range(n_nightgaunt):
-            new_ng = Nightgaunt(self, POOL)
+            new_ng = Nightgaunt(self, self._pool)
             self.add_unit(new_ng)
             self._nightgaunt.append(new_ng)
 
         for _ in range(n_flying_polyp):
-            new_fp = FlyingPolyp(self, POOL)
+            new_fp = FlyingPolyp(self, self._pool)
             self.add_unit(new_fp)
             self._flying_polyp.append(new_fp)
 
         for _ in range(n_hunting_horror):
-            new_hh = HuntingHorror(self, POOL)
+            new_hh = HuntingHorror(self, self._pool)
             self.add_unit(new_hh)
             self._hunting_horror.append(new_hh)
 
-        self._nyarlathotep = Nyarlathotep(self, POOL)
+        self._nyarlathotep = Nyarlathotep(self, self._pool)
         self.add_unit(self._nyarlathotep)
 
     def summon_nightgaunt(self, unit_zone):
@@ -203,34 +200,19 @@ class CrawlingChaos(Player):
         if not self._spell_requirment_met[5] and self._goo.__len__() > 0:
             self._spell_requirment_met[5] = True
 
-    '''
-    def summon_action(self):
-        unit_zone = None
-
-        summon_function = [
-                  self.summon_nightgaunt,
-                  self.summon_flying_polyp,
-                  self.summon_hunting_horror,
-                  self.summon_nyarlathotep]
-
-        for cultist in self._cultists:
-            if cultist.gate_state is GateState.occupied:
-                unit_zone = cultist.unit_zone
-
-        if unit_zone is not None:
-            #RANDOM_PLAYOUT
-            while True:
-                try:
-                    n = random.randint(0, summon_function.__len__() - 1)
-                    if not summon_function[n](unit_zone):
-                        summon_function.pop(n)
-                        return True
-                    else:
-                        break
-                except ValueError:
-                    break
+    def summon_action(self, monster, unit_zone):
+        assert isinstance(monster, Unit)
+        if monster.unit_state is UnitState.in_reserve:
+            if monster.unit_type is UnitType.flying_polyp:
+                return self.summon_flying_polyp(unit_zone)
+            if monster.unit_type is UnitType.hunting_horror:
+                return self.summon_hunting_horror(unit_zone)
+            if monster.unit_type is UnitType.nightgaunt:
+                return self.summon_nightgaunt(unit_zone)
+            if monster.unit_type is UnitType.nyarlathotep:
+                return self.summon_nyarlathotep(unit_zone)
         return False
-    '''
+
 
 def recompute_power(self):
     super(CrawlingChaos, self).recompute_power()

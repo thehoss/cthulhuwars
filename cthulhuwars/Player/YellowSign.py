@@ -7,8 +7,6 @@ from cthulhuwars.Color import TextColor, NodeColor
 # Yellow Sign
 # Starts in Europe
 
-POOL = Zone('Pool')
-
 class YellowSign(Player):
     def __init__(self, home_zone, board, name='The Yellow Sign'):
         super(YellowSign, self).__init__(Faction.yellow_sign, home_zone, board, name)
@@ -37,21 +35,21 @@ class YellowSign(Player):
         n_byakhee = 4
 
         for _ in range(n_undead):
-            new_u = Undead(self, POOL)
+            new_u = Undead(self, self._pool)
             self.add_unit(new_u)
             self._undead.append(new_u)
 
         for _ in range(n_byakhee):
-            new_b = Byakhee(self, POOL)
+            new_b = Byakhee(self, self._pool)
             self.add_unit(new_b)
             self._byakhee.append(new_b)
 
-        self._hastur = Hastur(self, POOL)
+        self._hastur = Hastur(self, self._pool)
         self.add_unit(self._hastur)
         self._goo.append(self._hastur)
         self._monsters.append(self._hastur)
 
-        self._king_in_yellow = KingInYellow(self, POOL)
+        self._king_in_yellow = KingInYellow(self, self._pool)
         self.add_unit(self._king_in_yellow)
         self._goo.append(self._king_in_yellow)
         self._monsters.append(self._king_in_yellow)

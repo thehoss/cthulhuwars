@@ -28,7 +28,13 @@ class Zone:
     def set_gate_state(self, gateState):
         self.gate_state = gateState
 
+    def clear_gate_state(self):
+        if self.gate_state is GateState.occupied:
+            self.gate_state = GateState.emptyGate
+            self.gate_unit = None
+
     def set_gate_unit(self, unit):
+        self.set_gate_state(GateState.occupied)
         self.gate_unit = unit
 
     def add_unit(self, unit):

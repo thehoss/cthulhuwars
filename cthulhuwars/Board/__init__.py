@@ -5,8 +5,7 @@ if __name__ == "__main__":
     B.build_map()
     B.create_players()
     B.start()
-    B.print_state()
-    B.render_map('play.1001')
+    #B.render_map('play.1001')
     i = 1
     num_rounds = 4
     for r in range(num_rounds):
