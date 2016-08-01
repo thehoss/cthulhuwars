@@ -1,0 +1,1279 @@
+### exported: Mon Aug  1 13:09:31 2016
+### from:     Arnold 4.2.14.2 darwin clang-3.8.0 oiio-1.5.24 rlm-12.0.2 2016/07/15 13:02:21
+
+
+
+options
+{
+ AA_samples 3
+ outputs "RGBA RGBA scenefilter scenerender"
+ xres 960
+ yres 540
+ texture_searchpath "C:/Users/Adam Martinez/PycharmProjects/cthulhuwars/tex"
+ camera "theCamera"
+ background "sky_env"
+ texture_gamma 2.20000005
+ light_gamma 2.20000005
+ shader_gamma 2.20000005
+ GI_diffuse_depth 1
+ GI_glossy_depth 1
+}
+
+persp_camera
+{
+ name theCamera
+ fov 100
+ matrix
+ 0.768283546 0 -0.640109718 0
+ -0.426140219 0.746192694 -0.511469364 0
+ 0.477645189 0.66573 0.573287547 0
+ 1.36623037 1.57795513 1.57900488 1
+}
+
+skydome_light
+{
+ name skydome
+ format "latlong"
+ color sky_image
+ exposure 1.5
+}
+
+sky
+{
+ name sky_env
+ color sky_image
+ format "latlong"
+}
+
+image
+{
+ name sky_image
+ filename "CGSkies_0061_free.tx"
+ multiply 1 1 1
+}
+
+driver_png
+{
+ name scenerender
+ filename "play.1001.png"
+}
+
+gaussian_filter
+{
+ name scenefilter
+ width 3
+}
+
+polymesh
+{
+ name west
+ nsides 4
+ vidxs 4 1 UINT
+0 1 2 3
+ nidxs 4 1 UINT
+0 1 2 3
+ uvidxs 4 1 UINT
+3 0 1 2
+ vlist 4 1 b85POINT
+aRT=dzaRT=daRT=dzyyzyyzaRT=d
+ nlist 0 1 VECTOR
+
+ uvlist 4 1 POINT2
+0 0 1 0 1 1 0 1
+ smoothing on
+ visibility 255
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -1 0 0 1
+ shader "aiUtility_west"
+}
+
+utility
+{
+ name aiUtility_west
+ shade_mode "ambocc"
+ color aiImage_west
+}
+
+image
+{
+ name aiImage_west
+ filename "earth3PWH.jpg"
+}
+
+polymesh
+{
+ name east
+ nsides 4
+ vidxs 4 1 UINT
+0 1 2 3
+ nidxs 4 1 UINT
+0 1 2 3
+ uvidxs 4 1 UINT
+3 0 1 2
+ vlist 4 1 b85POINT
+aRT=dzaRT=daRT=dzyyzyyzaRT=d
+ nlist 0 1 VECTOR
+
+ uvlist 4 1 POINT2
+0 0 1 0 1 1 0 1
+ smoothing on
+ visibility 255
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1 0 0 1
+ shader "aiUtility_east"
+}
+
+utility
+{
+ name aiUtility_east
+ shade_mode "ambocc"
+ color aiImage_east
+}
+
+image
+{
+ name aiImage_east
+ filename "earth5PEH.jpg"
+}
+
+sphere
+{
+ name "South America East"
+ center -0.479999989 0.0250000004 0.379999995
+ radius 0.0500000007
+ shader "sphere_mtl_South America East"
+}
+
+standard
+{
+ name "sphere_mtl_South America East"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "North Atlantic"
+ center -0.460000008 0.0250000004 -0.140000001
+ radius 0.0500000007
+ shader "sphere_mtl_North Atlantic"
+}
+
+standard
+{
+ name "sphere_mtl_North Atlantic"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "North America West"
+ center -1.25999999 0.0250000004 -0.5
+ radius 0.0500000007
+ shader "sphere_mtl_North America West"
+}
+
+standard
+{
+ name "sphere_mtl_North America West"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "South Asia"
+ center 1.70000005 0.0250000004 -0.100000001
+ radius 0.0500000007
+ shader "sphere_mtl_South Asia"
+}
+
+standard
+{
+ name "sphere_mtl_South Asia"
+ Kd 2
+ Kd_color 1 1 1
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0000_mtl_The Crawling Chaos_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0000_The Crawling Chaos_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.70000005 0.0149999997 -8.32667268e-17 1
+ shader "0000_mtl_The Crawling Chaos_cultist"
+}
+
+standard
+{
+ name "0001_mtl_The Crawling Chaos_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0001_The Crawling Chaos_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.78414714 0.0149999997 -0.0459697694 1
+ shader "0001_mtl_The Crawling Chaos_cultist"
+}
+
+standard
+{
+ name "0002_mtl_The Crawling Chaos_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0002_The Crawling Chaos_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.79092979 0.0149999997 -0.14161469 1
+ shader "0002_mtl_The Crawling Chaos_cultist"
+}
+
+standard
+{
+ name "0003_mtl_The Crawling Chaos_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0003_The Crawling Chaos_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.71411204 0.0149999997 -0.198999256 1
+ shader "0003_mtl_The Crawling Chaos_cultist"
+}
+
+standard
+{
+ name "0004_mtl_The Crawling Chaos_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0004_The Crawling Chaos_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.62431979 0.0149999997 -0.165364355 1
+ shader "0004_mtl_The Crawling Chaos_cultist"
+}
+
+standard
+{
+ name "0005_mtl_The Crawling Chaos_nightgaunt"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0005_The Crawling Chaos_nightgaunt"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.60410762 0.0149999997 -0.0716337785 1
+ shader "0005_mtl_The Crawling Chaos_nightgaunt"
+}
+
+standard
+{
+ name "0006_mtl_The Crawling Chaos_flying polyp"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0006_The Crawling Chaos_flying polyp"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.67205846 0.0149999997 -0.00398297142 1
+ shader "0006_mtl_The Crawling Chaos_flying polyp"
+}
+
+standard
+{
+ name "0007_mtl_The Black Goat_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.200000003 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0007_The Black Goat_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.76569867 0.0149999997 -0.0246097744 1
+ shader "0007_mtl_The Black Goat_cultist"
+}
+
+standard
+{
+ name "0008_mtl_The Crawling Chaos_nightgaunt"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0008_The Crawling Chaos_nightgaunt"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.79893577 0.0149999997 -0.114550002 1
+ shader "0008_mtl_The Crawling Chaos_nightgaunt"
+}
+
+sphere
+{
+ name Europe
+ center 0.74000001 0.0250000004 -0.419999987
+ radius 0.0500000007
+ shader "sphere_mtl_Europe"
+}
+
+standard
+{
+ name sphere_mtl_Europe
+ Kd 2
+ Kd_color 1 1 1
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0009_mtl_The Yellow Sign_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0009_The Yellow Sign_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.74000001 0.0149999997 -0.319999993 1
+ shader "0009_mtl_The Yellow Sign_cultist"
+}
+
+standard
+{
+ name "0010_mtl_The Yellow Sign_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0010_The Yellow Sign_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.824147105 0.0149999997 -0.365969777 1
+ shader "0010_mtl_The Yellow Sign_cultist"
+}
+
+standard
+{
+ name "0011_mtl_The Yellow Sign_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0011_The Yellow Sign_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.830929756 0.0149999997 -0.461614698 1
+ shader "0011_mtl_The Yellow Sign_cultist"
+}
+
+standard
+{
+ name "0012_mtl_The Yellow Sign_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0012_The Yellow Sign_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.754112005 0.0149999997 -0.518999279 1
+ shader "0012_mtl_The Yellow Sign_cultist"
+}
+
+standard
+{
+ name "0013_mtl_The Yellow Sign_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0013_The Yellow Sign_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.664319754 0.0149999997 -0.485364348 1
+ shader "0013_mtl_The Yellow Sign_cultist"
+}
+
+standard
+{
+ name "0014_mtl_The Yellow Sign_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0014_The Yellow Sign_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.64410758 0.0149999997 -0.391633779 1
+ shader "0014_mtl_The Yellow Sign_cultist"
+}
+
+standard
+{
+ name "0015_mtl_The Yellow Sign_undead"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0015_The Yellow Sign_undead"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.712058425 0.0149999997 -0.323982984 1
+ shader "0015_mtl_The Yellow Sign_undead"
+}
+
+standard
+{
+ name "0016_mtl_The Yellow Sign_byakhee"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0016_The Yellow Sign_byakhee"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.805698633 0.0149999997 -0.344609767 1
+ shader "0016_mtl_The Yellow Sign_byakhee"
+}
+
+standard
+{
+ name "0017_mtl_The Yellow Sign_king in yellow"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0017_The Yellow Sign_king in yellow"
+ radius 0.0549999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.838935852 0.0149999997 -0.434550017 1
+ shader "0017_mtl_The Yellow Sign_king in yellow"
+}
+
+standard
+{
+ name "0018_mtl_The Yellow Sign_undead"
+ Kd 2
+ Kd_color 0.699999988 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0018_The Yellow Sign_undead"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.781211853 0.0149999997 -0.511113048 1
+ shader "0018_mtl_The Yellow Sign_undead"
+}
+
+sphere
+{
+ name Australia
+ center -1.79999995 0.0250000004 0.600000024
+ radius 0.0500000007
+ shader "sphere_mtl_Australia"
+}
+
+standard
+{
+ name sphere_mtl_Australia
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "South Pacific"
+ center -1.05999994 0.0250000004 0.819999993
+ radius 0.0500000007
+ shader "sphere_mtl_South Pacific"
+}
+
+standard
+{
+ name "sphere_mtl_South Pacific"
+ Kd 2
+ Kd_color 1 1 1
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0019_mtl_Great Cthulhu_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0019_Great Cthulhu_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -1.05999994 0.0149999997 0.920000017 1
+ shader "0019_mtl_Great Cthulhu_cultist"
+}
+
+standard
+{
+ name "0020_mtl_Great Cthulhu_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0020_Great Cthulhu_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -0.975852907 0.0149999997 0.874030232 1
+ shader "0020_mtl_Great Cthulhu_cultist"
+}
+
+standard
+{
+ name "0021_mtl_Great Cthulhu_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0021_Great Cthulhu_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -0.969070256 0.0149999997 0.778385341 1
+ shader "0021_mtl_Great Cthulhu_cultist"
+}
+
+standard
+{
+ name "0022_mtl_Great Cthulhu_star spawn"
+ Kd 2
+ Kd_color 0.200000003 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0022_Great Cthulhu_star spawn"
+ radius 0.0299999993
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -1.04588795 0.0149999997 0.721000731 1
+ shader "0022_mtl_Great Cthulhu_star spawn"
+}
+
+sphere
+{
+ name "South America West"
+ center -0.800000012 0.0250000004 0.419999987
+ radius 0.0500000007
+ shader "sphere_mtl_South America West"
+}
+
+standard
+{
+ name "sphere_mtl_South America West"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0023_mtl_Great Cthulhu_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0023_Great Cthulhu_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -0.800000012 0.0149999997 0.519999981 1
+ shader "0023_mtl_Great Cthulhu_cultist"
+}
+
+sphere
+{
+ name "North America East"
+ center -0.720000029 0.0250000004 -0.439999998
+ radius 0.0500000007
+ shader "sphere_mtl_North America East"
+}
+
+standard
+{
+ name "sphere_mtl_North America East"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name Scandinavia
+ center 0.75999999 0.0250000004 -0.74000001
+ radius 0.0500000007
+ shader "sphere_mtl_Scandinavia"
+}
+
+standard
+{
+ name sphere_mtl_Scandinavia
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "Arctic Ocean"
+ center 0.0599999987 0.0250000004 -0.800000012
+ radius 0.0500000007
+ shader "sphere_mtl_Arctic Ocean"
+}
+
+standard
+{
+ name "sphere_mtl_Arctic Ocean"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "North Asia"
+ center 1.5 0.0250000004 -0.579999983
+ radius 0.0500000007
+ shader "sphere_mtl_North Asia"
+}
+
+standard
+{
+ name "sphere_mtl_North Asia"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "North Pacific"
+ center -1.79999995 0.0250000004 -0.0799999982
+ radius 0.0500000007
+ shader "sphere_mtl_North Pacific"
+}
+
+standard
+{
+ name "sphere_mtl_North Pacific"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "New Zealand"
+ center -1.38 0.0250000004 0.5
+ radius 0.0500000007
+ shader "sphere_mtl_New Zealand"
+}
+
+standard
+{
+ name "sphere_mtl_New Zealand"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "East Africa"
+ center 0.860000014 0.0250000004 0.5
+ radius 0.0500000007
+ shader "sphere_mtl_East Africa"
+}
+
+standard
+{
+ name "sphere_mtl_East Africa"
+ Kd 2
+ Kd_color 1 1 1
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0024_mtl_The Black Goat_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.200000003 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0024_The Black Goat_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.860000014 0.0149999997 0.600000024 1
+ shader "0024_mtl_The Black Goat_cultist"
+}
+
+standard
+{
+ name "0025_mtl_The Black Goat_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.200000003 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0025_The Black Goat_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.94414711 0.0149999997 0.55403024 1
+ shader "0025_mtl_The Black Goat_cultist"
+}
+
+sphere
+{
+ name "South Atlantic"
+ center -0.100000001 0.0250000004 0.519999981
+ radius 0.0500000007
+ shader "sphere_mtl_South Atlantic"
+}
+
+standard
+{
+ name "sphere_mtl_South Atlantic"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0026_mtl_The Black Goat_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.200000003 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0026_The Black Goat_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -0.100000001 0.0149999997 0.620000005 1
+ shader "0026_mtl_The Black Goat_cultist"
+}
+
+sphere
+{
+ name "Central America"
+ center -1.32000005 0.0250000004 -0.100000001
+ radius 0.0500000007
+ shader "sphere_mtl_Central America"
+}
+
+standard
+{
+ name "sphere_mtl_Central America"
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0027_mtl_Great Cthulhu_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0027_Great Cthulhu_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ -1.32000005 0.0149999997 -8.32667268e-17 1
+ shader "0027_mtl_Great Cthulhu_cultist"
+}
+
+sphere
+{
+ name "Indian Ocean"
+ center 1.38 0.0250000004 0.579999983
+ radius 0.0500000007
+ shader "sphere_mtl_Indian Ocean"
+}
+
+standard
+{
+ name "sphere_mtl_Indian Ocean"
+ Kd 2
+ Kd_color 1 1 1
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0028_mtl_Great Cthulhu_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.699999988 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0028_Great Cthulhu_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 1.38 0.0149999997 0.680000007 1
+ shader "0028_mtl_Great Cthulhu_cultist"
+}
+
+sphere
+{
+ name Antarctica
+ center -0.0500000007 0.0250000004 0.879999995
+ radius 0.0500000007
+ shader "sphere_mtl_Antarctica"
+}
+
+standard
+{
+ name sphere_mtl_Antarctica
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "West Africa"
+ center 0.419999987 0.0250000004 0.0599999987
+ radius 0.0500000007
+ shader "sphere_mtl_West Africa"
+}
+
+standard
+{
+ name "sphere_mtl_West Africa"
+ Kd 2
+ Kd_color 1 1 1
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+standard
+{
+ name "0029_mtl_The Black Goat_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.200000003 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0029_The Black Goat_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.419999987 0.0149999997 0.159999996 1
+ shader "0029_mtl_The Black Goat_cultist"
+}
+
+standard
+{
+ name "0030_mtl_The Black Goat_cultist"
+ Kd 2
+ Kd_color 0.699999988 0.200000003 0.200000003
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0030_The Black Goat_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.504147112 0.0149999997 0.114030227 1
+ shader "0030_mtl_The Black Goat_cultist"
+}
+
+standard
+{
+ name "0031_mtl_The Crawling Chaos_cultist"
+ Kd 2
+ Kd_color 0.200000003 0.200000003 0.699999988
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
+sphere
+{
+ name "0031_The Crawling Chaos_cultist"
+ radius 0.0149999997
+ matrix
+ 1 0 0 0
+ 0 1 0 0
+ 0 0 1 0
+ 0.510929763 0.0149999997 0.0183853172 1
+ shader "0031_mtl_The Crawling Chaos_cultist"
+}
+
+sphere
+{
+ name Arabia
+ center 1.12 0.0250000004 0.0599999987
+ radius 0.0500000007
+ shader "sphere_mtl_Arabia"
+}
+
+standard
+{
+ name sphere_mtl_Arabia
+ Kd 2
+ Kd_color 0 0 0
+ Ks 1
+ specular_roughness 0.150000006
+ specular_Fresnel on
+ Ksn 0.400000006
+}
+
