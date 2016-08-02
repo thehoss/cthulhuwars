@@ -252,7 +252,7 @@ class BlackGoat(Player):
         # As your Action for a Round, eliminate two of your Cultists
         # Share Areas with all enemies (i.e. both you and your enemy have Units there.)
         # Awaken Shub-Niggurath
-        nzones = self.occupied_zones()
+        nzones = len(self.occupied_zones)
         if nzones >= 4 and self.units_in_four_zones is False:
             self.units_in_four_zones = True
             # pick a spell
@@ -270,9 +270,8 @@ class BlackGoat(Player):
             shared = True
             for player in self._board.players:
                 assert isinstance(player, Player)
-                player.occupied_zones()
-                player_zones = player._occupied_zones
-                if len(set(self._occupied_zones).intersection(player_zones)) <= 0:
+                player_zones = player.occupied_zones
+                if len(set(self.occupied_zones).intersection(player_zones)) <= 0:
                     shared = False
             if shared is True:
                 self.share_zones_with_all_factions = True
