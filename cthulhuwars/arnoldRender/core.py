@@ -52,11 +52,14 @@ class ArnoldRender(object):
         shader_name = str(prefix) + '_mtl_' + str(render_def['name'][0])
         AiNodeSetStr(shader, 'name', shader_name )
         AiNodeSetRGB(shader, 'Kd_color', unit.faction._node_color[0], unit.faction._node_color[1], unit.faction._node_color[2])
-        AiNodeSetFlt(shader, 'Kd', 2)
+        AiNodeSetFlt(shader, 'Kd', 0.2)
         AiNodeSetFlt(shader, 'Ks', 1)
-        AiNodeSetFlt(shader, 'specular_roughness', 0.45)
+        AiNodeSetFlt(shader, 'specular_roughness', 0.35)
         AiNodeSetBool(shader, 'specular_Fresnel', True)
-        AiNodeSetFlt(shader, 'Ksn', 0.1)
+        AiNodeSetFlt(shader, 'Ksn', 0.015)
+        AiNodeSetFlt(shader, 'Ksss', 0.8)
+        AiNodeSetRGB(shader, 'Ksss_color', unit.faction._node_color[0], unit.faction._node_color[1], unit.faction._node_color[2])
+        AiNodeSetRGB(shader, 'sss_radius', 0.03, 0.03, 0.03)
 
         unit_obj = AiNode(render_def['nodetype'][0])
         AiNodeSetStr(unit_obj, 'name', prefix + '_' + str(render_def['name'][0]))
@@ -100,6 +103,7 @@ class ArnoldRender(object):
 
     def render_gate(self, name, centerX, centerY, centerZ):
         polymesh = AiNode('polymesh')
+        gate_size = 0.08
         AiNodeSetStr(polymesh, "name", name)
         nsides = [4]
         AiNodeSetArray(polymesh, "nsides", AiArrayConvert(len(nsides), 1, AI_TYPE_UINT, (c_uint * len(nsides))(*nsides)))
@@ -107,7 +111,7 @@ class ArnoldRender(object):
         AiNodeSetArray(polymesh, "vidxs", AiArrayConvert(len(vidxs), 1, AI_TYPE_UINT, (c_uint * len(vidxs))(*vidxs)))
         nidxs = [0, 1, 2, 3]
         AiNodeSetArray(polymesh, "nidxs", AiArrayConvert(len(nidxs), 1, AI_TYPE_UINT, (c_uint * len(nidxs))(*nidxs)))
-        vlist = [-0.05, 0, -0.05, -0.05, 0, 0.05, 0.05, 0, 0.05, 0.05, 0, -0.05]
+        vlist = [-1.0 * gate_size, 0.0, -1.0 * gate_size, -1.0 * gate_size, 0.0, 1.0 * gate_size, 1.0 * gate_size, 0.0, 1.0 * gate_size, 1.0 * gate_size, 0.0, -1.0 * gate_size]
         AiNodeSetArray(polymesh, "vlist", AiArrayConvert(len(vlist), 1, AI_TYPE_FLOAT, (c_float * len(vlist))(*vlist)))
         nlist = [1]
         AiNodeSetArray(polymesh, "nlist", AiArrayConvert(len(nlist), 1, AI_TYPE_FLOAT, (c_float * len(nlist))(*nlist)))
@@ -137,7 +141,7 @@ class ArnoldRender(object):
         opacity = AiNode("image")
 
         AiNodeSetStr(shader, "name", 'aiUtility_%s'%name)
-        AiNodeSetInt(shader, "shade_mode", 3)
+        AiNodeSetInt(shader, "shade_mode", 1)
         AiNodeSetStr(image, "name", 'aiImage_C_%s'%name)
         AiNodeSetStr(image, "filename", 'gate.png')
 
@@ -198,7 +202,7 @@ class ArnoldRender(object):
         image = AiNode("image")
 
         AiNodeSetStr(shader, "name", 'aiUtility_%s'%name)
-        AiNodeSetInt(shader, "shade_mode", 3)
+        AiNodeSetInt(shader, "shade_mode", 1)
         AiNodeSetStr(image, "name", 'aiImage_%s'%name)
         AiNodeSetStr(image, "filename", texture)
 
@@ -235,7 +239,7 @@ class ArnoldRender(object):
         AiNodeSetFlt(camera, 'fov', 100)
 
         skydome = AiNode("skydome_light")
-        AiNodeSetFlt(skydome, 'exposure', 1.5)
+        AiNodeSetFlt(skydome, 'exposure', 3.5)
         sky     = AiNode("sky")
         sky_image = AiNode("image")
 
@@ -290,7 +294,7 @@ class ArnoldRender(object):
             for unit in zone.occupancy_list:
                 assert isinstance(unit, Unit)
                 if unit.gate_state is GateState.occupied:
-                    unitspherepos = (spherepos[0], 0.052, spherepos[2])
+                    unitspherepos = (spherepos[0], 0.002, spherepos[2])
                 else:
                     unitspherepos = (
                                      spherepos[0] + 0.1*(math.sin(p)),

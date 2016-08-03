@@ -174,6 +174,17 @@ class Player(object):
         return cultists_in_play
 
     '''
+    units_in_play property
+    returns a list of units that are currently on the map
+    '''
+    @property
+    def units_in_play(self):
+        units_in_play = []
+        for c in self._units:
+            if c.unit_zone is not self._pool and c.unit_state is UnitState.in_play:
+                units_in_play.append(c)
+        return units_in_play
+    '''
     captured_cultists
     return the number of cultists captured by this player
     '''
@@ -209,7 +220,7 @@ class Player(object):
         return False
     '''
     capture_gate
-    cultist unit in a zone with an unoccupied gate can take control of te gate at no cost
+    cultist unit in a zone with an unoccupied gate can take control of the gate at no cost
     BlackGoat overrides this method to account for Dark Young with Red Sign spell
     '''
     def capture_gate(self, unit):
@@ -224,6 +235,16 @@ class Player(object):
                         unit.faction._name, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
                     return True
         return False
+
+    '''
+    free_action
+    the free action method implements logic that costs 0 power and is labeled a free action
+    It runs before and after every turn
+    '''
+    def free_action(self):
+        for unit in self.units_in_play:
+            self.capture_gate(unit)
+
     '''
     add_unit
     adds a new unit to the player pool and updates _monsters and _goo lists
@@ -345,11 +366,12 @@ class Player(object):
                     action_success = self.capture_unit(action_params[0], action_params[1], action_params[2])
                 if key_list[action] is 'move':
                     # TODO:  allow multiple moves
-                    move_scores = [ clamp(i[3], 0, 10) for i in possible_moves]
-                    move_scores_norm = [float(i) / sum(move_scores) for i in move_scores]
-                    move_choice = choice(range(len(possible_moves)), 1, p=move_scores_norm )[0]
-
-                    action_success = self.move_action(possible_moves[move_choice][0], possible_moves[move_choice][1], possible_moves[move_choice][2])
+                    move_scores = [ clamp(float(i[3]), 0, 10) for i in possible_moves]
+                    move_total = sum(move_scores)
+                    if move_total > 0:
+                        move_scores_norm = [float(s) / move_total for s in move_scores]
+                        move_choice = choice(range(len(possible_moves)), 1, p=move_scores_norm )[0]
+                        action_success = self.move_action(possible_moves[move_choice][0], possible_moves[move_choice][1], possible_moves[move_choice][2])
                 if key_list[action] is 'build':
                     action_success = self.build_gate_action(action_params[0], action_params[1])
                 if key_list[action] is 'summon':
@@ -362,7 +384,8 @@ class Player(object):
                 print("No Possible Actions!")
                 self.spend_power(self.power)
                 action_success = True
-                return False
+        self.free_action()
+
 
     '''
     find_recruit_actions

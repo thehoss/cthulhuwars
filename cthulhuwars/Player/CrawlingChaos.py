@@ -38,7 +38,6 @@ class CrawlingChaos(Player):
         '''
         self._color = TextColor.BLUE
         self._node_color = NodeColor.BLUE
-
         self.awakened_nyarlathotep = False
 
     @property
@@ -143,7 +142,7 @@ class CrawlingChaos(Player):
                     self._nyarlathotep.set_unit_zone(unit_zone)
                     self._nyarlathotep.set_unit_state(UnitState.in_play)
                     self.spend_power(unit_cost)
-                    if not self.awakend_nyarlathotep:
+                    if not self.awakened_nyarlathotep:
                         self.awakened_nyarlathotep = True
                         self.take_new_spell()
                     print(self._color + TextColor.BOLD + 'Nyarlathotep Successfully Summoned!' + TextColor.ENDC)

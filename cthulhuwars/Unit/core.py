@@ -128,6 +128,14 @@ class Cultist(Unit):
     def __init__(self, faction, unit_zone, base_movement, unit_state):
         super(Cultist, self).__init__(faction, unit_zone, UnitType.cultist, 0, 1, base_movement, unit_state)
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["procedural"],
+            "name": ["cultist_object"],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
+        }
+        return render_definition
 
 class Monster(Unit):
     def __init__(self, faction, unit_zone, unit_state):

@@ -8,7 +8,7 @@ from cthulhuwars.Color import TextColor, NodeColor
 from cthulhuwars.DiceRoller import DiceRoller
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
-
+from cthulhuwars.Maps import Map
 
 class Cthulhu(Player):
     def __init__(self, home_zone, board, name='Great Cthulhu'):
@@ -120,6 +120,50 @@ class Cthulhu(Player):
             if monster.unit_type is UnitType.star_spawn:
                 return self.summon_starspawn(unit_zone)
         return False
+
+    '''
+    find_move_actions
+    returns a list of all possible move actions based on current state of units on the board
+    This method scores each move according to desirability in the field
+    this list is a tuple: (the unit that can move, the zone in which the unit currently resides, the destination zone, score)
+    '''
+    def find_move_actions(self, map):
+        assert isinstance(map, Map)
+        # we need to know who can move and to where
+        # power determines how many moves we can make
+        # after moving we also need to check for spell book
+        # availability
+        all_possible_moves = []
+        for unit in self._units:
+            if self.power >= 1:
+                if unit.unit_state is UnitState.in_play and unit.gate_state is not GateState.occupied:
+                    score = 0
+                    assert isinstance(unit, Unit)
+
+                    # build list of possible moves to neighboring zones
+                    neighbors = map.find_neighbors(unit.unit_zone.name, unit.base_movement)
+                    for n in neighbors:
+                        destination_zone = map.zone_by_name(n)
+                        assert isinstance(destination_zone, Zone)
+                        if destination_zone.gate_state is GateState.emptyGate:
+                            score += 2
+                        if destination_zone.is_ocean is True:
+                            score += 1
+                        for occupant in destination_zone.occupancy_list:
+                            assert isinstance(occupant, Unit)
+                            if occupant.unit_type is UnitType.cultist and unit.unit_type is not UnitType.cultist:
+                                score += 1
+                            if occupant.unit_type is not UnitType.cultist:
+                                score -= 1
+                        if len(destination_zone.occupancy_list) == 0:
+                            score += 1
+
+                        all_possible_moves.append((unit, unit.unit_zone, destination_zone, score))
+
+                elif unit.gate_state is GateState.occupied:
+                    print(self._color + '%s %s in %s is maintaining a gate' % (
+                        self._faction.value, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
+        return all_possible_moves
 
 class DeepOne(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
