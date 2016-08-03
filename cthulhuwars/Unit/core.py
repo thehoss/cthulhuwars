@@ -112,6 +112,10 @@ class Unit(object):
     def set_unit_state(self, unit_state):
         self._unit_state = unit_state
 
+    def return_to_pool(self):
+        self.set_unit_zone(self._faction._pool)
+        self.set_unit_state(UnitState.in_reserve)
+
     def render_unit(self):
         render_definition = {
             "nodetype": ["sphere"],

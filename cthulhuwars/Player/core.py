@@ -260,8 +260,7 @@ class Player(object):
         for captive in self._captured_cultists:
             assert isinstance(captive, Unit)
             self._power += 1
-            captive.set_unit_state(UnitState.in_reserve)
-            captive.set_unit_zone(self._pool)
+            captive.return_to_pool()
             self._captured_cultists.remove(captive)
 
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
