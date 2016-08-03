@@ -39,6 +39,8 @@ class CrawlingChaos(Player):
         self._color = TextColor.BLUE
         self._node_color = NodeColor.BLUE
 
+        self.awakened_nyarlathotep = False
+
     @property
     def nightgaunt_in_play(self):
         result = 0

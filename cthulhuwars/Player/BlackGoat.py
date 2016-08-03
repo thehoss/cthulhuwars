@@ -200,14 +200,14 @@ class BlackGoat(Player):
                     # Per Errata: must have controlled gate and two cultists anywhere
                     # interact with user to determine which cultists to sacrifice
                     # assumes gate occupying cultists will not be sacrificed
-                    if self.current_cultists >= 2:
+                    cultists = self.cultists_in_play
+                    if len(cultists) >= 2:
                         for _ in range(2):
                             kill_list = []
-                            for unit in self._units:
-                                if unit.unit_type is UnitType.cultist and unit.unit_state is UnitState.in_play:
-                                    # TODO: remove occupancy assumption, replace with logic
-                                    if unit.gate_state is not GateState.occupied:
-                                        kill_list.append(unit)
+                            for c in cultists:
+                                # TODO: remove occupancy assumption, replace with logic
+                                # if unit.gate_state is not GateState.occupied:
+                                kill_list.append(c)
                             print(self._color + 'Pick a cultist to sacrifice:')
                             for n in range(len(kill_list)):
                                 print('  [' + str(n) + '] Cultist in %s' % kill_list[n].unit_zone.name)

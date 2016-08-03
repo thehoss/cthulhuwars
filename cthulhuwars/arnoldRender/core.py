@@ -98,6 +98,60 @@ class ArnoldRender(object):
         AiNodeSetFlt(shader, 'Ksn', 0.4)
         AiNodeSetPtr(sphere, "shader", shader)
 
+    def render_gate(self, name, centerX, centerY, centerZ):
+        polymesh = AiNode('polymesh')
+        AiNodeSetStr(polymesh, "name", name)
+        nsides = [4]
+        AiNodeSetArray(polymesh, "nsides", AiArrayConvert(len(nsides), 1, AI_TYPE_UINT, (c_uint * len(nsides))(*nsides)))
+        vidxs = [0, 1, 2, 3]
+        AiNodeSetArray(polymesh, "vidxs", AiArrayConvert(len(vidxs), 1, AI_TYPE_UINT, (c_uint * len(vidxs))(*vidxs)))
+        nidxs = [0, 1, 2, 3]
+        AiNodeSetArray(polymesh, "nidxs", AiArrayConvert(len(nidxs), 1, AI_TYPE_UINT, (c_uint * len(nidxs))(*nidxs)))
+        vlist = [-0.05, 0, -0.05, -0.05, 0, 0.05, 0.05, 0, 0.05, 0.05, 0, -0.05]
+        AiNodeSetArray(polymesh, "vlist", AiArrayConvert(len(vlist), 1, AI_TYPE_FLOAT, (c_float * len(vlist))(*vlist)))
+        nlist = [1]
+        AiNodeSetArray(polymesh, "nlist", AiArrayConvert(len(nlist), 1, AI_TYPE_FLOAT, (c_float * len(nlist))(*nlist)))
+        uvidxs = [3, 0, 1, 2]
+        AiNodeSetArray(polymesh, "uvidxs", AiArrayConvert(len(vidxs), 1, AI_TYPE_UINT, (c_uint * len(uvidxs))(*uvidxs)))
+        uvlist = [0, 0,
+                  1, 0,
+                  1, 1,
+                  0, 1]
+        AiNodeSetArray(polymesh, "uvlist", AiArrayConvert(len(uvlist), 1, AI_TYPE_FLOAT, (c_float * len(uvlist))(*uvlist)))
+
+        m = AtMatrix(1, 0, 0, 0,
+                     0, 1, 0, 0,
+                     0, 0, 1, 0,
+                     0, 0, 0, 1)
+        AiM4Translation(m, AtVector(centerX, centerY, centerZ))
+        am = AiArrayAllocate(1, 1, AI_TYPE_MATRIX)
+        AiArraySetMtx(am, 0, m)
+        AiNodeSetArray(polymesh, "matrix", am)
+        AiNodeSetBool(polymesh, "smoothing", True)
+        AiNodeSetByte(polymesh, "visibility", 255)
+        AiNodeSetBool(polymesh, "opaque", False)
+
+        # Assign a shader to the polymesh node
+        shader = AiNode("utility")
+        image = AiNode("image")
+        opacity = AiNode("image")
+
+        AiNodeSetStr(shader, "name", 'aiUtility_%s'%name)
+        AiNodeSetInt(shader, "shade_mode", 3)
+        AiNodeSetStr(image, "name", 'aiImage_C_%s'%name)
+        AiNodeSetStr(image, "filename", 'gate.png')
+
+        AiNodeSetStr(opacity, "name", 'aiImage_O_%s' % name)
+        AiNodeSetStr(opacity, "filename", 'gate.png')
+        AiNodeSetByte(opacity, "start_channel", AtByte(3))
+        AiNodeSetBool(opacity, "single_channel", True)
+
+        AiNodeLink(image, "color", shader)
+        AiNodeLink(opacity, "opacity", shader)
+
+        AiNodeSetPtr(polymesh, "shader", shader)
+        return True
+
     def _boardHalf(self, name, texture, centerX, centerY, centerZ):
         polymesh = AiNode('polymesh')
         AiNodeSetStr(polymesh, "name", name)
@@ -228,17 +282,15 @@ class ArnoldRender(object):
             pos = self.earth_gate_positions[node]
             zone = map.node[node]['zone']
             assert isinstance(zone, Zone)
-            #spherepos is centerX, centerY, centerZ, radius
-            spherepos = (pos[0]*2 , 0.05, 1.0-(pos[1]*2), 0.05)
-            spherecolor = (0, 0, 0)
+            spherepos = (pos[0]*2 , 0.002, 1.0-(pos[1]*2), 0.05)
+
             if zone.gate_state is not GateState.noGate:
-                spherecolor = (1,1,1)
-            self.nodesphere(node, spherecolor, spherepos)
+                self.render_gate(zone.name.replace(" ","_"), spherepos[0], spherepos[1], spherepos[2])
             p = 0
             for unit in zone.occupancy_list:
                 assert isinstance(unit, Unit)
                 if unit.gate_state is GateState.occupied:
-                    unitspherepos = (spherepos[0], 0.115, spherepos[2])
+                    unitspherepos = (spherepos[0], 0.052, spherepos[2])
                 else:
                     unitspherepos = (
                                      spherepos[0] + 0.1*(math.sin(p)),

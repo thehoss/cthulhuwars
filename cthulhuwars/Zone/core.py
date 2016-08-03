@@ -62,3 +62,4 @@ class Zone:
     def get_zone_state(self):
         zoneState = (self.gate_state, self.gate_unit, self.occupancy_list)
         return zoneState
+
