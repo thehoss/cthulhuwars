@@ -68,6 +68,15 @@ class Undead(Unit):
                 total += 1
         return total
 
+
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.025)]
+        }
+        return render_definition
+
 class Byakhee(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=2):
         super(Byakhee, self).__init__(unit_parent, unit_zone, UnitType.byakhee, combat_power=None, cost=unit_cost,
@@ -81,6 +90,14 @@ class Byakhee(Unit):
                 total += 1
         return total
 
+
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.025)]
+        }
+        return render_definition
 
 class Hastur(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=10):

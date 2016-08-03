@@ -40,7 +40,7 @@ class Board(object):
         self.crawling_chaos = False
         self.yellow_sign = False
         self.__players = []
-        self.__num_players = num_players
+        self.__num_players = int(num_players)
         self._phase = Phase.gather_power
         self._round = 0
 
@@ -50,7 +50,15 @@ class Board(object):
 
     def build_map(self):
         print(TextColor.BOLD + "Building The Map" + TextColor.ENDC)
-        self.__map = Map(self.__num_players, 'earth5P')
+        nplayers = self.__num_players
+        map_type = [
+                     'earth2Pa',
+                     'earth2Pb',
+                     'earth3P',
+                     'earth4Pb',
+                     'earth5P'
+                     ]
+        self.__map = Map(nplayers, map_type[nplayers-1])
 
     def show_map(self, image='image'):
         self.__map.show_map(image)
@@ -135,22 +143,6 @@ class Board(object):
             return True
         else:
             return False
-
-    def test_move_actions(self):
-        for p in self.__players:
-            assert isinstance(p, Player)
-            if p.power is 0:
-                print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
-            else:
-                p.find_move_actions(self.__map)
-
-    def test_summon_actions(self):
-        for p in self.__players:
-            assert isinstance(p, Player)
-            if p.power is 0:
-                print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
-            else:
-                p.summon_action()
 
     def test_actions(self):
 

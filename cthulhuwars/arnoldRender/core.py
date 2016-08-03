@@ -54,9 +54,9 @@ class ArnoldRender(object):
         AiNodeSetRGB(shader, 'Kd_color', unit.faction._node_color[0], unit.faction._node_color[1], unit.faction._node_color[2])
         AiNodeSetFlt(shader, 'Kd', 2)
         AiNodeSetFlt(shader, 'Ks', 1)
-        AiNodeSetFlt(shader, 'specular_roughness', 0.15)
+        AiNodeSetFlt(shader, 'specular_roughness', 0.45)
         AiNodeSetBool(shader, 'specular_Fresnel', True)
-        AiNodeSetFlt(shader, 'Ksn', 0.4)
+        AiNodeSetFlt(shader, 'Ksn', 0.1)
 
         unit_obj = AiNode(render_def['nodetype'][0])
         AiNodeSetStr(unit_obj, 'name', prefix + '_' + str(render_def['name'][0]))
@@ -77,11 +77,10 @@ class ArnoldRender(object):
         AiNodeSetPtr(unit_obj, "shader", shader)
 
         m = AtMatrix()
-        AiM4Translation(m, AtVector(position[0], 0.015, position[2]))
+        AiM4Translation(m, AtVector(position[0], position[1], position[2]))
         am = AiArrayAllocate(1, 1, AI_TYPE_MATRIX)
         AiArraySetMtx(am, 0, m)
         AiNodeSetArray(unit_obj, "matrix", am)
-
 
     def nodesphere(self, name, color, position):
         sphere = AiNode('sphere')
@@ -98,8 +97,6 @@ class ArnoldRender(object):
         AiNodeSetBool(shader, 'specular_Fresnel', True)
         AiNodeSetFlt(shader, 'Ksn', 0.4)
         AiNodeSetPtr(sphere, "shader", shader)
-
-
 
     def _boardHalf(self, name, texture, centerX, centerY, centerZ):
         polymesh = AiNode('polymesh')
@@ -232,26 +229,27 @@ class ArnoldRender(object):
             zone = map.node[node]['zone']
             assert isinstance(zone, Zone)
             #spherepos is centerX, centerY, centerZ, radius
-            spherepos = (pos[0]*2 , 0.025, 1.0-(pos[1]*2), 0.05)
+            spherepos = (pos[0]*2 , 0.05, 1.0-(pos[1]*2), 0.05)
             spherecolor = (0, 0, 0)
             if zone.gate_state is not GateState.noGate:
                 spherecolor = (1,1,1)
             self.nodesphere(node, spherecolor, spherepos)
             p = 0
             for unit in zone.occupancy_list:
-
-                unitspherepos = (
-                                 spherepos[0] + 0.1*(math.sin(p)),
-                                 0,
-                                 spherepos[2] + 0.1*(math.cos(p))
-                                 )
+                assert isinstance(unit, Unit)
+                if unit.gate_state is GateState.occupied:
+                    unitspherepos = (spherepos[0], 0.115, spherepos[2])
+                else:
+                    unitspherepos = (
+                                     spherepos[0] + 0.1*(math.sin(p)),
+                                     0,
+                                     spherepos[2] + 0.1*(math.cos(p))
+                                     )
 
                 #self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction._node_color, unitspherepos)
                 self.render_unit(unit, '%04d'%n, unit.faction._node_color, unitspherepos)
                 p += 1
                 n += 1
-
-
 
         AiASSWrite(outputFileName, AI_NODE_ALL, False)
         #AiRender(AI_RENDER_MODE_CAMERA)

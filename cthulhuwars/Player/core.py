@@ -1,6 +1,3 @@
-from enum import Enum
-import random
-from functools import partial
 from numpy.random import choice
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
@@ -13,6 +10,7 @@ from cthulhuwars.Color import NodeColor
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
 # Zone class instance from the map construction
+def clamp(n, smallest, largest): return max(smallest, min(n, largest))
 
 class Player(object):
     def __init__(self, faction, home_zone, board, name='Player1'):
@@ -348,7 +346,11 @@ class Player(object):
                     action_success = self.capture_unit(action_params[0], action_params[1], action_params[2])
                 if key_list[action] is 'move':
                     # TODO:  allow multiple moves
-                    action_success = self.move_action(action_params[0], action_params[1], action_params[2])
+                    move_scores = [ clamp(i[3], 0, 10) for i in possible_moves]
+                    move_scores_norm = [float(i) / sum(move_scores) for i in move_scores]
+                    move_choice = choice(range(len(possible_moves)), 1, p=move_scores_norm )[0]
+
+                    action_success = self.move_action(possible_moves[move_choice][0], possible_moves[move_choice][1], possible_moves[move_choice][2])
                 if key_list[action] is 'build':
                     action_success = self.build_gate_action(action_params[0], action_params[1])
                 if key_list[action] is 'summon':
@@ -432,7 +434,8 @@ class Player(object):
     '''
     find_move_actions
     returns a list of all possible move actions based on current state of units on the board
-    this list is a tuple: (the unit that can move, the zone in which the unit currently resides, the destination zone)
+    This method scores each move according to desirability in the field
+    this list is a tuple: (the unit that can move, the zone in which the unit currently resides, the destination zone, score)
     '''
     def find_move_actions(self, map):
         assert isinstance(map, Map)
@@ -444,13 +447,26 @@ class Player(object):
         for unit in self._units:
             if self.power >= 1:
                 if unit.unit_state is UnitState.in_play and unit.gate_state is not GateState.occupied:
+                    score = 0
                     assert isinstance(unit, Unit)
-                    candidate_moves = []
+
                     # build list of possible moves to neighboring zones
                     neighbors = map.find_neighbors(unit.unit_zone.name, unit.base_movement)
                     for n in neighbors:
-                        candidate_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
-                        all_possible_moves.append((unit, unit.unit_zone, map.zone_by_name(n)))
+                        destination_zone = map.zone_by_name(n)
+                        assert isinstance(destination_zone, Zone)
+                        if destination_zone.gate_state is GateState.emptyGate:
+                            score += 2
+                        for occupant in destination_zone.occupancy_list:
+                            assert isinstance(occupant, Unit)
+                            if occupant.unit_type is UnitType.cultist and unit.unit_type is not UnitType.cultist:
+                                score += 1
+                            if occupant.unit_type is not UnitType.cultist:
+                                score -= 1
+                        if len(destination_zone.occupancy_list) == 0:
+                            score += 1
+
+                        all_possible_moves.append((unit, unit.unit_zone, destination_zone, score))
 
                 elif unit.gate_state is GateState.occupied:
                     print(self._color + '%s %s in %s is maintaining a gate' % (

@@ -55,8 +55,8 @@ class BlackGoat(Player):
             'capture': 0.3,
             'build': 0.2,
             'move': 0.3,
-            'summon': 0.2,
-            'recruit': 0.1,
+            'summon': 0.15,
+            'recruit': 0.05,
             'combat': 0,
             'awaken': 0,
             'special': 0
@@ -131,7 +131,7 @@ class BlackGoat(Player):
         can_capture = False
         if unit.unit_type is UnitType.cultist:
             can_capture = True
-        if self.spell_red_sign and unit.unit_type is UnitType.dark_young:
+        if self.spell_red_sign is True and unit.unit_type is UnitType.dark_young:
             can_capture = True
 
         if can_capture is True:
@@ -209,11 +209,11 @@ class BlackGoat(Player):
                                     if unit.gate_state is not GateState.occupied:
                                         kill_list.append(unit)
                             print(self._color + 'Pick a cultist to sacrifice:')
-                            for n in range(kill_list.__len__()):
+                            for n in range(len(kill_list)):
                                 print('  [' + str(n) + '] Cultist in %s' % kill_list[n].unit_zone.name)
                             while True:
                                 sacrifice = int(raw_input('Selection:'))
-                                if sacrifice < kill_list.__len__():
+                                if sacrifice < len(kill_list):
                                     break
                             self.remove_unit(kill_list[sacrifice])
                         # put shub_niggurath on the board, and spend the power
@@ -252,7 +252,7 @@ class BlackGoat(Player):
         # As your Action for a Round, eliminate two of your Cultists
         # Share Areas with all enemies (i.e. both you and your enemy have Units there.)
         # Awaken Shub-Niggurath
-        nzones = self.occupied_zones()
+        nzones = len(self.occupied_zones)
         if nzones >= 4 and self.units_in_four_zones is False:
             self.units_in_four_zones = True
             # pick a spell
@@ -270,8 +270,7 @@ class BlackGoat(Player):
             shared = True
             for player in self._board.players:
                 assert isinstance(player, Player)
-                player.occupied_zones()
-                player_zones = player._occupied_zones
+                player_zones = player.occupied_zones
                 if len(set(self._occupied_zones).intersection(player_zones)) <= 0:
                     shared = False
             if shared is True:

@@ -11,9 +11,9 @@ class TextColor():
     UNDERLINE = '\033[4m'
 
 class NodeColor():
-    BLUE = (0.2, 0.2, 0.7)
-    GREEN = (0.2, 0.7, 0.2)
-    YELLOW = (0.7, 0.7, 0.2)
-    RED = (0.7, 0.2, 0.2)
+    BLUE = (0.5, 0.5, 0.75)
+    GREEN = (0.5, 0.75, 0.5)
+    YELLOW = (0.75, 0.75, 0.5)
+    RED = (0.75, 0.5, 0.5)
     BLACK = (0.0, 0.0, 0.0)
 

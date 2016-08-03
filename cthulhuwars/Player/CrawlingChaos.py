@@ -224,6 +224,13 @@ class Nightgaunt(Unit):
                                          base_movement=2,
                                          unit_state=UnitState.in_reserve)
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.035)]
+        }
+        return render_definition
 
 class FlyingPolyp(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
@@ -231,6 +238,13 @@ class FlyingPolyp(Unit):
                                           base_movement=2,
                                           unit_state=UnitState.in_reserve)
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.035)]
+        }
+        return render_definition
 
 class HuntingHorror(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
@@ -239,8 +253,23 @@ class HuntingHorror(Unit):
                                             unit_state=UnitState.in_reserve)
 
 
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.035)]
+        }
+        return render_definition
+
 class Nyarlathotep(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=10):
         super(Nyarlathotep, self).__init__(unit_parent, unit_zone, UnitType.nyarlathotep, combat_power=0, cost=unit_cost,
                                            base_movement=2,
                                            unit_state=UnitState.in_reserve)
+    def render_unit(self):
+        render_definition = {
+            "nodetype": ["sphere"],
+            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
+            "params": [("float", "radius", 0.08)]
+        }
+        return render_definition

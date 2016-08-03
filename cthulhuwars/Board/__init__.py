@@ -7,7 +7,7 @@ if __name__ == "__main__":
     B.start()
     #B.render_map('play.1001')
     i = 1
-    num_rounds = 4
+    num_rounds = 8
     for r in range(num_rounds):
         B.gather_power_phase()
         B.print_state()
@@ -24,6 +24,7 @@ if __name__ == "__main__":
                 break
 
         B.render_map('play.%s' % str('%04d'%(r+1001)))
+        B.print_state()
 
                 #doom phase
         #annihilation phase
