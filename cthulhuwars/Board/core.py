@@ -4,12 +4,8 @@ from enum import Enum
 
 from cthulhuwars.Color import TextColor
 from cthulhuwars.Maps import Map
-from cthulhuwars.Player import BlackGoat
-from cthulhuwars.Player import CrawlingChaos
-from cthulhuwars.Player import Cthulhu
-from cthulhuwars.Player import Player
-from cthulhuwars.Player import YellowSign
-
+from cthulhuwars.Player import Player, BlackGoat, CrawlingChaos, Cthulhu, YellowSign
+from cthulhuwars.PlayerLogic import PlayerLogic
 
 class Actions(Enum):
     move = 0
@@ -47,6 +43,10 @@ class Board(object):
     @property
     def players(self):
         return self.__players
+
+    @property
+    def map(self):
+        return self.__map
 
     def build_map(self):
         print(TextColor.BOLD + "Building The Map" + TextColor.ENDC)
@@ -151,7 +151,7 @@ class Board(object):
             if p.power is 0:
                 print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
-                p.execute_action(self.__map)
+                p.brain.execute_action()
 
     def current_player(self, state):
         # Takes the game state and returns the current player's

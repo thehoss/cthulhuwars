@@ -9,7 +9,6 @@ from __future__ import print_function
 # TODO: implement spell conditions
 # TODO: implement Avatar ability for shub-nuggurath
 # TODO: implement Fertility Cult in summoning logic
-import random
 from core import Player
 from cthulhuwars.Color import TextColor, NodeColor
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
@@ -202,12 +201,14 @@ class BlackGoat(Player):
                     # assumes gate occupying cultists will not be sacrificed
                     cultists = self.cultists_in_play
                     if len(cultists) >= 2:
-                        for _ in range(2):
+                        for i in range(2):
                             kill_list = []
                             for c in cultists:
                                 # TODO: remove occupancy assumption, replace with logic
                                 # if unit.gate_state is not GateState.occupied:
                                 kill_list.append(c)
+                            # Uncomment below to allow user selection of cultists to sacrifice
+                            '''
                             print(self._color + 'Pick a cultist to sacrifice:')
                             for n in range(len(kill_list)):
                                 print('  [' + str(n) + '] Cultist in %s' % kill_list[n].unit_zone.name)
@@ -215,7 +216,8 @@ class BlackGoat(Player):
                                 sacrifice = int(raw_input('Selection:'))
                                 if sacrifice < len(kill_list):
                                     break
-                            self.remove_unit(kill_list[sacrifice])
+                            '''
+                            self.remove_unit(kill_list[i])
                         # put shub_niggurath on the board, and spend the power
                         self._shub_niggurath.set_unit_zone(unit_zone)
                         self._shub_niggurath.set_unit_state(UnitState.in_play)

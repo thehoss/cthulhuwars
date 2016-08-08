@@ -253,6 +253,7 @@ class ArnoldRender(object):
         AiNodeSetRGB(sky_image, "multiply", 1, 1, 1)
         AiNodeSetInt(sky, 'format', 2)
         AiNodeSetInt(skydome, 'format', 2)
+        AiNodeSetInt(skydome, 'samples', 3)
 
         # Matrix transform copied from maya. Cant seem to get this to work the way I want using AI calls
         m = AtMatrix( 0.768283546, 0, -0.640109718, 0,

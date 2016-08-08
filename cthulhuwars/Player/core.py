@@ -1,20 +1,18 @@
-from numpy.random import choice
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
 from cthulhuwars.Maps import Map
-from cthulhuwars.Color import TextColor
-from cthulhuwars.Color import NodeColor
-
+from cthulhuwars.Color import TextColor,NodeColor
+from cthulhuwars.PlayerLogic import PlayerLogic
 
 # Generic Player class
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
 # Zone class instance from the map construction
-def clamp(n, smallest, largest): return max(smallest, min(n, largest))
 
 class Player(object):
     def __init__(self, faction, home_zone, board, name='Player1'):
         assert isinstance(home_zone, Zone)
+
         self._name = name
         self._faction = faction
         self._home_zone = home_zone
@@ -35,6 +33,10 @@ class Player(object):
         self._occupied_zones = []
         self._color = TextColor.GREEN
         self._node_color = NodeColor.GREEN
+        self.brain = PlayerLogic(self, board.map)
+
+        self.brain.use_method_wc()
+
         '''
             board
             instance of the game
@@ -286,106 +288,6 @@ class Player(object):
 
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
         pass
-    '''
-    execute_action
-    collects all possible actions based on the current map and player state
-    uses a weighted random choice based on the probability_dict to decide what action
-     to take
-     Once an action is decided on, the first action in the list is taken
-
-     TODO: make this more robust by evaluating each action and it's short term benefits
-     e.g. a move to an empty zone will be more desirable for a cultist than an occupied zone
-     a move to a zone with one cultist and a gate will be very desirable for a monster
-
-     TODO: account for battle and awaken actions
-    '''
-    def execute_action(self, map):
-        possible_builds = self.find_build_actions()
-        possible_moves = self.find_move_actions(map)
-        possible_captures = self.find_capture_actions()
-        possible_summons = self.find_summon_actions()
-        possible_recruits = self.find_recruit_actions()
-
-        action_func = {
-            'capture': [],
-            'summon': [],
-            'move': [],
-            'build': [],
-            'recruit': [],
-            'combat': [],
-            'awaken': [],
-            'special': []
-        }
-
-        action_probability = {}
-
-        if len(possible_captures) > 0:
-            action_probability['capture'] = []
-            action_probability['capture'].append(self.probability_dict['capture'])
-            action_func['capture'] = possible_captures
-
-        if len(possible_summons) > 0:
-            action_probability['summon'] = []
-            action_probability['summon'].append(self.probability_dict['summon'])
-            action_func['summon'] = possible_summons
-
-        if len(possible_moves) > 0:
-            action_probability['move'] = []
-            action_probability['move'].append(self.probability_dict['move'])
-            action_func['move'] = possible_moves
-
-        if len(possible_builds) > 0:
-            action_probability['build'] = []
-            action_probability['build'].append(self.probability_dict['build'])
-            action_func['build'] = possible_builds
-
-        if len(possible_recruits) > 0:
-            action_probability['recruit'] = []
-            action_probability['recruit'].append(self.probability_dict['recruit'])
-            action_func['recruit'] = possible_recruits
-
-        action_success = False
-        while action_success is False:
-            if len(action_probability) > 0:
-                key_list = []
-                p_dist = []
-
-                for k, v in action_probability.iteritems():
-                    p_dist.append(v[0])
-                    key_list.append(k)
-
-                p_norm = [float(i) / sum(p_dist) for i in p_dist]
-                action = choice(range(len(key_list)), 1, p=p_norm)[0]
-
-                action_params = action_func[key_list[action]][0]
-
-                action_func.pop(key_list[action])
-                action_probability.pop(key_list[action])
-
-                if key_list[action] is 'capture':
-                    action_success = self.capture_unit(action_params[0], action_params[1], action_params[2])
-                if key_list[action] is 'move':
-                    # TODO:  allow multiple moves
-                    move_scores = [ clamp(float(i[3]), 0, 10) for i in possible_moves]
-                    move_total = sum(move_scores)
-                    if move_total > 0:
-                        move_scores_norm = [float(s) / move_total for s in move_scores]
-                        move_choice = choice(range(len(possible_moves)), 1, p=move_scores_norm )[0]
-                        action_success = self.move_action(possible_moves[move_choice][0], possible_moves[move_choice][1], possible_moves[move_choice][2])
-                if key_list[action] is 'build':
-                    action_success = self.build_gate_action(action_params[0], action_params[1])
-                if key_list[action] is 'summon':
-                    # TODO:  allow multiple summons for black goat with Fertility Cult
-                    action_success = self.summon_action(action_params[0], action_params[1])
-                if key_list[action] is 'recruit':
-                    action_success = self.recruit_cultist(action_params[1])
-
-            else:
-                print("No Possible Actions!")
-                self.spend_power(self.power)
-                action_success = True
-        self.free_action()
-
 
     '''
     find_recruit_actions
@@ -540,8 +442,69 @@ class Player(object):
     combat_action
     boilerplate combat action stub
     '''
-    def combat_action(self):
+    def combat_action(self, attackers, zone, defenders):
+        total_attack_power = 0
+        total_defense_power = 0
+
+        for a in attackers:
+            assert isinstance(a, Unit)
+            if a.combat_power <= 0:
+                attackers.remove(a)
+            total_attack_power += a.combat_power
+        for d in defenders:
+            assert isinstance(d, Unit)
+            if d.combat_power > 0:
+                total_defense_power += d.combat_power
+
+        print(self._color + 'At battle has erupted in %s!' % (zone.name) + TextColor.ENDC)
+
         return False
+
+    '''
+    find_combat_action
+    boilerplate combat action stub
+    '''
+    def find_combat_actions(self):
+        combat_actions = []
+        units_in_play = self.units_in_play
+        my_zones = self.occupied_zones
+
+        for zone in my_zones:
+            attackers = self.my_units_in_zone(zone)
+            defenders = self.enemy_units_in_zone(zone)
+            total_attack_power = 0
+            total_defense_power = 0
+            for a in attackers:
+                assert isinstance(a, Unit)
+                if a.combat_power <= 0:
+                    attackers.remove(a)
+                total_attack_power += a.combat_power
+            for d in defenders:
+                assert isinstance(d, Unit)
+                if d.combat_power > 0:
+                    total_defense_power += d.combat_power
+
+            if total_attack_power > total_defense_power:
+                combat_actions.append((attackers, zone, defenders))
+        return combat_actions
+
+    def my_units_in_zone(self, zone):
+        assert isinstance(zone, Zone)
+        units_in_zone = []
+        for unit in zone.occupancy_list:
+            assert isinstance(unit, Unit)
+            if unit.faction == self.faction:
+                units_in_zone.append(unit)
+        return units_in_zone
+
+    def enemy_units_in_zone(self, zone):
+        assert isinstance(zone, Zone)
+        units_in_zone = []
+        for unit in zone.occupancy_list:
+            assert isinstance(unit, Unit)
+            if unit.faction is not self.faction:
+                units_in_zone.append(unit)
+        return units_in_zone
 
     '''
     build_gate_action
