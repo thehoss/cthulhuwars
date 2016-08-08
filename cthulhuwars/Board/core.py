@@ -68,8 +68,10 @@ class Board(object):
 
     def create_players(self):
         assert isinstance(self.__map, Map)
+        index = 0
         for p in range(1, int(self.__num_players) + 1):
-            print('Player %s please select a faction:' % p)
+            # print('Player %s please select a faction:' % p)
+            print ('Please the select the factions that will be in play...')
             if self.cthulhu is False:
                 print(TextColor.GREEN + ' [1] The Great Cthulhu' + TextColor.ENDC)
             if self.black_goat is False:
@@ -82,6 +84,7 @@ class Board(object):
 
             if selection is 1:
                 self.cthulhu = True
+                index = self.__players.__len__()
                 self.__players.append(Cthulhu(self.__map.zone_by_name('South Pacific'),self))
             elif selection is 2:
                 self.black_goat = True
@@ -98,6 +101,16 @@ class Board(object):
             elif selection is 4:
                 self.yellow_sign = True
                 self.__players.append(YellowSign(self.__map.zone_by_name('Europe'), self))
+
+        # Rule:  If present, The Great Cthulhu goes first on first turn
+        print ('Generating random player turn order...')
+        if self.cthulhu:
+            print ('The Great Cthulhu faction holds primacy for the first turn!')
+            cthulhu = self.__players.pop(index)
+            random.shuffle(self.__players)
+            self.__players.insert(0, cthulhu)
+        else:
+            random.shuffle(self.__players)
 
     def print_state(self):
         for p in self.__players:
