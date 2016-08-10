@@ -16,7 +16,7 @@ import networkx as nx
 import matplotlib.pylab as P
 import matplotlib.image as mpimg
 import numpy as np
-from cthulhuwars.Zone import Zone
+from cthulhuwars.Zone import Zone, GateState
 from cthulhuwars import arnoldRender
 
 import os
@@ -230,6 +230,11 @@ class Map:
         ar = arnoldRender.ArnoldRender(image_prefix)
         ar.do_render(1, self.map)
 
-    def move_unit(self, unit, fromeZone, toZone):
-
-        pass
+    @property
+    def empty_gates(self):
+        results = []
+        for node in self.map.node:
+            zone = self.map.node[node]['zone']
+            if zone.gate_state is GateState.emptyGate:
+                results.append(zone)
+        return results

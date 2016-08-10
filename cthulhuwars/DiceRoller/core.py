@@ -20,6 +20,9 @@ class DiceRoller:
 
     def interpret_dice(self):
         results = []
+
+        self.roll_dice()
+
         for roll in self.dice_results:
             if roll == 4 or roll == 5:
                 results.append('pain')

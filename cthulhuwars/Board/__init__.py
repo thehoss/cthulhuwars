@@ -7,14 +7,14 @@ if __name__ == "__main__":
     B.start()
     #B.render_map('play.1001')
     i = 1
-    num_rounds = 8
+    num_rounds = 16
     for r in range(num_rounds):
         B.gather_power_phase()
-        B.print_state()
+        #B.print_state()
 
         #first player phase
         while True:
-            print('**Round %s, Turn %s **' % (r,i))
+            #print('**Round %s, Turn %s **' % (r,i))
             B.test_actions()
 
             f = i + 1001

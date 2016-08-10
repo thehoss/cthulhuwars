@@ -293,20 +293,20 @@ class ArnoldRender(object):
                 self.render_gate(zone.name.replace(" ","_"), spherepos[0], spherepos[1], spherepos[2])
             p = 0
             for unit in zone.occupancy_list:
-                assert isinstance(unit, Unit)
-                if unit.gate_state is GateState.occupied:
-                    unitspherepos = (spherepos[0], 0.002, spherepos[2])
-                else:
-                    unitspherepos = (
-                                     spherepos[0] + 0.1*(math.sin(p)),
-                                     0,
-                                     spherepos[2] + 0.1*(math.cos(p))
-                                     )
+                if unit.unit_state is UnitState.in_play:
+                    if unit.gate_state is GateState.occupied:
+                        unitspherepos = (spherepos[0], 0.002, spherepos[2])
+                    else:
+                        unitspherepos = (
+                                         spherepos[0] + 0.1*(math.sin(p)),
+                                         0,
+                                         spherepos[2] + 0.1*(math.cos(p))
+                                         )
 
-                #self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction._node_color, unitspherepos)
-                self.render_unit(unit, '%04d'%n, unit.faction._node_color, unitspherepos)
-                p += 1
-                n += 1
+                    #self.nodesphere(str(unit.faction._name+'%04d'%n),unit.faction._node_color, unitspherepos)
+                    self.render_unit(unit, '%04d'%n, unit.faction._node_color, unitspherepos)
+                    p += 1
+                    n += 1
 
         AiASSWrite(outputFileName, AI_NODE_ALL, False)
         #AiRender(AI_RENDER_MODE_CAMERA)
