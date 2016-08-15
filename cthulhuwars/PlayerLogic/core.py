@@ -299,7 +299,7 @@ class PlayerLogic(object):
         unit_weights = []
         for unit in units:
             assert isinstance(unit, Unit)
-            unit_weights.append(unit.combat_power)
+            unit_weights.append(unit.combat_power + 1)
         sum_unit_weights = sum(unit_weights)
 
         unit_weights_norm = [float(w) / sum_unit_weights for w in unit_weights]
@@ -360,7 +360,7 @@ class PlayerLogic(object):
         unit_weights = []
         for unit in units:
             assert isinstance(unit, Unit)
-            unit_weights.append(unit.combat_power)
+            unit_weights.append(unit.combat_power + 1)
         sum_unit_weights = sum(unit_weights)
 
         unit_weights_norm = [float(w) / sum_unit_weights for w in unit_weights]
