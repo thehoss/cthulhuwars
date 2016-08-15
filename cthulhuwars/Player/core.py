@@ -419,6 +419,35 @@ class Player(object):
         return all_possible_moves
 
     '''
+     find_combat_action
+     boilerplate combat action stub
+     '''
+
+    def find_combat_actions(self):
+        combat_actions = []
+        my_zones = self.occupied_zones
+        for zone in my_zones:
+            attackers = self.my_units_in_zone(zone)
+            defenders = self.enemy_units_in_zone(zone)
+            if len(defenders) > 0:
+                total_attack_power = 0
+                total_defense_power = 0
+                for a in attackers:
+                    assert isinstance(a, Unit)
+                    if a.combat_power <= 0:
+                        attackers.remove(a)
+                    total_attack_power += a.combat_power
+                for d in defenders:
+                    assert isinstance(d, Unit)
+                    if d.combat_power > 0:
+                        total_defense_power += d.combat_power
+                # if total_attack_power > total_defense_power:
+                score = total_attack_power - total_defense_power
+                if len(attackers) > 0:
+                    combat_actions.append((attackers, zone, defenders, score))
+            return combat_actions
+
+    '''
       summon_action
       boilerplate summon method.  each faction will override this to specific needs based on unit populations
       '''
@@ -471,87 +500,54 @@ class Player(object):
     def combat_action(self, attackers, zone, defenders):
         total_attack_power = 0
         total_defense_power = 0
-        print(self._color+TextColor.BOLD+"Combat!"+TextColor.ENDC)
+
         for a in attackers:
             assert isinstance(a, Unit)
             if a.combat_power <= 0:
                 attackers.remove(a)
             total_attack_power += a.combat_power
+
         for d in defenders:
             assert isinstance(d, Unit)
             if d.combat_power > 0:
                 total_defense_power += d.combat_power
 
         if total_attack_power > 0:
+            if self.spend_power(1):
+                print(self._color + TextColor.BOLD + 'A battle has erupted in %s!' % (zone.name) + TextColor.ENDC)
 
-            print(self._color + TextColor.BOLD + 'A battle has erupted in %s!' % (zone.name) + TextColor.ENDC)
-            self.spend_power(1)
-            attack_dice = DiceRoller(total_attack_power, 6)
-            defence_dice = DiceRoller(total_defense_power, 6)
+                attack_dice = DiceRoller(total_attack_power, 6)
+                defence_dice = DiceRoller(total_defense_power, 6)
 
-            attack_rolls = attack_dice.interpret_dice()
-            defence_rolls = defence_dice.interpret_dice()
+                attack_rolls = attack_dice.interpret_dice()
+                defence_rolls = defence_dice.interpret_dice()
 
-            print(attack_rolls)
-            print(defence_rolls)
+                print ('    attacker rolled: %s'%attack_rolls)
+                print ('    defender rolled: %s'%defence_rolls)
 
-            for aroll in attack_rolls:
-                if aroll is 'kill':
+                for _ in range(attack_rolls['kill']):
                     # TODO: kill an enemy monster
-                    print(self._color + TextColor.BOLD + '%s has been killed!' % (zone.name) + TextColor.ENDC)
                     defenders = self.brain.kill_from_selection(defenders)
-                if aroll is 'pain':
+                for _ in range(attack_rolls['pain']):
                     # TODO: force an enemy to move, defenders choice
                     self.brain.pain_from_selection(defenders)
 
-            for broll in defence_rolls:
-                if broll is 'kill':
+                for _ in range(defence_rolls['kill']):
                     attackers = self.brain.kill_from_selection(attackers)
-                    print(self._color + TextColor.BOLD + '%s has been killed!' % (zone.name) + TextColor.ENDC)
-
                     # TODO: kill an attackers monster
-                if broll is 'pain':
+                for _ in range(defence_rolls['pain']):
                     # TODO: force an attacker to move, attackers choice
                     self.brain.pain_from_selection(attackers)
 
-            return True
-        return False
-
-    '''
-    find_combat_action
-    boilerplate combat action stub
-    '''
-
-    def find_combat_actions(self):
-        combat_actions = []
-        my_zones = self.occupied_zones
-
-        for zone in my_zones:
-            attackers = self.my_units_in_zone(zone)
-            defenders = self.enemy_units_in_zone(zone)
-            total_attack_power = 0
-            total_defense_power = 0
-            for a in attackers:
-                assert isinstance(a, Unit)
-                if a.combat_power <= 0:
-                    attackers.remove(a)
-                total_attack_power += a.combat_power
-            for d in defenders:
-                assert isinstance(d, Unit)
-                if d.combat_power > 0:
-                    total_defense_power += d.combat_power
-            # if total_attack_power > total_defense_power:
-            score = total_attack_power - total_defense_power
-            if len(attackers) > 0:
-                combat_actions.append((attackers, zone, defenders, score))
-        return combat_actions
+                return True
+            return False
 
     def my_units_in_zone(self, zone):
         assert isinstance(zone, Zone)
         units_in_zone = []
         for unit in zone.occupancy_list:
             assert isinstance(unit, Unit)
-            if unit.faction == self.faction:
+            if unit.faction._name is self._name:
                 units_in_zone.append(unit)
         return units_in_zone
 
@@ -560,7 +556,7 @@ class Player(object):
         units_in_zone = []
         for unit in zone.occupancy_list:
             assert isinstance(unit, Unit)
-            if unit.faction is not self.faction:
+            if unit.faction._name is not self._name:
                 units_in_zone.append(unit)
         return units_in_zone
 

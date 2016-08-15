@@ -19,13 +19,16 @@ class DiceRoller:
         return self.dice_results
 
     def interpret_dice(self):
-        results = []
+        results = {'kill': 0,
+                   'pain': 0
+                   }
 
         self.roll_dice()
 
         for roll in self.dice_results:
             if roll == 4 or roll == 5:
-                results.append('pain')
+                results['pain'] += 1
             elif roll == 6:
-                results.append('kill')
+                results['kill'] += 1
+
         return results

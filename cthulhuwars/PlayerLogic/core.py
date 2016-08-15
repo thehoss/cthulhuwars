@@ -2,7 +2,7 @@ from enum import Enum
 from cthulhuwars.Maps import Map
 from cthulhuwars.Unit import Unit, UnitState, UnitType
 from numpy.random import choice
-
+from cthulhuwars.Color import TextColor
 
 class Methods(Enum):
     random = 0
@@ -19,6 +19,7 @@ class PlayerLogic(object):
         self.player = player
         self._method = Methods.random
         self.map = the_map
+
         self._probability_dict = {
             'capture': 3.0,
             'build': 4.0,
@@ -205,7 +206,6 @@ class PlayerLogic(object):
         if len(possible_combat) > 0:
             action_probability['combat'] = []
             action_probability['combat'].append(self._probability_dict['combat'])
-            print "combat actions %s" % possible_combat
             action_func['combat'] = possible_combat
 
         action_success = False
@@ -265,46 +265,114 @@ class PlayerLogic(object):
 
     def kill_unit(self, unit):
         assert isinstance(unit, Unit)
-        unit.set_unit_state(UnitState.killed)
+        unit.set_unit_state(UnitState.in_reserve)
         unit.set_unit_zone(unit.faction._pool)
         return True
 
     def kill_from_selection(self, units):
-        if self._method is Methods.random:
-            units = self.kill_from_selection_random(units)
-        elif self._method is Methods.weighted_choice:
-            units = self.kill_from_selection_wc(units)
+        if len(units) > 1:
+            if self._method is Methods.random:
+                units = self.kill_from_selection_random(units)
+            elif self._method is Methods.weighted_choice:
+                units = self.kill_from_selection_wc(units)
+        elif len(units) == 1:
+            self.kill_unit(units[0])
+            print(self.player._color + TextColor.BOLD + '%s %s has been killed!' % (
+                units[0].faction._name, units[0].unit_type.value) + TextColor.ENDC)
+            return []
+        elif len(units) <= 0:
+            print(TextColor.BOLD + 'Kill list empty'+ TextColor.ENDC)
         return units
 
-    def kill_from_selection_random(self, units=[]):
+    def kill_from_selection_random(self, units):
         index = choice(range(len(units)), 1)[0]
         unit_to_kill = units[index]
         assert isinstance(unit_to_kill, Unit)
         if unit_to_kill.unit_state is UnitState.in_play:
             self.kill_unit(unit_to_kill)
             units.remove(unit_to_kill)
+            print(self.player._color + TextColor.BOLD + '%s %s has been killed!' % (unit_to_kill.faction._name, unit_to_kill.unit_type.value) + TextColor.ENDC)
         return units
 
-    def kill_from_selection_wc(self, units=[]):
+    def kill_from_selection_wc(self, units):
         # weight based on combat power
         unit_weights = []
         for unit in units:
             assert isinstance(unit, Unit)
-            unit_weights.append(float(unit.combat_power))
-        unit_weights_norm = [float(w) / sum(unit_weights) for w in unit_weights]
+            unit_weights.append(unit.combat_power)
+        sum_unit_weights = sum(unit_weights)
 
-        index = choice(range(len(units)), 1, p=unit_weights_norm)[0]
+        unit_weights_norm = [float(w) / sum_unit_weights for w in unit_weights]
+
+        index = choice(range(len(units)), 1, p = unit_weights_norm )[0]
 
         unit_to_kill = units[index]
         assert isinstance(unit_to_kill, Unit)
         if unit_to_kill.unit_state is UnitState.in_play:
             self.kill_unit(unit_to_kill)
             units.remove(unit_to_kill)
+            print(self.player._color + TextColor.BOLD + '%s %s has been killed!' % (unit_to_kill.faction._name, unit_to_kill.unit_type.value) + TextColor.ENDC)
         return units
+
+    def pain_unit(self, unit):
+        assert isinstance(unit, Unit)
+        unit.set_unit_zone(unit.faction._home_zone)
+        return True
 
     def pain_from_selection(self, units):
         # if self._method is Methods.random:
         # units = self.pain_from_selection_random(units)
         # elif self._method is Methods.weighted_choice:
         # units = self.pain_from_selection_wc(units)
-        return True
+        if len(units) > 1:
+            if self._method is Methods.random:
+                units = self.pain_from_selection_random(units)
+            elif self._method is Methods.weighted_choice:
+                units = self.pain_from_selection_wc(units)
+        elif len(units) == 1:
+            self.pain_unit(units[0])
+            print(self.player._color + TextColor.BOLD + '%s %s has been pained!' % (
+                units[0].faction._name, units[0].unit_type.value) + TextColor.ENDC)
+            return []
+        elif len(units) <= 0:
+            print(TextColor.BOLD + 'Pain list empty'+ TextColor.ENDC)
+            return False
+        return False
+
+    '''
+    Pain methods
+    Currently moves units to the home zone, but should employ move logic
+    TODO: select a location to move pained units to
+    '''
+    def pain_from_selection_random(self, units):
+        index = choice(range(len(units)), 1)[0]
+        unit_to_kill = units[index]
+        assert isinstance(unit_to_kill, Unit)
+        if unit_to_kill.unit_state is UnitState.in_play:
+            self.pain_unit(unit_to_kill)
+            units.remove(unit_to_kill)
+            print(self.player._color + TextColor.BOLD + '%s %s has been pained!' % (unit_to_kill.faction._name, unit_to_kill.unit_type.value) + TextColor.ENDC)
+            return True
+        return False
+
+    def pain_from_selection_wc(self, units):
+        # weight based on combat power
+        unit_weights = []
+        for unit in units:
+            assert isinstance(unit, Unit)
+            unit_weights.append(unit.combat_power)
+        sum_unit_weights = sum(unit_weights)
+
+        unit_weights_norm = [float(w) / sum_unit_weights for w in unit_weights]
+
+        index = choice(range(len(units)), 1, p=unit_weights_norm)[0]
+
+        unit_to_kill = units[index]
+        assert isinstance(unit_to_kill, Unit)
+        if unit_to_kill.unit_state is UnitState.in_play:
+            self.pain_unit(unit_to_kill)
+            units.remove(unit_to_kill)
+            print(self.player._color + TextColor.BOLD + '%s %s has been pained!' % (
+            unit_to_kill.faction._name, unit_to_kill.unit_type.value) + TextColor.ENDC)
+            return True
+        return False

@@ -98,6 +98,7 @@ class Cthulhu(Player):
         if self._home_zone.gate_state is not GateState.noGate:
             if self.power >= unit_cost:
                 cthulhu = self._cthulhu
+                assert isinstance(cthulhu, Unit)
                 if cthulhu.unit_state is UnitState.in_reserve:
                     if self.spend_power(unit_cost):
                         print(self._color + TextColor.BOLD + 'The Great Cthulhu has emerged!' + TextColor.ENDC)

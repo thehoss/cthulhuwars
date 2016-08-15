@@ -178,28 +178,28 @@ class CrawlingChaos(Player):
         # check conditions for taking a new spell:
 
         # As action for a round, pay 4 power
-        if not self._spell_requirment_met[0] and self._power_spent == 4:
-            self._spell_requirment_met[0] = True
+        if not self._spell_requirement_met[0] and self._power_spent == 4:
+            self._spell_requirement_met[0] = True
 
         # As action for a round, pay 6 power
-        if not self._spell_requirment_met[1] and self._power_spent == 6:
-            self._spell_requirment_met[1] = True
+        if not self._spell_requirement_met[1] and self._power_spent == 6:
+            self._spell_requirement_met[1] = True
 
         # Control 3 gates or have 12 power
-        if not self._spell_requirment_met[2] and self.current_gates == 3 or self._power == 12:
-            self._spell_requirment_met[2] = True
+        if not self._spell_requirement_met[2] and self.current_gates == 3 or self._power == 12:
+            self._spell_requirement_met[2] = True
 
         # Control 4 gates or have 15 power
-        if not self._spell_requirment_met[3] and self.current_gates == 4 or self._power == 15:
-            self._spell_requirment_met[3] = True
+        if not self._spell_requirement_met[3] and self.current_gates == 4 or self._power == 15:
+            self._spell_requirement_met[3] = True
 
         # Capture an enemy Cultist
-        if not self._spell_requirment_met[4] and self._captured_cultists.__len__() > 0:
-            self._spell_requirment_met[4] = True
+        if not self._spell_requirement_met[4] and self._captured_cultists.__len__() > 0:
+            self._spell_requirement_met[4] = True
 
         # Awaken Nyarlathotep
-        if not self._spell_requirment_met[5] and self._goo.__len__() > 0:
-            self._spell_requirment_met[5] = True
+        if not self._spell_requirement_met[5] and self._goo.__len__() > 0:
+            self._spell_requirement_met[5] = True
 
     def summon_action(self, monster, unit_zone):
         assert isinstance(monster, Unit)
