@@ -47,12 +47,12 @@ class Player(object):
             by various factors
         '''
         self.probability_dict = {
-            'capture': 0.1,
-            'build': 0.1,
-            'move': 0.1,
-            'summon': 0.1,
-            'recruit': 0.1,
-            'combat': 0.2,
+            'capture': 0.225,
+            'build': 0.225,
+            'move': 0.15,
+            'summon': 0.175,
+            'recruit': 0.125,
+            'combat': 0.1,
             'awaken': 0.0,
             'special': 0.0
         }
@@ -434,9 +434,8 @@ class Player(object):
                 total_defense_power = 0
                 for a in attackers:
                     assert isinstance(a, Unit)
-                    if a.combat_power <= 0:
-                        attackers.remove(a)
-                    total_attack_power += a.combat_power
+                    if a.combat_power > 0:
+                        total_attack_power += a.combat_power
                 for d in defenders:
                     assert isinstance(d, Unit)
                     if d.combat_power > 0:
@@ -445,7 +444,7 @@ class Player(object):
                 score = total_attack_power - total_defense_power
                 if len(attackers) > 0:
                     combat_actions.append((attackers, zone, defenders, score))
-            return combat_actions
+        return combat_actions
 
     '''
       summon_action
@@ -503,9 +502,8 @@ class Player(object):
 
         for a in attackers:
             assert isinstance(a, Unit)
-            if a.combat_power <= 0:
-                attackers.remove(a)
-            total_attack_power += a.combat_power
+            if a.combat_power > 0:
+                total_attack_power += a.combat_power
 
         for d in defenders:
             assert isinstance(d, Unit)

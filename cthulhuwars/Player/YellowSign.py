@@ -56,16 +56,19 @@ class YellowSign(Player):
 
 class Undead(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=1):
-        super(Undead, self).__init__(unit_parent, unit_zone, UnitType.undead, combat_power=None, cost=unit_cost,
+        super(Undead, self).__init__(unit_parent, unit_zone, UnitType.undead, combat_power=0, cost=unit_cost,
                                      base_movement=1,
                                      unit_state=UnitState.in_reserve)
 
     @property
     def combat_power(self):
-        total = -1
-        for unit in self.unit_zone.occupancy_list:
-            if unit.unit_type is UnitType.undead:
+        total = 0
+        units = list(set(self.faction.my_units_in_zone(self.unit_zone)))
+        for unit in units:
+            if unit.unit_type is UnitType.undead and unit.unit_state is UnitState.in_play:
                 total += 1
+            units.remove(unit)
+        self.set_combat_power(total-1)
         return total
 
 
@@ -79,15 +82,18 @@ class Undead(Unit):
 
 class Byakhee(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=2):
-        super(Byakhee, self).__init__(unit_parent, unit_zone, UnitType.byakhee, combat_power=None, cost=unit_cost,
+        super(Byakhee, self).__init__(unit_parent, unit_zone, UnitType.byakhee, combat_power=1, cost=unit_cost,
                                       base_movement=1,
                                       unit_state=UnitState.in_reserve)
     @property
     def combat_power(self):
-        total = 1
-        for unit in self.unit_zone.occupancy_list:
-            if unit.unit_type is UnitType.byakhee:
+        total = 0
+        units = list(set(self.faction.my_units_in_zone(self.unit_zone)))
+        for unit in units:
+            if unit.unit_type is UnitType.byakhee and unit.unit_state is UnitState.in_play:
                 total += 1
+            units.remove(unit)
+        self.set_combat_power(total+1)
         return total
 
 
@@ -101,7 +107,7 @@ class Byakhee(Unit):
 
 class Hastur(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=10):
-        super(Hastur, self).__init__(unit_parent, unit_zone, UnitType.hastur, combat_power=None, cost=unit_cost,
+        super(Hastur, self).__init__(unit_parent, unit_zone, UnitType.hastur, combat_power=5, cost=unit_cost,
                                       base_movement=1,
                                       unit_state=UnitState.in_reserve)
     @property
@@ -119,7 +125,7 @@ class Hastur(Unit):
 
 class KingInYellow(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=4):
-        super(KingInYellow, self).__init__(unit_parent, unit_zone, UnitType.king_in_yellow, combat_power=None,
+        super(KingInYellow, self).__init__(unit_parent, unit_zone, UnitType.king_in_yellow, combat_power=0,
                                       cost=unit_cost,
                                       base_movement=1,
                                       unit_state=UnitState.in_reserve)

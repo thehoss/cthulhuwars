@@ -50,16 +50,23 @@ class BlackGoat(Player):
         '''
         self._color = TextColor.RED
         self._node_color = NodeColor.RED
+
+        '''
+        probability_dict overrides the probabilities in the Player class
+        these are used to govern the weighted choices for actions in the 'wc'
+        PlayerLogic methods
+        '''
         self.probability_dict = {
             'capture': 0.3,
-            'build': 0.2,
+            'build': 0.1,
             'move': 0.3,
             'summon': 0.15,
             'recruit': 0.05,
-            'combat': 0,
+            'combat': 0.1,
             'awaken': 0,
             'special': 0
         }
+        self.brain.set_probabilities(self.probability_dict)
 
     @property
     def dark_young_in_play(self):
@@ -372,7 +379,8 @@ class ShubNiggurath(Unit):
 
     @property
     def combat_power(self):
-        total_combat_power = self.faction.current_cultists + self.faction.current_gates
+        total_combat_power = 0
+        total_combat_power += self.faction.current_cultists + self.faction.current_gates
         if self.faction.spell_red_sign:
             total_combat_power += self.faction.dark_young_in_play
         return total_combat_power
