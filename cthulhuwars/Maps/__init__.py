@@ -1,4 +1,4 @@
-from core import Map
+from .core import Map
 
 if __name__ == "__test__":
     M = Map(4, 'earth4Pa')

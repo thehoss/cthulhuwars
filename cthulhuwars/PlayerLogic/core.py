@@ -331,13 +331,14 @@ class PlayerLogic(object):
                 units = self.pain_from_selection_wc(units)
         elif len(units) == 1:
             self.pain_unit(units[0])
+
             print(self.player._color + TextColor.BOLD + '%s %s has been pained!' % (
                 units[0].faction._name, units[0].unit_type.value) + TextColor.ENDC)
             return []
         elif len(units) <= 0:
             print(TextColor.BOLD + 'Pain list empty'+ TextColor.ENDC)
-            return False
-        return False
+            return []
+        return []
 
     '''
     Pain methods
@@ -352,8 +353,8 @@ class PlayerLogic(object):
             self.pain_unit(unit_to_kill)
             units.remove(unit_to_kill)
             print(self.player._color + TextColor.BOLD + '%s %s has been pained!' % (unit_to_kill.faction._name, unit_to_kill.unit_type.value) + TextColor.ENDC)
-            return True
-        return False
+            return units
+        return units
 
     def pain_from_selection_wc(self, units):
         # weight based on combat power
@@ -374,5 +375,5 @@ class PlayerLogic(object):
             units.remove(unit_to_kill)
             print(self.player._color + TextColor.BOLD + '%s %s has been pained!' % (
             unit_to_kill.faction._name, unit_to_kill.unit_type.value) + TextColor.ENDC)
-            return True
-        return False
+            return units
+        return units

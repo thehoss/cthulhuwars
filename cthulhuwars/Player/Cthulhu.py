@@ -13,10 +13,10 @@ from cthulhuwars.Maps import Map
 class Cthulhu(Player):
     def __init__(self, home_zone, board, name='Great Cthulhu'):
         super(Cthulhu, self).__init__(Faction.cthulhu, home_zone, board, name)
-        self._deep_ones = []
-        self._shoggoth = []
-        self._starspawn = []
-        self._cthulhu = []
+        self._deep_ones = set()
+        self._shoggoth = set()
+        self._starspawn = set()
+        self._cthulhu = None
         self._immortal = False
         self._spell_dreams = False
         self._spell_yha_nthlei = False
@@ -35,25 +35,25 @@ class Cthulhu(Player):
         for _ in range(n_deep_ones):
             new_do = DeepOne(self, self._pool)
             self.add_unit(new_do)
-            self._deep_ones.append(new_do)
-            self._monsters.append(new_do)
+            self._deep_ones.add(new_do)
+            self._monsters.add(new_do)
 
         for _ in range(n_shoggoth):
             new_s = Shoggoth(self, self._pool)
             self.add_unit(new_s)
-            self._shoggoth.append(new_s)
-            self._monsters.append(new_s)
+            self._shoggoth.add(new_s)
+            self._monsters.add(new_s)
 
         for _ in range(n_starspawn):
             new_ss = Starspawn(self, self._pool)
             self.add_unit(new_ss)
-            self._starspawn.append(new_ss)
-            self._monsters.append(new_ss)
+            self._starspawn.add(new_ss)
+            self._monsters.add(new_ss)
 
         self._cthulhu = GreatCthulhu(self, self._pool)
         self.add_unit(self._cthulhu)
-        self._goo.append(self._cthulhu)
-        self._monsters.append(self._cthulhu)
+        self._goo.add(self._cthulhu)
+        self._monsters.add(self._cthulhu)
 
     def summon_deep_one(self, unit_zone):
         unit_cost = 1

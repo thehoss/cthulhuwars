@@ -10,8 +10,8 @@ from cthulhuwars.Color import TextColor, NodeColor
 class YellowSign(Player):
     def __init__(self, home_zone, board, name='The Yellow Sign'):
         super(YellowSign, self).__init__(Faction.yellow_sign, home_zone, board, name)
-        self._undead = []
-        self._byakhee = []
+        self._undead = set()
+        self._byakhee = set()
         self._hastur = None
         self._king_in_yellow = None
 
@@ -37,29 +37,29 @@ class YellowSign(Player):
         for _ in range(n_undead):
             new_u = Undead(self, self._pool)
             self.add_unit(new_u)
-            self._undead.append(new_u)
+            self._undead.add(new_u)
 
         for _ in range(n_byakhee):
             new_b = Byakhee(self, self._pool)
             self.add_unit(new_b)
-            self._byakhee.append(new_b)
+            self._byakhee.add(new_b)
 
         self._hastur = Hastur(self, self._pool)
         self.add_unit(self._hastur)
-        self._goo.append(self._hastur)
-        self._monsters.append(self._hastur)
+        self._goo.add(self._hastur)
+        self._monsters.add(self._hastur)
 
         self._king_in_yellow = KingInYellow(self, self._pool)
         self.add_unit(self._king_in_yellow)
-        self._goo.append(self._king_in_yellow)
-        self._monsters.append(self._king_in_yellow)
+        self._goo.add(self._king_in_yellow)
+        self._monsters.add(self._king_in_yellow)
 
 class Undead(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=1):
-        super(Undead, self).__init__(unit_parent, unit_zone, UnitType.undead, combat_power=0, cost=unit_cost,
+        super(Undead, self).__init__(unit_parent, unit_zone, UnitType.undead, combat_power=1, cost=unit_cost,
                                      base_movement=1,
                                      unit_state=UnitState.in_reserve)
-
+    '''
     @property
     def combat_power(self):
         total = 0
@@ -70,7 +70,7 @@ class Undead(Unit):
             units.remove(unit)
         self.set_combat_power(total-1)
         return total
-
+    '''
 
     def render_unit(self):
         render_definition = {
@@ -85,6 +85,7 @@ class Byakhee(Unit):
         super(Byakhee, self).__init__(unit_parent, unit_zone, UnitType.byakhee, combat_power=1, cost=unit_cost,
                                       base_movement=1,
                                       unit_state=UnitState.in_reserve)
+    '''
     @property
     def combat_power(self):
         total = 0
@@ -95,7 +96,7 @@ class Byakhee(Unit):
             units.remove(unit)
         self.set_combat_power(total+1)
         return total
-
+    '''
 
     def render_unit(self):
         render_definition = {

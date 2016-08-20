@@ -19,9 +19,9 @@ class CrawlingChaos(Player):
         Unit Lists
         The following lists are conveniences linking the relevant units from self._units
         '''
-        self._nightgaunt = []
-        self._flying_polyp = []
-        self._hunting_horror = []
+        self._nightgaunt = set()
+        self._flying_polyp = set()
+        self._hunting_horror = set()
         self._nyarlathotep = None
         '''
         spell flags
@@ -76,20 +76,23 @@ class CrawlingChaos(Player):
         for _ in range(n_nightgaunt):
             new_ng = Nightgaunt(self, self._pool)
             self.add_unit(new_ng)
-            self._nightgaunt.append(new_ng)
+            self._nightgaunt.add(new_ng)
+            self._monsters.add(new_ng)
 
         for _ in range(n_flying_polyp):
             new_fp = FlyingPolyp(self, self._pool)
             self.add_unit(new_fp)
-            self._flying_polyp.append(new_fp)
+            self._flying_polyp.add(new_fp)
+            self._monsters.add(new_fp)
 
         for _ in range(n_hunting_horror):
             new_hh = HuntingHorror(self, self._pool)
             self.add_unit(new_hh)
-            self._hunting_horror.append(new_hh)
-
+            self._hunting_horror.add(new_hh)
+            self._monsters.add(new_hh)
         self._nyarlathotep = Nyarlathotep(self, self._pool)
         self.add_unit(self._nyarlathotep)
+        self._goo.add(self._nyarlathotep)
 
     def summon_nightgaunt(self, unit_zone):
         unit_cost = 1

@@ -20,19 +20,19 @@ class Player(object):
         self._home_zone = home_zone
         self._spells = [6]
         self._spell_requirement_met = [False] * 6
-        self._units = []
-        self._cultists = []
-        self._monsters = []
-        self._goo = []
+        self._units = set()
+        self._cultists = set()
+        self._monsters = set()
+        self._goo = set()
         self._power = 8
         self._power_spent = 0
         self._doom_points = 0
         self._elder_points = 0
         self._starting_cultists = 6
         self._current_cultists = 0
-        self._captured_cultists = []
+        self._captured_cultists = set()
         self._current_gates = 0
-        self._occupied_zones = []
+        self._occupied_zones = set()
         self._color = TextColor.GREEN
         self._node_color = NodeColor.GREEN
 
@@ -78,8 +78,8 @@ class Player(object):
         for _ in range(self._starting_cultists):
             new_cultist = Cultist(self, self._home_zone, movement_max_radius, UnitState.in_play)
             self.add_unit(new_cultist)
-            self._cultists.append(new_cultist)
-        self.build_gate_action(self._cultists[0], self._home_zone)
+            self._cultists.add(new_cultist)
+        self.build_gate_action(list(self._cultists)[0], self._home_zone)
 
     '''
     remove_unit
@@ -111,7 +111,7 @@ class Player(object):
                     unit.set_unit_gate_state(GateState.noGate)
                     unit_zone.clear_gate_state()
                     self.capture_gate(monster)
-                self._captured_cultists.append(unit)
+                self._captured_cultists.add(unit)
                 unit.set_unit_state(UnitState.captured)
                 unit.set_unit_zone(self._pool)
                 return True
@@ -262,11 +262,11 @@ class Player(object):
     '''
 
     def add_unit(self, new_unit):
-        self._units.append(new_unit)
+        self._units.add(new_unit)
         if new_unit.unit_type is not UnitType.cultist:
-            self._monsters.append(new_unit)
+            self._monsters.add(new_unit)
         if new_unit.unit_type is UnitType.GOO or UnitType.cthulhu or UnitType.shub_niggurath or UnitType.nyarlathotep or UnitType.hastur or UnitType.king_in_yellow:
-            self._goo.append(new_unit)
+            self._goo.add(new_unit)
 
     '''
     spend_power
@@ -298,7 +298,7 @@ class Player(object):
             assert isinstance(captive, Unit)
             self._power += 1
             captive.return_to_pool()
-            self._captured_cultists.remove(captive)
+        self._captured_cultists.clear()
 
         # add gates and special stuff.  This method will be overridden by faction specific thingies.
         pass
@@ -428,7 +428,7 @@ class Player(object):
         my_zones = self.occupied_zones
         for zone in my_zones:
             attackers = self.my_units_in_zone(zone)
-            defenders = self.enemy_units_in_zone(zone)
+            defenders = self.enemy_combatants_in_zone(zone)
             if len(defenders) > 0:
                 total_attack_power = 0
                 total_defense_power = 0
@@ -502,20 +502,19 @@ class Player(object):
 
         for a in attackers:
             assert isinstance(a, Unit)
-            if a.combat_power > 0:
-                total_attack_power += a.combat_power
-
+            total_attack_power += a.combat_power
         for d in defenders:
             assert isinstance(d, Unit)
-            if d.combat_power > 0:
-                total_defense_power += d.combat_power
+            total_defense_power += d.combat_power
 
         if total_attack_power > 0:
             if self.spend_power(1):
                 print(self._color + TextColor.BOLD + 'A battle has erupted in %s!' % (zone.name) + TextColor.ENDC)
+                print(self._color + TextColor.BOLD + '     '+', '.join(a.unit_type.value for a in attackers) +' : %s'%total_attack_power + TextColor.ENDC)
+                print(self._color + TextColor.BOLD + '     '+', '.join(d.unit_type.value for d in defenders)  +' : %s'%total_defense_power + TextColor.ENDC)
 
-                attack_dice = DiceRoller(total_attack_power, 6)
-                defence_dice = DiceRoller(total_defense_power, 6)
+                attack_dice = DiceRoller(total_attack_power)
+                defence_dice = DiceRoller(total_defense_power)
 
                 attack_rolls = attack_dice.interpret_dice()
                 defence_rolls = defence_dice.interpret_dice()
@@ -528,14 +527,14 @@ class Player(object):
                     defenders = self.brain.kill_from_selection(defenders)
                 for _ in range(attack_rolls['pain']):
                     # TODO: force an enemy to move, defenders choice
-                    self.brain.pain_from_selection(defenders)
+                    defenders = self.brain.pain_from_selection(defenders)
 
                 for _ in range(defence_rolls['kill']):
                     attackers = self.brain.kill_from_selection(attackers)
                     # TODO: kill an attackers monster
                 for _ in range(defence_rolls['pain']):
                     # TODO: force an attacker to move, attackers choice
-                    self.brain.pain_from_selection(attackers)
+                    attackers = self.brain.pain_from_selection(attackers)
 
                 return True
             return False
@@ -557,6 +556,16 @@ class Player(object):
             if unit.faction._name is not self._name:
                 units_in_zone.append(unit)
         return units_in_zone
+
+    def enemy_combatants_in_zone(self, zone):
+        assert isinstance(zone, Zone)
+        units_in_zone = []
+        for unit in zone.occupancy_list:
+            assert isinstance(unit, Unit)
+            if unit.faction._name is not self._name and unit.unit_type is not UnitType.cultist:
+                units_in_zone.append(unit)
+        return units_in_zone
+
 
     '''
     build_gate_action

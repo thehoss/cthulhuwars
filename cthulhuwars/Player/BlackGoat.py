@@ -21,9 +21,9 @@ class BlackGoat(Player):
         Unit Lists
         The following lists are conveniences linking the relevant units from self._units
         '''
-        self._dark_young = []
-        self._fungi = []
-        self._ghouls = []
+        self._dark_young = set()
+        self._fungi = set()
+        self._ghouls = set()
         self._shub_niggurath = None
         '''
         Spell Book Conditions
@@ -104,22 +104,25 @@ class BlackGoat(Player):
         for _ in range(n_dark_young):
             new_dy = DarkYoung(self, self._pool)
             self.add_unit(new_dy)
-            self._dark_young.append(new_dy)
+            self._dark_young.add(new_dy)
+            self._monsters.add(new_dy)
 
         for _ in range(n_ghoul):
             new_g = Ghoul(self, self._pool)
             self.add_unit(new_g)
-            self._ghouls.append(new_g)
+            self._ghouls.add(new_g)
+            self._monsters.add(new_g)
 
         for _ in range(n_fungi):
             new_f = Fungi(self, self._pool)
             self.add_unit(new_f)
-            self._fungi.append(new_f)
+            self._fungi.add(new_f)
+            self._monsters.add(new_f)
 
         self._shub_niggurath = ShubNiggurath(self, self._pool)
         self.add_unit(self._shub_niggurath)
-        self._goo.append(self._shub_niggurath)
-        self._monsters.append(self._shub_niggurath)
+        self._goo.add(self._shub_niggurath)
+        self._monsters.add(self._shub_niggurath)
 
     def find_build_actions(self):
         build_actions = []
@@ -166,6 +169,8 @@ class BlackGoat(Player):
 
     def summon_ghoul(self, unit_zone):
         unit_cost = 1
+        if self.ghouls_in_play >= 2:
+            return False
         if self.spell_thousand_young:
             unit_cost = 0
         if self.power >= unit_cost:

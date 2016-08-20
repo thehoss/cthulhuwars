@@ -1,1 +1,1 @@
-from core import TextColor, NodeColor
+from .core import TextColor, NodeColor

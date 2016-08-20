@@ -54,7 +54,7 @@ class Unit(object):
         self._unit_zone = unit_zone
         self._unit_gate_state = GateState.noGate
 
-        self.set_unit_zone(unit_zone)
+        #self.set_unit_zone(unit_zone)
         #print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
 
     @property
@@ -63,6 +63,7 @@ class Unit(object):
 
     def set_unit_zone(self, unit_zone):
         assert isinstance(unit_zone, Zone)
+        self._unit_zone.remove_unit(self)
         self._unit_zone = unit_zone
         unit_zone.add_unit(self)
 

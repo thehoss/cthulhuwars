@@ -22,7 +22,7 @@ class Zone:
         self.is_ocean = isOcean
         self.gate_state = GateState.noGate
         self.gate_unit  = None
-        self.occupancy_list = []
+        self.occupancy_list = set()
         self.color = NodeColor.BLACK
 
     def set_gate_state(self, gateState):
@@ -38,13 +38,14 @@ class Zone:
         self.gate_unit = unit
 
     def add_unit(self, unit):
-        self.occupancy_list.append(unit)
+        self.occupancy_list.add(unit)
         #unit.set_unit_zone(self)
 
     def remove_unit(self, unit):
         try:
-            index = self.occupancy_list.index(unit)
-            self.occupancy_list.pop(index)
+            #index = self.occupancy_list.index(unit)
+            #self.occupancy_list.pop(index)
+            self.occupancy_list.discard(unit)
         except ValueError:
             pass
 
