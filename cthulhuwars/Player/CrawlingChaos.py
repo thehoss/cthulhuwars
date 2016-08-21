@@ -90,6 +90,7 @@ class CrawlingChaos(Player):
             self.add_unit(new_hh)
             self._hunting_horror.add(new_hh)
             self._monsters.add(new_hh)
+
         self._nyarlathotep = Nyarlathotep(self, self._pool)
         self.add_unit(self._nyarlathotep)
         self._goo.add(self._nyarlathotep)
@@ -218,8 +219,8 @@ class CrawlingChaos(Player):
         return False
 
 
-def recompute_power(self):
-    super(CrawlingChaos, self).recompute_power()
+    def recompute_power(self):
+        super(CrawlingChaos, self).recompute_power()
 
 
 class Nightgaunt(Unit):

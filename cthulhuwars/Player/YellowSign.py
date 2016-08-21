@@ -54,6 +54,25 @@ class YellowSign(Player):
         self._goo.add(self._king_in_yellow)
         self._monsters.add(self._king_in_yellow)
 
+    def determine_combat_power(self, units):
+        total_combat_power = 0
+        n_undead = 0
+        n_byakhee = 0
+        for unit in units:
+            assert isinstance(unit, Unit)
+            total_combat_power += unit.combat_power
+            if unit.unit_type is UnitType.undead:
+                n_undead += 1
+            if unit.unit_type is UnitType.byakhee:
+                n_byakhee += 1
+
+        if n_undead > 0:
+            total_combat_power -= 1
+        if n_byakhee > 0:
+            total_combat_power += 1
+
+        return total_combat_power
+
 class Undead(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=1):
         super(Undead, self).__init__(unit_parent, unit_zone, UnitType.undead, combat_power=1, cost=unit_cost,

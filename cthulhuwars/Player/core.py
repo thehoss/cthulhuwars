@@ -1,9 +1,9 @@
+from cthulhuwars.Color import TextColor, NodeColor
+from cthulhuwars.DiceRoller import DiceRoller
+from cthulhuwars.Maps import Map
+from cthulhuwars.PlayerLogic import PlayerLogic
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
 from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars.Maps import Map
-from cthulhuwars.Color import TextColor, NodeColor
-from cthulhuwars.PlayerLogic import PlayerLogic
-from cthulhuwars.DiceRoller import DiceRoller
 
 
 # Generic Player class
@@ -408,7 +408,7 @@ class Player(object):
                             if occupant.unit_type is not UnitType.cultist and unit.unit_type is UnitType.cultist:
                                 score -= 1
 
-                        #if len(destination_zone.occupancy_list) == 0:
+                        # if len(destination_zone.occupancy_list) == 0:
                         #    score += 1
                         all_possible_moves.append((unit, unit.unit_zone, destination_zone, score))
 
@@ -430,21 +430,24 @@ class Player(object):
             attackers = self.my_units_in_zone(zone)
             defenders = self.enemy_combatants_in_zone(zone)
             if len(defenders) > 0:
-                total_attack_power = 0
-                total_defense_power = 0
-                for a in attackers:
-                    assert isinstance(a, Unit)
-                    if a.combat_power > 0:
-                        total_attack_power += a.combat_power
-                for d in defenders:
-                    assert isinstance(d, Unit)
-                    if d.combat_power > 0:
-                        total_defense_power += d.combat_power
+                total_attack_power = self.determine_combat_power(list(attackers))
+                total_defense_power = self.determine_combat_power(list(defenders))
+
                 # if total_attack_power > total_defense_power:
                 score = total_attack_power - total_defense_power
                 if len(attackers) > 0:
                     combat_actions.append((attackers, zone, defenders, score))
         return combat_actions
+
+    '''
+    determine the combat power of a group of units
+    '''
+
+    def determine_combat_power(self, units):
+        total_combat_power = 0
+        for unit in units:
+            total_combat_power += unit.combat_power
+        return total_combat_power
 
     '''
       summon_action
@@ -493,25 +496,21 @@ class Player(object):
 
     '''
     combat_action
-    boilerplate combat action stub
+    boilerplate combat action
     '''
 
     def combat_action(self, attackers, zone, defenders):
-        total_attack_power = 0
-        total_defense_power = 0
 
-        for a in attackers:
-            assert isinstance(a, Unit)
-            total_attack_power += a.combat_power
-        for d in defenders:
-            assert isinstance(d, Unit)
-            total_defense_power += d.combat_power
+        total_attack_power = self.determine_combat_power(list(attackers))
+        total_defense_power = self.determine_combat_power(list(defenders))
 
         if total_attack_power > 0:
             if self.spend_power(1):
                 print(self._color + TextColor.BOLD + 'A battle has erupted in %s!' % (zone.name) + TextColor.ENDC)
-                print(self._color + TextColor.BOLD + '     '+', '.join(a.unit_type.value for a in attackers) +' : %s'%total_attack_power + TextColor.ENDC)
-                print(self._color + TextColor.BOLD + '     '+', '.join(d.unit_type.value for d in defenders)  +' : %s'%total_defense_power + TextColor.ENDC)
+                print(self._color + TextColor.BOLD + '     ' + ', '.join(
+                    a.unit_type.value for a in attackers) + ' : %s' % total_attack_power + TextColor.ENDC)
+                print(self._color + TextColor.BOLD + '     ' + ', '.join(
+                    d.unit_type.value for d in defenders) + ' : %s' % total_defense_power + TextColor.ENDC)
 
                 attack_dice = DiceRoller(total_attack_power)
                 defence_dice = DiceRoller(total_defense_power)
@@ -519,8 +518,8 @@ class Player(object):
                 attack_rolls = attack_dice.interpret_dice()
                 defence_rolls = defence_dice.interpret_dice()
 
-                print ('    attacker rolled: %s'%attack_rolls)
-                print ('    defender rolled: %s'%defence_rolls)
+                print ('    attacker rolled: %s' % attack_rolls)
+                print ('    defender rolled: %s' % defence_rolls)
 
                 for _ in range(attack_rolls['kill']):
                     # TODO: kill an enemy monster
@@ -565,7 +564,6 @@ class Player(object):
             if unit.faction._name is not self._name and unit.unit_type is not UnitType.cultist:
                 units_in_zone.append(unit)
         return units_in_zone
-
 
     '''
     build_gate_action

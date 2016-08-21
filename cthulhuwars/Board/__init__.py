@@ -23,7 +23,7 @@ if __name__ == "__main__":
             if not B.is_action_phase():
                 break
 
-        B.render_map('play.%s' % str('%04d'%(r+1001)))
+        #B.render_map('play.%s' % str('%04d'%(r+1001)))
         B.print_state()
 
                 #doom phase
