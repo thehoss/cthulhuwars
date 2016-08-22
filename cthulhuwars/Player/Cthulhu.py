@@ -27,6 +27,23 @@ class Cthulhu(Player):
         self._color = TextColor.GREEN
         self._node_color = NodeColor.GREEN
 
+        '''
+        probability_dict overrides the probabilities in the Player class
+        these are used to govern the weighted choices for actions in the 'wc'
+        PlayerLogic methods
+        '''
+        self.probability_dict = {
+            'capture': 0.1,
+            'build': 0.2,
+            'move': 0.2,
+            'summon': 0.2,
+            'recruit': 0.1,
+            'combat': 0.2,
+            'awaken': 0,
+            'special': 0
+        }
+        self.brain.set_probabilities(self.probability_dict)
+
     def player_setup(self):
         super(Cthulhu, self).player_setup()
         n_deep_ones = 4

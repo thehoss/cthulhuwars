@@ -57,11 +57,11 @@ class BlackGoat(Player):
         PlayerLogic methods
         '''
         self.probability_dict = {
-            'capture': 0.3,
-            'build': 0.1,
-            'move': 0.3,
-            'summon': 0.15,
-            'recruit': 0.05,
+            'capture': 0.2,
+            'build': 0.3,
+            'move': 0.2,
+            'summon': 0.1,
+            'recruit': 0.1,
             'combat': 0.1,
             'awaken': 0,
             'special': 0
