@@ -213,6 +213,10 @@ class Player(object):
         self._current_gates = gates
         return self._current_gates
 
+    @property
+    def doom_points(self):
+        dp = self.current_gates
+        return dp
     '''
     abandon_gate
     unit occupying the gate leaves the gate, presumably to move to another zone
@@ -430,24 +434,16 @@ class Player(object):
             attackers = self.my_units_in_zone(zone)
             defenders = self.enemy_combatants_in_zone(zone)
             if len(defenders) > 0:
+                defenderFaction = list(defenders)[0]._faction
+
                 total_attack_power = self.determine_combat_power(list(attackers))
-                total_defense_power = self.determine_combat_power(list(defenders))
+                total_defense_power = defenderFaction.determine_combat_power(list(defenders))
 
                 # if total_attack_power > total_defense_power:
                 score = total_attack_power - total_defense_power
                 if len(attackers) > 0:
                     combat_actions.append((attackers, zone, defenders, score))
         return combat_actions
-
-    '''
-    determine the combat power of a group of units
-    '''
-
-    def determine_combat_power(self, units):
-        total_combat_power = 0
-        for unit in units:
-            total_combat_power += unit.combat_power
-        return total_combat_power
 
     '''
       summon_action
@@ -501,8 +497,14 @@ class Player(object):
 
     def combat_action(self, attackers, zone, defenders):
 
+        defenderFaction = defenders[0]._faction
+        assert isinstance(defenderFaction, Player)
+
         total_attack_power = self.determine_combat_power(list(attackers))
-        total_defense_power = self.determine_combat_power(list(defenders))
+        total_defense_power = defenderFaction.determine_combat_power(list(defenders))
+
+        self.pre_combat_action()
+        defenderFaction.pre_combat_action()
 
         if total_attack_power > 0:
             if self.spend_power(1):
@@ -536,7 +538,20 @@ class Player(object):
                     attackers = self.brain.pain_from_selection(attackers)
 
                 return True
+
+            self._board.post_combat_actions()
+
             return False
+
+    '''
+    determine the combat power of a group of units
+    '''
+
+    def determine_combat_power(self, units):
+        total_combat_power = 0
+        for unit in units:
+            total_combat_power += unit.combat_power
+        return total_combat_power
 
     def my_units_in_zone(self, zone):
         assert isinstance(zone, Zone)

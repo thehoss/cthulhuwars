@@ -39,6 +39,7 @@ class Board(object):
         self.__num_players = int(num_players)
         self._phase = Phase.gather_power
         self._round = 0
+        self._doom_track = {}
 
     @property
     def players(self):
@@ -102,6 +103,10 @@ class Board(object):
                 self.yellow_sign = True
                 self.__players.append(YellowSign(self.__map.zone_by_name('Europe'), self))
 
+        for p in self.__players:
+            assert isinstance(p, Player)
+            self._doom_track[p._name] = 0
+
         # Rule:  If present, The Great Cthulhu goes first on first turn
         print ('Generating random player turn order...')
         if self.cthulhu:
@@ -111,6 +116,7 @@ class Board(object):
             self.__players.insert(0, cthulhu)
         else:
             random.shuffle(self.__players)
+
 
     def print_state(self):
         for p in self.__players:
@@ -144,6 +150,25 @@ class Board(object):
 
         print(TextColor.BOLD + "**First Player is %s **"%first_player._name + TextColor.ENDC)
 
+    def doom_phase(self):
+        max_doom = 0
+        win_condition = 30
+        lead = ''
+        for p in self.__players:
+            assert isinstance(p, Player)
+            self._doom_track[p._name] += p.doom_points
+            if self._doom_track[p._name] > max_doom:
+                max_doom = self._doom_track[p._name]
+                lead = p._name
+
+        print self._doom_track
+
+        if self._doom_track[lead] > win_condition:
+            print(TextColor.BOLD + "**%s Wins! **" % lead + TextColor.ENDC)
+            return True
+        else:
+            return False
+
 
     def tally_player_power(self):
         total_power = 0
@@ -161,10 +186,28 @@ class Board(object):
 
         for p in self.__players:
             assert isinstance(p, Player)
+            self.pre_turn_actions()
             if p.power is 0:
                 print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
                 p.brain.execute_action()
+            self.post_turn_actions()
+
+
+    def post_combat_actions(self):
+        for p in self.__players:
+            assert isinstance(p, Player)
+            p.post_combat_action()
+
+    def pre_turn_actions(self):
+        for p in self.__players:
+            assert isinstance(p, Player)
+            p.pre_turn_action()
+
+    def post_turn_actions(self):
+        for p in self.__players:
+            assert isinstance(p, Player)
+            p.post_turn_action()
 
     def current_player(self, state):
         # Takes the game state and returns the current player's
