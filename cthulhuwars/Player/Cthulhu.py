@@ -147,9 +147,10 @@ class DeepOne(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.025)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -162,9 +163,10 @@ class Shoggoth(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.030)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -177,9 +179,10 @@ class Starspawn(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.03)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self) )],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -193,7 +196,7 @@ class GreatCthulhu(Unit):
     def render_unit(self):
         render_definition = {
             "nodetype": ["procedural"],
-            "name": ["cthulhu_object"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
             "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cthulhu_goo.obj"),
                        ("bool", "load_at_init", 1)]
         }

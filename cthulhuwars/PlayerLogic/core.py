@@ -20,6 +20,8 @@ class PlayerLogic(object):
         self._method = Methods.random
         self.map = the_map
 
+        self._spells = []
+
         self._probability_dict = {
             'capture': 3.0,
             'build': 4.0,
@@ -40,6 +42,9 @@ class PlayerLogic(object):
     def set_probabilities(self, dict):
         self._probability_dict = dict
 
+    def set_spells(self, spells):
+        self._spells = spells
+
     '''
     execute_action
     collects all possible actions based on the current map and player state
@@ -56,6 +61,8 @@ class PlayerLogic(object):
 
     def execute_action(self):
         result = False
+        self.player.take_spell_book()
+
         if self._method is Methods.random:
             result = self.random_action()
         if self._method is Methods.weighted_choice:
@@ -155,6 +162,7 @@ class PlayerLogic(object):
                 self.player.spend_power(self.player.power)
                 action_success = True
         self.player.free_action()
+        self.player.take_spell_book()
         return action_success
 
     def weighted_choice_action(self):
@@ -377,3 +385,25 @@ class PlayerLogic(object):
             unit_to_kill.faction._name, unit_to_kill.unit_type.value) + TextColor.ENDC)
             return units
         return units
+
+    def select_spell(self, spells):
+        if self._method is Methods.random:
+            self.select_spell_random(spells)
+        elif self._method is Methods.weighted_choice:
+            self.select_spell_wc(spells)
+
+    def select_spell_random(self, spells):
+        valid_spells = [i for i in range(len(self._spells)) if self._spells[i]['state'] == False]
+        index = valid_spells[choice(range(len(valid_spells)), 1)[0]]
+        self._spells[index]['state'] = True
+        self._spells[index]['method']()
+        print (self.player._color + TextColor.BOLD + "Spell selected: %s"%(self._spells[index]['name']) + TextColor.ENDC)
+        return
+
+    def select_spell_wc(self, spells):
+        valid_spells = [i for i in range(len(self._spells)) if self._spells[i]['state'] == False]
+        index = valid_spells[choice(range(len(valid_spells)), 1)[0]]
+        self._spells[index]['state'] = True
+        self._spells[index]['method']()
+        print (self.player._color + TextColor.BOLD + "Spell selected: %s"%(self._spells[index]['name']) + TextColor.ENDC)
+        return

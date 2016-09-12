@@ -18,7 +18,7 @@ class Player(object):
         self._name = name
         self._faction = faction
         self._home_zone = home_zone
-        self._spells = [6]
+        self._spells = 0
         self._spell_requirement_met = [False] * 6
         self._units = set()
         self._cultists = set()

@@ -7,12 +7,13 @@ from __future__ import print_function
 """
 
 # TODO: implement spell conditions
-# TODO: implement Avatar ability for shub-nuggurath
+# TODO: implement Avatar ability for shub-niggurath
 # TODO: implement Fertility Cult in summoning logic
 from core import Player
 from cthulhuwars.Color import TextColor, NodeColor
 from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
 from cthulhuwars.Zone import Zone, GateState
+from enum import Enum
 
 class BlackGoat(Player):
     def __init__(self, home_zone, board, name='The Black Goat'):
@@ -39,6 +40,18 @@ class BlackGoat(Player):
         spell flags
         True = spell has been acquired by player
         '''
+        self.spells = [
+
+        {'name': "Thousand Young", 'state': False, 'method': self.spell_play_thousand_young, 'weight': 0.2 },
+        {'name': "Frenzy", 'state': False, 'method': self.spell_play_frenzy, 'weight': 0.2},
+        {'name': "Necrophagy", 'state': False, 'method': self.spell_play_necrophagy, 'weight': 0.2},
+        {'name': "Ghroth", 'state': False, 'method': self.spell_play_ghroth, 'weight': 0.2},
+        {'name': "The Red Sign", 'state': False, 'method': self.spell_play_red_sign, 'weight': 0.2},
+        {'name': "Blood Sacrifice", 'state': False, 'method': self.spell_play_blood_sacrifice, 'weight': 0.2}
+
+        ]
+        self.brain.set_spells(self.spells)
+
         self.spell_thousand_young = False
         self.spell_frenzy = False
         self.spell_necrophagy = False
@@ -128,7 +141,7 @@ class BlackGoat(Player):
         build_actions = []
         builders = self.cultists_in_play
         if self.spell_red_sign is True:
-            builders = builders+self._dark_young
+            builders = set(list(builders)+list(self._dark_young))
         if self.power >= 3:
             for cultist in builders:
                 if cultist.unit_state is UnitState.in_play:
@@ -235,7 +248,7 @@ class BlackGoat(Player):
                         self._shub_niggurath.set_unit_state(UnitState.in_play)
                         self.spend_power(unit_cost)
                         if not self.awakened_shub_niggurath:
-                            self.take_new_spell()
+                            self.take_spell_book()
                         print(
                             self._color + TextColor.BOLD + 'Shub-Niggurath Successfully Summoned!' + TextColor.ENDC)
                         return True
@@ -243,22 +256,31 @@ class BlackGoat(Player):
 
     def spell_play_thousand_young(self):
         self.spell_thousand_young = True
+        self._spells += 1
 
     def spell_play_red_sign(self):
         self.spell_red_sign = True
+        self._spells += 1
 
     def spell_play_frenzy(self):
         self.spell_frenzy = True
         for cultist in self._cultists:
             cultist.set_combat_power(1)
+        self._spells += 1
 
     def spell_play_ghroth(self):
         self.spell_ghroth = True
+        self._spells += 1
 
     def spell_play_necrophagy(self):
         self.spell_necrophagy = True
+        self._spells += 1
 
-    def take_new_spell(self):
+    def spell_play_blood_sacrifice(self):
+        self.spell_blood_sacrifice = True
+        self._spells += 1
+
+    def take_spell_book(self):
         # check conditions for taking a new spell:
         # Have Units in four Areas
         # Have Units in six Areas
@@ -269,16 +291,19 @@ class BlackGoat(Player):
         nzones = len(self.occupied_zones)
         if nzones >= 4 and self.units_in_four_zones is False:
             self.units_in_four_zones = True
-            # pick a spell
+            self.brain.select_spell(self.spells)
         if nzones >= 6 and self.units_in_six_zones is False:
             self.units_in_six_zones = True
             # pick a spell
+            self.brain.select_spell(self.spells)
         if nzones >= 8 and self.units_in_eight_zones is False:
             self.units_in_eight_zones = True
             # pick a spell
+            self.brain.select_spell(self.spells)
         if self._shub_niggurath is not None and self.awakened_shub_niggurath is False:
             self.awakened_shub_niggurath = True
             # pick a spell
+            self.brain.select_spell(self.spells)
         # check for shared areas condition
         if self.share_zones_with_all_factions is False:
             shared = True
@@ -290,7 +315,7 @@ class BlackGoat(Player):
             if shared is True:
                 self.share_zones_with_all_factions = True
                 # Pick a spell
-
+                self.brain.select_spell(self.spells)
         pass
 
     def sacrifice_two_cultists(self):
@@ -339,9 +364,10 @@ class Ghoul(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.025)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -354,9 +380,10 @@ class Fungi(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.03)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -369,9 +396,10 @@ class DarkYoung(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.035)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -392,8 +420,9 @@ class ShubNiggurath(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.085)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition

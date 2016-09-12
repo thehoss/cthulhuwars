@@ -93,9 +93,10 @@ class Undead(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.025)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -119,9 +120,10 @@ class Byakhee(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.025)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
 
@@ -136,12 +138,12 @@ class Hastur(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.085)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition
-
 
 class KingInYellow(Unit):
     def __init__(self, unit_parent, unit_zone, unit_cost=4):
@@ -153,8 +155,9 @@ class KingInYellow(Unit):
 
     def render_unit(self):
         render_definition = {
-            "nodetype": ["sphere"],
-            "name": ["%s_%s" % (self.faction._name, self._unit_type.value)],
-            "params": [("float", "radius", 0.055)]
+            "nodetype": ["procedural"],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
+            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+                       ("bool", "load_at_init", 1)]
         }
         return render_definition

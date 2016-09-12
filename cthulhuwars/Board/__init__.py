@@ -5,7 +5,7 @@ if __name__ == "__main__":
     B.build_map()
     B.create_players()
     B.start()
-    #B.render_map('play.1001')
+    B.render_map('play.1001')
     i = 1
     num_rounds = 16
     r = 0
@@ -25,7 +25,7 @@ if __name__ == "__main__":
             if not B.is_action_phase():
                 break
 
-        #B.render_map('play.%s' % str('%04d'%(r+1001)))
+        B.render_map('play.%s' % str('%04d'%(r+1001)))
         r += 1
         winner = B.doom_phase()
         B.print_state()

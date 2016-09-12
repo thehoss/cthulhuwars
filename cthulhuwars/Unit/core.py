@@ -120,7 +120,7 @@ class Unit(object):
     def render_unit(self):
         render_definition = {
             "nodetype": ["sphere"],
-            "name": ["%s_%s"%(self.faction._name, self._unit_type.value)],
+            "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, self.id())],
             "params": [("float", "radius", 0.015)]
         }
         return render_definition
