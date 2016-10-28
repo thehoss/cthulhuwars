@@ -1,4 +1,4 @@
-from PodSixNet.Channel import Channel
+from Channel import Channel
 
 class ClientChannel(Channel):
     """

@@ -1,10 +1,9 @@
-import sys
-from time import sleep, localtime
-from random import randint
+from time import sleep
 from weakref import WeakKeyDictionary
 
-from PodSixNet.Server import Server
 from ClientChannel import ClientChannel
+from Server import Server
+
 
 class CWServer(Server):
 
