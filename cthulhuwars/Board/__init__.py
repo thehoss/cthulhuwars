@@ -1,6 +1,7 @@
 from core import Board, Actions, Phase
 
-if __name__ == "__main__":
+
+if __name__ == "__test__":
     B = Board()
     B.build_map()
     B.create_players()
@@ -32,5 +33,4 @@ if __name__ == "__main__":
 
                 #doom phase
         #annihilation phase
-
 

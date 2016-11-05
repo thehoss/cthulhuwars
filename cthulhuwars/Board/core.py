@@ -29,13 +29,31 @@ class Phase(Enum):
 
 class Board(object):
     def __init__(self):
-        num_players = raw_input("Please enter the number of players:")
+        num_players = 4
+
         self.__map = None
+
         self.cthulhu = False
+        self._cthulhu = None
+
         self.black_goat = False
+        self._black_goat = None
+
         self.crawling_chaos = False
+        self._crawling_chaos = None
+
         self.yellow_sign = False
+        self._yellow_sign = None
+
         self.__players = []
+
+        self.player_dict = {
+            'cthulhu': {'active':False, 'class': None},
+            'black_goat': {'active': False, 'class': None},
+            'crawling_chaos': {'active': False, 'class': None},
+            'yellow_sign': {'active': False, 'class': None}
+        }
+
         self.__num_players = int(num_players)
         self._phase = Phase.gather_power
         self._round = 0
@@ -66,6 +84,45 @@ class Board(object):
 
     def render_map(self, image='image'):
         self.__map.render_map(image)
+
+    def create_all_players(self):
+        assert isinstance(self.__map, Map)
+
+        index = self.__players.__len__()
+
+        self.player_dict['cthulhu']['class'] = Cthulhu(self.__map.zone_by_name('South Pacific'),self)
+        self.__players.append(self.player_dict['cthulhu']['class'])
+
+        try:
+            self.player_dict['black_goat']['class'] = BlackGoat(self.__map.zone_by_name('Africa'), self)
+            self.__players.append(self.player_dict['black_goat']['class'])
+        except KeyError:
+            self.player_dict['black_goat']['class'] = BlackGoat(self.__map.zone_by_name('West Africa'), self)
+            self.__players.append(self.player_dict['black_goat']['class'])
+
+        try:
+            self.player_dict['crawling_chaos']['class'] = CrawlingChaos(self.__map.zone_by_name('Asia'), self)
+            self.__players.append(self.player_dict['crawling_chaos']['class'])
+        except KeyError:
+            self.player_dict['crawling_chaos']['class'] = CrawlingChaos(self.__map.zone_by_name('South Asia'), self)
+            self.__players.append(self.player_dict['crawling_chaos']['class'])
+
+        self.player_dict['yellow_sign']['class'] = YellowSign(self.__map.zone_by_name('Europe'), self)
+        self.__players.append(self.player_dict['yellow_sign']['class'])
+
+        for p in self.__players:
+            assert isinstance(p, Player)
+            self._doom_track[p._name] = 0
+
+        # Rule:  If present, The Great Cthulhu goes first on first turn
+        print ('Generating random player turn order...')
+        if self.cthulhu:
+            print ('The Great Cthulhu faction holds primacy for the first turn!')
+            cthulhu = self.__players.pop(index)
+            random.shuffle(self.__players)
+            self.__players.insert(0, cthulhu)
+        else:
+            random.shuffle(self.__players)
 
     def create_players(self):
         assert isinstance(self.__map, Map)
