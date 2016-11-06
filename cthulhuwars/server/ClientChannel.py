@@ -1,20 +1,12 @@
 from Channel import Channel
-import sys
-
-class PrintStream:
-    def __init__(self):
-        self.data = []
-    def write(self, s):
-        self.data.append(s)
-    def __enter__(self):
-        sys.stdout = self
-        return self
-    def __exit__(self, ext_type, exc_value, traceback):
-        sys.stdout = sys.__stdout__
+from PrintStream import PrintStream
 
 class ClientChannel(Channel):
     """
     This is the server representation of a single connected client.
+    This class contains a reference to the player faction object.
+    Clients do NOT get a local reference to this data.  State is only
+    maintained by the server
     """
 
     def __init__(self, *args, **kwargs):
@@ -37,6 +29,11 @@ class ClientChannel(Channel):
     ##################################
 
     def Network_boardState(self, data):
+        '''
+        The current state of the board from the server has been requested. send it to the client
+        :param data:
+        :return:
+        '''
         print "Board State Request"
         with PrintStream() as x:
             self._server.board.print_state()
@@ -44,12 +41,31 @@ class ClientChannel(Channel):
         self.Send({"action": "gameMessage", "message": x.data})
 
     def Network_me(self, data):
+        '''
+        The state of the current player has been requested.  Send it only to the client this channel represents.
+        :param data:
+        :return:
+        '''
         with PrintStream() as x:
             self.player_class.print_state()
         self.Send({"action": "gameMessage", "message": x.data})
 
+    def Network_disconnect(self, data):
+        self._server.SendToAll({"action": "gameMessage", "message": [('%s is disconnecting')%(self.faction)]})
+        self.Close()
+
     def Network_initial(self, data):
+        '''
+        Called when a client connects
+        :param data:
+        :return:
+        '''
         self.faction = data['faction']
 
     def Network_message(self, data):
+        '''
+        Pass a message from this client to all other clients
+        :param data:
+        :return:
+        '''
         self._server.SendToAll({"action": "message", "message": data['message'], "who": self.faction})

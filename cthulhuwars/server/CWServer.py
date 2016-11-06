@@ -4,12 +4,18 @@ from weakref import WeakKeyDictionary
 from ClientChannel import ClientChannel
 from Server import Server
 from cthulhuwars import Color, Board
+from PrintStream import PrintStream
 
 class CWServer(Server):
-
+    '''
+    ClientChannel class is used to communicate server data back to each client.  There is one ClientChannel per player
+    '''
     channelClass = ClientChannel
 
     def __init__(self, *args, **kwargs):
+        '''
+        Init builds the board and map as well as the faction classes.  The factions are not set up until a player connects
+        '''
         self.id = 0
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
@@ -30,6 +36,9 @@ class CWServer(Server):
         self.AddPlayer(channel)
 
     def sprint(self, msg, mode='info'):
+        '''
+        Custom print mechanism.  Just for pretty
+        '''
         head = '[CWServer]: '
         if mode == 'info':
             print(Color.TextColor.GREEN+Color.TextColor.BOLD+head+msg)
@@ -40,39 +49,61 @@ class CWServer(Server):
         print(Color.TextColor.ENDC)
 
     def AddPlayer(self, player):
+        '''
+        Adds a new player, selects a faction, sets up the faction object and places faction on the the board.
+        This is called when a new client connects.
+        :param player:
+        :return: nothing
+        '''
         if self.nPlayers < self.maxPlayers:
             self.nPlayers += 1
             self.sprint("New Player" + str(player.addr))
             self.players[player] = True
             player_faction = ''
-            for k, v in self.board.player_dict.items():
-                if self.board.player_dict[k]['active'] is False:
-                    player_faction = k
-                    self.board.player_dict[k]['active'] = True
-                    self.board.player_dict[k]['class'].player_setup()
-                    player.player_class = self.board.player_dict[k]['class']
-                    player.faction = player_faction
-                    break
+            with PrintStream() as x:
+                for k, v in self.board.player_dict.items():
+                    if self.board.player_dict[k]['active'] is False:
+                        player_faction = k
+                        self.board.player_dict[k]['active'] = True
+                        self.board.player_dict[k]['class'].player_setup()
+                        player.player_class = self.board.player_dict[k]['class']
+                        player.faction = player_faction
+                        break
             self.sprint('assigning player %s to faction %s' % (str(player.addr), k))
 
             player.Send(
                 {"action": "initial", "faction": player_faction }
             )
-            self.SendPlayers()
+            self.SendToAll({"action": "gameMessage", "message": x.data})
+            #self.SendPlayers()
         else:
             self.sprint('Maximum Players Reached', mode='warning')
             del player
 
     def DelPlayer(self, player):
+        '''
+        Remove a player and it's client channel
+        :param player:
+        :return:
+        '''
         self.sprint("Deleting Player" + str(player.addr), mode='warning')
         del self.players[player]
         self.nPlayers -= 1
         self.SendPlayers()
 
     def SendPlayers(self):
+        '''
+        This sends a list of current players to all players
+        :return:
+        '''
         self.SendToAll({"action": "players", "players": dict([(p.id, p.faction) for p in self.players])})
 
     def SendToAll(self, data):
+        '''
+        Sends data to all players
+        :param data:
+        :return:
+        '''
         [p.Send(data) for p in self.players]
 
     def Launch(self):
