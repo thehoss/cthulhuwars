@@ -1,5 +1,4 @@
 import CWServer
-import time
 
 s = CWServer.CWServer(localaddr=('localhost', int(666)))
 s.Launch()

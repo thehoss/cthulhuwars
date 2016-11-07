@@ -1,14 +1,15 @@
-import sys
 from time import sleep
 from sys import stdin, exit
 
 from PodSixNet.Connection import connection, ConnectionListener
 from thread import *
-from cthulhuwars import Color, Board, Player
+from cthulhuwars import Color
+from Board import Factions
 
 class CWClient(ConnectionListener):
 
-    def __init__(self, host, port):
+
+    def __init__(self, host='localhost', port=int(666)):
         '''
         A thin client.  This class is the user interface to the game.  Game and player state are kept only on the server
         Client requests data and posts commands.
@@ -42,6 +43,11 @@ class CWClient(ConnectionListener):
     def Loop(self):
         self.Pump()
         connection.Pump()
+
+    def Launch(self):
+        while True:
+            self.Loop()
+            sleep(0.001)
 
     def InputLoop(self):
         '''
@@ -90,9 +96,34 @@ class CWClient(ConnectionListener):
         :param data:
         :return:
         '''
-        self.faction = data['faction']
+        available_factions = data['factions']
+        valid = False
+        validVals = []
+        while valid is False:
+            print ('Select your Great Old One:')
+            if available_factions['cthulhu'] is False:
+                print(Color.TextColor.GREEN + ' [1] The Great Cthulhu' + Color.TextColor.ENDC)
+                validVals.append(1)
+            if available_factions['black_goat'] is False:
+                print(Color.TextColor.RED + ' [2] The Black Goat' + Color.TextColor.ENDC)
+                validVals.append(2)
+            if available_factions['crawling_chaos'] is False:
+                print(Color.TextColor.BLUE + ' [3] The Crawling Chaos' + Color.TextColor.ENDC)
+                validVals.append(3)
+            if available_factions['yellow_sign'] is False:
+                print(Color.TextColor.YELLOW + ' [4] The Yellow Sign' + Color.TextColor.ENDC)
+                validVals.append(4)
+            selection = int(raw_input("Selection: "))
+
+            if selection in validVals:
+                valid = True
+
+        self.faction = Factions[selection-1]
+
         self.sprint('joined as faction ' + self.faction)
         self.sprint('commands:  \n board = request board state from server \n me = print current player state')
+        connection.Send({"action": "faction", "faction": self.faction})
+
         t = start_new_thread(self.InputLoop, ())
         #connection.Send({"action": "boardState"})
 

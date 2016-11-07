@@ -5,7 +5,6 @@ from enum import Enum
 from cthulhuwars.Color import TextColor
 from cthulhuwars.Maps import Map
 from cthulhuwars.Player import Player, BlackGoat, CrawlingChaos, Cthulhu, YellowSign
-from cthulhuwars.PlayerLogic import PlayerLogic
 
 class Actions(Enum):
     move = 0
@@ -18,7 +17,6 @@ class Actions(Enum):
     control_gate = 7
     abandon_gate = 8
 
-
 class Phase(Enum):
     gather_power = 'gather power'
     first_player = 'first player'
@@ -26,6 +24,7 @@ class Phase(Enum):
     doom = 'doom'
     annihilation = 'annihilation'
 
+Factions = ['cthulhu', 'black_goat', 'crawling_chaos', 'yellow_sign']
 
 class Board(object):
     def __init__(self):

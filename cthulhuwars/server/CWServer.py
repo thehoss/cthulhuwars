@@ -59,22 +59,26 @@ class CWServer(Server):
             self.nPlayers += 1
             self.sprint("New Player" + str(player.addr))
             self.players[player] = True
-            player_faction = ''
-            with PrintStream() as x:
-                for k, v in self.board.player_dict.items():
-                    if self.board.player_dict[k]['active'] is False:
-                        player_faction = k
-                        self.board.player_dict[k]['active'] = True
-                        self.board.player_dict[k]['class'].player_setup()
-                        player.player_class = self.board.player_dict[k]['class']
-                        player.faction = player_faction
-                        break
-            self.sprint('assigning player %s to faction %s' % (str(player.addr), k))
+            available_factions = {}
+            for k, v in self.board.player_dict.items():
+                available_factions[k] = self.board.player_dict[k]['active']
+
+            #with PrintStream() as x:
+            #    for k, v in self.board.player_dict.items():
+            #        if self.board.player_dict[k]['active'] is False:
+            #            player_faction = k
+            #            self.board.player_dict[k]['active'] = True
+            #            self.board.player_dict[k]['class'].player_setup()
+            #            player.player_class = self.board.player_dict[k]['class']
+            #            player.faction = player_faction
+            #            break
+            #self.sprint('assigning player %s to faction %s' % (str(player.addr), k))
 
             player.Send(
-                {"action": "initial", "faction": player_faction }
+                {"action": "initial", "factions": available_factions}
             )
-            self.SendToAll({"action": "gameMessage", "message": x.data})
+
+            #self.SendToAll({"action": "gameMessage", "message": x.data})
             #self.SendPlayers()
         else:
             self.sprint('Maximum Players Reached', mode='warning')

@@ -60,7 +60,19 @@ class ClientChannel(Channel):
         :param data:
         :return:
         '''
-        self.faction = data['faction']
+        print data
+
+    def Network_faction(self, data):
+        f = data['faction']
+        self._server.board.player_dict[f]['active'] = True
+
+        with PrintStream() as x:
+            self._server.board.player_dict[f]['class'].player_setup()
+        self._server.SendToAll({"action": "gameMessage", "message": x.data})
+
+        self.player_class = self._server.board.player_dict[f]['class']
+        self.faction = f
+
 
     def Network_message(self, data):
         '''

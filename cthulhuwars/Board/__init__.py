@@ -1,4 +1,4 @@
-from core import Board, Actions, Phase
+from core import Board, Actions, Phase, Factions
 
 
 if __name__ == "__test__":
