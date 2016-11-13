@@ -52,7 +52,6 @@ if __name__ == "__main__":
         def Network_connected(self, data):
             print "connection test Connected"
 
-
     c = ConnectionTest()
 
     c.Connect()

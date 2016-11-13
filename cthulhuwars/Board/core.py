@@ -88,7 +88,6 @@ class Board(object):
         assert isinstance(self.__map, Map)
 
         index = self.__players.__len__()
-
         self.player_dict['cthulhu']['class'] = Cthulhu(self.__map.zone_by_name('South Pacific'),self)
         self.__players.append(self.player_dict['cthulhu']['class'])
 
@@ -113,16 +112,6 @@ class Board(object):
             assert isinstance(p, Player)
             self._doom_track[p._name] = 0
 
-        # Rule:  If present, The Great Cthulhu goes first on first turn
-        print ('Generating random player turn order...')
-        if self.cthulhu:
-            print ('The Great Cthulhu faction holds primacy for the first turn!')
-            cthulhu = self.__players.pop(index)
-            random.shuffle(self.__players)
-            self.__players.insert(0, cthulhu)
-        else:
-            random.shuffle(self.__players)
-
     def create_players(self):
         assert isinstance(self.__map, Map)
         index = 0
@@ -141,37 +130,31 @@ class Board(object):
 
             if selection is 1:
                 self.cthulhu = True
+                self.player_dict['cthulhu']['active'] = True
                 index = self.__players.__len__()
                 self.__players.append(Cthulhu(self.__map.zone_by_name('South Pacific'),self))
             elif selection is 2:
                 self.black_goat = True
+                self.player_dict['black_goat']['active'] = True
                 try:
                     self.__players.append(BlackGoat(self.__map.zone_by_name('Africa'), self))
                 except KeyError:
                     self.__players.append(BlackGoat(self.__map.zone_by_name('West Africa'), self))
             elif selection is 3:
+                self.player_dict['crawling_chaos']['active'] = True
                 self.crawling_chaos = True
                 try:
                     self.__players.append(CrawlingChaos(self.__map.zone_by_name('Asia'), self))
                 except KeyError:
                     self.__players.append(CrawlingChaos(self.__map.zone_by_name('South Asia'), self))
             elif selection is 4:
+                self.player_dict['yellow_sign']['active'] = True
                 self.yellow_sign = True
                 self.__players.append(YellowSign(self.__map.zone_by_name('Europe'), self))
 
         for p in self.__players:
             assert isinstance(p, Player)
             self._doom_track[p._name] = 0
-
-        # Rule:  If present, The Great Cthulhu goes first on first turn
-        print ('Generating random player turn order...')
-        if self.cthulhu:
-            print ('The Great Cthulhu faction holds primacy for the first turn!')
-            cthulhu = self.__players.pop(index)
-            random.shuffle(self.__players)
-            self.__players.insert(0, cthulhu)
-        else:
-            random.shuffle(self.__players)
 
 
     def print_state(self):
@@ -181,6 +164,18 @@ class Board(object):
 
     def start(self):
         # Returns a representation of the starting state of the game.
+        # Rule:  If present, The Great Cthulhu goes first on first turn
+        cIndex = 0
+        print ('Game Starting: Generating random player turn order...')
+        if self.player_dict['cthulhu']['active']:
+            print ('The Great Cthulhu faction holds primacy for the first turn!')
+            self.cthulhu = True
+            cthulhu = self.__players.pop(cIndex)
+            random.shuffle(self.__players)
+            self.__players.insert(0, cthulhu)
+        else:
+            random.shuffle(self.__players)
+
         for p in self.__players:
             assert isinstance(p, Player)
             p.player_setup()

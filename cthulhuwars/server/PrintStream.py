@@ -1,6 +1,7 @@
 import sys
 
 class PrintStream:
+
     def __init__(self):
         self.data = []
     def write(self, s):

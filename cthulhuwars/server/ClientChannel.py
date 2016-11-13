@@ -66,9 +66,9 @@ class ClientChannel(Channel):
         f = data['faction']
         self._server.board.player_dict[f]['active'] = True
 
-        with PrintStream() as x:
-            self._server.board.player_dict[f]['class'].player_setup()
-        self._server.SendToAll({"action": "gameMessage", "message": x.data})
+        #with PrintStream() as x:
+            #self._server.board.player_dict[f]['class'].player_setup()
+        #self._server.SendToAll({"action": "gameMessage", "message": x.data})
 
         self.player_class = self._server.board.player_dict[f]['class']
         self.faction = f

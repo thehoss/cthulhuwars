@@ -6,8 +6,9 @@ from thread import *
 from cthulhuwars import Color
 from Board import Factions
 
-class CWClient(ConnectionListener):
+serveraddress=('localhost', int(666))
 
+class CWClient(ConnectionListener):
 
     def __init__(self, host='localhost', port=int(666)):
         '''
@@ -16,11 +17,11 @@ class CWClient(ConnectionListener):
         :param host:
         :param port:
         '''
-        self.Connect((host, port))
         self.players = {}
         self.statusLabel = 'connecting'
         self.playersLabel = "0 players"
         self.faction = ''
+        self.Connect((host, port))
 
     def sprint(self, msg, mode='info'):
         '''
@@ -29,7 +30,7 @@ class CWClient(ConnectionListener):
         :param mode:
         :return:
         '''
-        head = '[CWServer]: '
+        head = '[CWClient]: '
         if mode == 'info':
             print(Color.TextColor.GREEN+Color.TextColor.BOLD+head+msg)
         if mode == 'error':
@@ -67,7 +68,7 @@ class CWClient(ConnectionListener):
                 connection.Send({"action": "message", "message": input})
 
     def Network(self, data):
-        #print 'network:', data
+        # print 'network:', data
         pass
 
     def Network_connected(self, data):
@@ -85,10 +86,11 @@ class CWClient(ConnectionListener):
         :param data:
         :return:
         '''
-        self.sprint('error:'+data['error'][1], mode='error')
+        self.sprint('error:'+data['error'], mode='error')
         import traceback
         traceback.print_exc()
         connection.Close()
+        exit(-1)
 
     def Network_initial(self, data):
         '''
@@ -129,7 +131,7 @@ class CWClient(ConnectionListener):
 
     def Network_disconnected(self, data):
         self.statusLabel += " - disconnected"
-        self.sprint('Server disconnected', mode='warning')
+        self.sprint('Server disconnected * ', mode='warning')
         exit()
 
     def Network_players(self, data):
@@ -156,3 +158,7 @@ class CWClient(ConnectionListener):
         '''
         msg = data['message']
         print ''.join(msg)
+
+if __name__ == "__main__":
+    c = CWClient(host=serveraddress[0], port=serveraddress[1])
+    c.Launch()

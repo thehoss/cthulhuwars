@@ -1,7 +1,6 @@
 from core import Board, Actions, Phase, Factions
 
-
-if __name__ == "__test__":
+if __name__ == "__main__":
     B = Board()
     B.build_map()
     B.create_players()

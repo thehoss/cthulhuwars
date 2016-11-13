@@ -6,6 +6,8 @@ from Server import Server
 from cthulhuwars import Color, Board
 from PrintStream import PrintStream
 
+serveraddress=('localhost', int(666))
+
 class CWServer(Server):
     '''
     ClientChannel class is used to communicate server data back to each client.  There is one ClientChannel per player
@@ -21,6 +23,7 @@ class CWServer(Server):
         self.players = WeakKeyDictionary()
         self.nPlayers = 0
         self.maxPlayers = 4
+        self.__player_turn = 0
 
         self.board = Board.Board()
         self.board.build_map()
@@ -48,6 +51,23 @@ class CWServer(Server):
             print(Color.TextColor.YELLOW+Color.TextColor.BOLD+head+msg)
         print(Color.TextColor.ENDC)
 
+    def gameBegin(self):
+        with PrintStream() as x:
+            self.board.start()
+        self.SendToAll({"action": "gameMessage", "message": x.data})
+
+        i = 1
+        num_rounds = 16
+        r = 0
+        winner = False
+        with PrintStream() as x:
+            self.board.gather_power_phase()
+        self.SendToAll({"action": "gameMessage", "message": x.data})
+
+        self.SendToAll({"action": "gameMessage", "message": "First Player, make your move!"})
+        self.__player_turn = 1
+
+
     def AddPlayer(self, player):
         '''
         Adds a new player, selects a faction, sets up the faction object and places faction on the the board.
@@ -63,23 +83,11 @@ class CWServer(Server):
             for k, v in self.board.player_dict.items():
                 available_factions[k] = self.board.player_dict[k]['active']
 
-            #with PrintStream() as x:
-            #    for k, v in self.board.player_dict.items():
-            #        if self.board.player_dict[k]['active'] is False:
-            #            player_faction = k
-            #            self.board.player_dict[k]['active'] = True
-            #            self.board.player_dict[k]['class'].player_setup()
-            #            player.player_class = self.board.player_dict[k]['class']
-            #            player.faction = player_faction
-            #            break
-            #self.sprint('assigning player %s to faction %s' % (str(player.addr), k))
-
             player.Send(
                 {"action": "initial", "factions": available_factions}
             )
-
-            #self.SendToAll({"action": "gameMessage", "message": x.data})
-            #self.SendPlayers()
+            if self.nPlayers == self.maxPlayers:
+                self.gameBegin()
         else:
             self.sprint('Maximum Players Reached', mode='warning')
             del player
@@ -114,3 +122,6 @@ class CWServer(Server):
         while True:
             self.Pump()
             sleep(0.0001)
+if __name__ == "__main__":
+    s = CWServer(localaddr=serveraddress)
+    s.Launch()
