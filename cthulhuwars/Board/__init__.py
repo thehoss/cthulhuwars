@@ -1,4 +1,4 @@
-from core import Board, Actions, Phase, Factions
+from core import Board, Actions, Phase
 
 if __name__ == "__main__":
     B = Board()

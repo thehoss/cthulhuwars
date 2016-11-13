@@ -12,7 +12,6 @@ class ClientChannel(Channel):
     def __init__(self, *args, **kwargs):
         Channel.__init__(self, *args, **kwargs)
         self.id = str(self._server.NextId())
-
         self.faction = ''
         self.player_class = None
 
@@ -62,6 +61,13 @@ class ClientChannel(Channel):
         '''
         print data
 
+    def Network_gameTurn(self, data):
+        '''
+        Called when a client connects
+        :param data:
+        :return:
+        '''
+        print data
     def Network_faction(self, data):
         f = data['faction']
         self._server.board.player_dict[f]['active'] = True

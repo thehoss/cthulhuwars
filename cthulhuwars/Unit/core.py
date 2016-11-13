@@ -23,24 +23,22 @@ class UnitType(Enum):
     cthulhu = 'cthulhu'
     nyarlathotep = 'nyarlathotep'
 
-class Faction(Enum):
-    cthulhu = 'Cthulhu'
-    black_goat = 'Black Goat'
-    crawling_chaos = 'Crawling Chaos'
-    yellow_sign = 'Yellow Sign'
-    sleeper = 'Sleeper'
-    windwalker = 'Windwalker'
-    opener_of_the_way = 'Opener of the Way'
-    tcho_tcho = 'Tcho Tcho'
-    azathoth = 'Azathoth'
-
-
 class UnitState(Enum):
     in_reserve = 0
     in_play = 1
     killed = 2
     captured = 3
 
+class Faction(Enum):
+    cthulhu = 'cthulhu'
+    black_goat = 'black_goat'
+    crawling_chaos = 'crawling_chaos'
+    yellow_sign = 'yellow_sign'
+    sleeper = 'sleeper'
+    windwalker = 'windwalker'
+    opener_of_the_way = 'opener_of_the_way'
+    tcho_tcho = 'tcho_tcho'
+    azathoth = 'azathoth'
 
 class Unit(object):
     def __init__(self, faction, unit_zone, unit_type=UnitType.cultist, combat_power=0, cost=1, base_movement=1,

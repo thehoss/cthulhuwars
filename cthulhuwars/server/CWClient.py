@@ -4,7 +4,7 @@ from sys import stdin, exit
 from PodSixNet.Connection import connection, ConnectionListener
 from thread import *
 from cthulhuwars import Color
-from Board import Factions
+from cthulhuwars.Unit import Faction
 
 serveraddress=('localhost', int(666))
 
@@ -101,6 +101,7 @@ class CWClient(ConnectionListener):
         available_factions = data['factions']
         valid = False
         validVals = []
+        factions = ['cthulhu', 'black_goat', 'crawling_chaos', 'yellow_sign']
         while valid is False:
             print ('Select your Great Old One:')
             if available_factions['cthulhu'] is False:
@@ -120,7 +121,7 @@ class CWClient(ConnectionListener):
             if selection in validVals:
                 valid = True
 
-        self.faction = Factions[selection-1]
+        self.faction = factions[selection-1]
 
         self.sprint('joined as faction ' + self.faction)
         self.sprint('commands:  \n board = request board state from server \n me = print current player state')
@@ -158,6 +159,14 @@ class CWClient(ConnectionListener):
         '''
         msg = data['message']
         print ''.join(msg)
+
+    def Network_gameTurn(self, data ):
+        self.sprint(data['message'])
+        selection = raw_input("Action (move, attack, build, summon): ")
+        self.sprint('selected %s'%(selection))
+
+        return
+
 
 if __name__ == "__main__":
     c = CWClient(host=serveraddress[0], port=serveraddress[1])

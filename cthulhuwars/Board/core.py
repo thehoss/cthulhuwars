@@ -24,8 +24,6 @@ class Phase(Enum):
     doom = 'doom'
     annihilation = 'annihilation'
 
-Factions = ['cthulhu', 'black_goat', 'crawling_chaos', 'yellow_sign']
-
 class Board(object):
     def __init__(self):
         num_players = 4
@@ -47,10 +45,10 @@ class Board(object):
         self.__players = []
 
         self.player_dict = {
-            'cthulhu': {'active':False, 'class': None},
-            'black_goat': {'active': False, 'class': None},
-            'crawling_chaos': {'active': False, 'class': None},
-            'yellow_sign': {'active': False, 'class': None}
+            'cthulhu': {'active':False, 'class': None, 'address': [], 'turn': 0} ,
+            'black_goat': {'active': False, 'class': None, 'address': [], 'turn': 1},
+            'crawling_chaos': {'active': False, 'class': None, 'address': [], 'turn': 2},
+            'yellow_sign': {'active': False, 'class': None, 'address': [], 'turn': 3}
         }
 
         self.__num_players = int(num_players)
@@ -175,9 +173,11 @@ class Board(object):
             self.__players.insert(0, cthulhu)
         else:
             random.shuffle(self.__players)
-
+        t = 0
         for p in self.__players:
             assert isinstance(p, Player)
+            self.player_dict[p.short_name]['turn'] = t
+            t += 1
             p.player_setup()
 
     def gather_power_phase(self):

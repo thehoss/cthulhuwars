@@ -64,8 +64,11 @@ class CWServer(Server):
             self.board.gather_power_phase()
         self.SendToAll({"action": "gameMessage", "message": x.data})
 
-        self.SendToAll({"action": "gameMessage", "message": "First Player, make your move!"})
-        self.__player_turn = 1
+        for _p in self.board.players:
+            self.SendToAll({"action": "gameMessage", "message": "%s make your move!"%(_p.name)})
+            for p in self.players:
+                if p.faction == _p.short_name:
+                    p.Send({"action": "gameTurn", "message": "Your Turn"})
 
 
     def AddPlayer(self, player):

@@ -140,6 +140,13 @@ class Player(object):
     def power(self):
         return self._power
 
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def short_name(self):
+        return self._faction.value
     '''
     faction property
     returns the faction enum, defined in Unit, of the current player
