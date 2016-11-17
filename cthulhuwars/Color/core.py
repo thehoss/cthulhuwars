@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class TextColor():
     BLUE = '\033[94m'
     GREEN = '\033[92m'
@@ -10,6 +9,7 @@ class TextColor():
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+
 class NodeColor():
     BLUE = (0.5, 0.5, 0.75)
     GREEN = (0.5, 0.75, 0.5)
@@ -17,3 +17,10 @@ class NodeColor():
     RED = (0.75, 0.5, 0.5)
     BLACK = (0.0, 0.0, 0.0)
 
+
+class NodeColorINT():
+    BLUE = (122, 122, 235)
+    GREEN = (122, 235, 122)
+    YELLOW = (235, 235, 122)
+    RED = (235, 122, 122)
+    BLACK = (0, 0, 0)

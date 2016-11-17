@@ -70,8 +70,31 @@ class Player(object):
         self._pool = Zone('pool')
 
     def player_setup(self):
+        # reset the entire faction
         # add starting gate and cultist to home zone
         # add remaining cultists
+        del self._cultists
+        del self._current_gates
+        del self._goo
+        del self._units
+        del self._monsters
+
+        self._spells = 0
+        self._spell_requirement_met = [False] * 6
+        self._units = set()
+        self._cultists = set()
+        self._monsters = set()
+        self._goo = set()
+        self._power = 8
+        self._power_spent = 0
+        self._doom_points = 0
+        self._elder_points = 0
+        self._starting_cultists = 6
+        self._current_cultists = 0
+        self._captured_cultists = set()
+        self._current_gates = 0
+        self._occupied_zones = set()
+
         movement_max_radius = 1
         if self._faction == Faction.crawling_chaos:
             movement_max_radius = 2

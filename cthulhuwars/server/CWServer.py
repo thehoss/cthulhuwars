@@ -86,8 +86,11 @@ class CWServer(Server):
             for k, v in self.board.player_dict.items():
                 available_factions[k] = self.board.player_dict[k]['active']
 
+            eastImage = self.board.map.eastMapImage
+            westImage = self.board.map.westMapImage
+
             player.Send(
-                {"action": "initial", "factions": available_factions}
+                {"action": "initial", "factions": available_factions, "mapImageData":[westImage, eastImage]}
             )
             if self.nPlayers == self.maxPlayers:
                 self.gameBegin()

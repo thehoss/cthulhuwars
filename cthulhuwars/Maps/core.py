@@ -21,7 +21,6 @@ from cthulhuwars import arnoldRender
 
 import os
 
-
 class Map:
     # available maps
     # Earth, 3 player, Eastern Hemisphere
@@ -113,7 +112,6 @@ class Map:
                             'North Asia': [0.75, 0.79], 'South Asia': [0.85, 0.55]
                             }
 
-
     earth_map_configs = {'earth3P': ['earth3PWH', 'earth3PEH'], 'earth2Pa': ['earth5PWH', 'earth3PEH'],
                          'earth4Pa': ['earth5PWH', 'earth3PEH'], 'earth2Pb': ['earth3PWH', 'earth5PEH'],
                          'earth4Pb': ['earth3PWH', 'earth5PEH'], 'earth5P': ['earth5PWH', 'earth5PEH']
@@ -149,18 +147,18 @@ class Map:
         self._west_map = nx.from_dict_of_lists(west_map)
         self._east_map = nx.from_dict_of_lists(east_map)
         # construct combined node graph with compose()
-        self.map = nx.compose(self._east_map, self._west_map)
-        self.map.graph['name'] = self.map_name
+        self.nx_map = nx.compose(self._east_map, self._west_map)
+        self.nx_map.graph['name'] = self.map_name
 
         # relable nodes with zone objects
-        node_list = self.map.nodes()
+        node_list = self.nx_map.nodes()
 
         for node_name in node_list:
             is_ocean = False
             if node_name in self.earth_oceans:
                 is_ocean = True
-            self.map.node[node_name]['zone'] = Zone(node_name, is_ocean)
-            self.map.node[node_name]['pos'] = [0.5, 0.5]
+            self.nx_map.node[node_name]['zone'] = Zone(node_name, is_ocean)
+            self.nx_map.node[node_name]['pos'] = [0.5, 0.5]
         # ^ map.nodes(data=True) will show the attributes of node label 'blah'
         '''
         # optionally, swap labeled nodes with name-tagged zone objects
@@ -178,14 +176,32 @@ class Map:
          self.map = nx.relabel_nodes(G, mapping)
         '''
     def zone_by_name(self, zone):
-        return self.map.node[zone]['zone']
+        return self.nx_map.node[zone]['zone']
 
     def find_neighbors(self, zone, radius=1):
         if radius == 1:
-            return self.map.neighbors(zone)
+            return self.nx_map.neighbors(zone)
         if radius == 2:
-            ego_graph = nx.ego_graph(self.map, zone, 2, center=False, undirected=True)
+            ego_graph = nx.ego_graph(self.nx_map, zone, 2, center=False, undirected=True)
             return ego_graph.nodes()
+
+    @property
+    def eastMapImage(self):
+        basepath = '../../tex'
+        imagepath = '../../img'
+        file_format = '.png'
+        east_map_filename = self.earth_map_configs[self.map_name][1] + file_format
+        img_east_path = os.path.join(basepath, east_map_filename)
+        return img_east_path
+
+    @property
+    def westMapImage(self):
+        basepath = '../../tex'
+        imagepath = '../../img'
+        file_format = '.png'
+        west_map_filename = self.earth_map_configs[self.map_name][0] + file_format
+        img_west_path = os.path.join(basepath, west_map_filename)
+        return img_west_path
 
     def show_map(self, image_prefix='image'):
         basepath = '../../tex'
@@ -205,7 +221,6 @@ class Map:
         img_east = mpimg.imread(img_east_path)
         print(img_east.shape)
 
-
         img = np.concatenate((img_west, img_east), axis=1)
 
         P.imshow(img, extent=[-1, 1, 0, 1])
@@ -214,11 +229,11 @@ class Map:
 
         pos = {}
         cols = []
-        for node in self.map.node:
-            cols.append(self.map.node[node]['zone'].compute_color())
+        for node in self.nx_map.node:
+            cols.append(self.nx_map.node[node]['zone'].compute_color())
             pos[node] = self.earth_gate_positions[node]
 
-        nx.draw(self.map, pos, font_size=12, with_labels=False, node_color=cols)
+        nx.draw(self.nx_map, pos, font_size=12, with_labels=False, node_color=cols)
         #for p in pos:  # raise text positions
         #    pos[p][1] += 0.07
         #nx.draw_networkx_labels(self.map, pos)
@@ -228,13 +243,13 @@ class Map:
 
     def render_map(self, image_prefix='image'):
         ar = arnoldRender.ArnoldRender(image_prefix)
-        ar.do_render(1, self.map)
+        ar.do_render(1, self.nx_map)
 
     @property
     def empty_gates(self):
         results = []
-        for node in self.map.node:
-            zone = self.map.node[node]['zone']
+        for node in self.nx_map.node:
+            zone = self.nx_map.node[node]['zone']
             if zone.gate_state is GateState.emptyGate:
                 results.append(zone)
         return results

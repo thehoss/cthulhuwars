@@ -1,14 +1,44 @@
 from time import sleep
 from sys import stdin, exit
-
+import os
 from PodSixNet.Connection import connection, ConnectionListener
 from thread import *
 from cthulhuwars import Color
 from cthulhuwars.Unit import Faction
+import pygame, math
 
 serveraddress=('localhost', int(666))
 
 class CWClient(ConnectionListener):
+    earth_gate_positions = {'Arctic Ocean': [0.03, 0.9], 'North Atlantic': [-0.23, 0.57],
+                            'South Atlantic': [-0.05, 0.24], 'Indian Ocean': [0.69, 0.21],
+                            'North Pacific': [-0.9, 0.54], 'South Pacific': [-0.53, 0.09],
+                            'North America': [-0.58, 0.7], 'South America': [-0.33, 0.28],
+                            'North America West': [-0.63, 0.75], 'North America East': [-0.36, 0.72],
+                            'South America East': [-0.24, 0.31], 'South America West': [-0.4, 0.29],
+                            'Central America': [-0.66, 0.55], 'Australia': [-0.9, 0.2],
+                            'New Zealand': [-0.69, 0.25], 'Antarctica': [-0.025, 0.06],
+                            'Africa': [0.21, 0.47], 'East Africa': [0.43, 0.25],
+                            'West Africa': [0.21, 0.47], 'Europe': [0.37, 0.71],
+                            'Scandinavia': [0.38, 0.87], 'Arabia': [0.56, 0.47], 'Asia': [0.68, 0.75],
+                            'North Asia': [0.75, 0.79], 'South Asia': [0.85, 0.55]
+                            }
+    width, height = 800, 400
+
+    Factions = ['yellow_sign', 'crawling_chaos', 'cthulhu', 'black_goat']
+
+    FactionColor = {
+        'cthulhu': Color.NodeColorINT.GREEN,
+        'black_goat': Color.NodeColorINT.RED,
+        'crawling_chaos': Color.NodeColorINT.BLUE,
+        'yellow_sign': Color.NodeColorINT.YELLOW
+
+    }
+
+    def pygame_coords(self, x, y):
+        x = int(x * (self.width * 0.5) + self.width * 0.5)
+        y = int((1.0 - y) * (self.height))
+        return (x, y)
 
     def __init__(self, host='localhost', port=int(666)):
         '''
@@ -21,7 +51,128 @@ class CWClient(ConnectionListener):
         self.statusLabel = 'connecting'
         self.playersLabel = "0 players"
         self.faction = ''
+        self.faction_color = ''
+        self.connected = False
         self.Connect((host, port))
+        self.in_play = False
+
+        self.resource_dir = '../../tex'
+        self.img_map_west = None
+        self.img_map_east = None
+        self.img_selectionbg = None
+        self.img_gate = None
+        self.available_factions = []
+
+        self.gate_data = []
+        self.unit_data = []
+        self.img_factions = []
+        self.img_faction_selection = {
+            'cthulhu':{'active':None, 'inactive':None,'selected':None},
+            'black_goat': {'active': None, 'inactive': None, 'selected': None},
+            'crawling_chaos': {'active': None, 'inactive': None, 'selected': None},
+            'yellow_sign': {'active': None, 'inactive': None, 'selected': None}
+        }
+        pygame.init()
+
+        # initialize the screen
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.clock = pygame.time.Clock()
+
+    def draw_board(self):
+        '''
+        draw the board
+        :return:
+        '''
+        self.screen.blit(self.img_map_west, (0, 0))
+        self.screen.blit(self.img_map_east, (self.width / 2, 0))
+
+        for zone in self.gate_data:
+            (x,y)=self.earth_gate_positions[zone]
+            (x,y) = self.pygame_coords(x, y)
+            self.screen.blit(self.img_gate, (x - 16, y - 16))
+
+        i = 0
+        lastZone = ''
+        for (unit_zone, faction_name, unit_type, gate_state) in self.unit_data:
+            if i > 0 and unit_zone != lastZone:
+                i = 0
+            i += 1
+            (x,y) = self.earth_gate_positions[unit_zone]
+            (x, y) = self.pygame_coords(x, y)
+            if gate_state != 2:
+                x = x + i*10
+            pygame.draw.circle(self.screen, self.FactionColor[faction_name], (x,y), 7, 0)
+            pygame.draw.circle(self.screen, (0,0,0), (x, y), 8, 1)
+            lastZone = unit_zone
+
+    def draw_selectionScreen(self):
+        self.screen.blit(self.img_selectionbg, (0, 0))
+        for fac in self.Factions:
+            img = self.img_faction_selection[fac]['inactive']
+            if self.available_factions[fac] == False:
+                img = self.img_faction_selection[fac]['selected']
+            self.screen.blit(img, (0, 0))
+
+    def update_selection(self):
+        # sleep to make the game 60 fps
+        self.clock.tick(60)
+        connection.Pump()
+        self.Pump()
+
+        # clear the screen
+        self.screen.fill(0)
+        self.draw_selectionScreen()
+        (x,y) = pygame.mouse.get_pos()
+
+        for fac in self.Factions:
+            img = self.img_faction_selection[fac]['active']
+            bounds = img.get_bounding_rect(min_alpha=1)
+            if bounds.collidepoint(x, y) == True:
+                self.screen.blit(img, (0, 0))
+
+        for event in pygame.event.get():
+            # quit if the quit button was pressed
+            if event.type == pygame.QUIT:
+                exit()
+            if event.type == pygame.MOUSEMOTION:
+                (x,y) = event.pos
+            if event.type == pygame.MOUSEBUTTONUP:
+                (x,y) = event.pos
+                self.faction_selection(x,y)
+        # update the screen
+        pygame.display.flip()
+
+    def update_game(self):
+        # sleep to make the game 60 fps
+        self.clock.tick(60)
+        connection.Pump()
+        self.Pump()
+
+        self.draw_board()
+
+        for event in pygame.event.get():
+            # quit if the quit button was pressed
+            if event.type == pygame.QUIT:
+                exit()
+            if event.type == pygame.MOUSEBUTTONUP:
+                (x,y) = event.pos
+
+        # update the screen
+        pygame.display.flip()
+
+    def faction_selection(self, x, y):
+        for fac in self.Factions:
+            img = self.img_faction_selection[fac]['active']
+            bounds = img.get_bounding_rect(min_alpha=1)
+            print bounds
+            if bounds.collidepoint(x,y):
+                self.faction = fac
+                self.faction_color = self.FactionColor[self.faction]
+                self.sprint('joined as faction ' + self.faction)
+                connection.Send({"action": "faction", "faction": self.faction})
+                self.in_play = True
+                return
+        print x,y
 
     def sprint(self, msg, mode='info'):
         '''
@@ -41,35 +192,26 @@ class CWClient(ConnectionListener):
             print(Color.TextColor.BLUE+Color.TextColor.BOLD+msg)
         print(Color.TextColor.ENDC)
 
-    def Loop(self):
-        self.Pump()
-        connection.Pump()
-
     def Launch(self):
         while True:
-            self.Loop()
-            sleep(0.001)
-
-    def InputLoop(self):
-        '''
-        horrid threaded input loop
-        continually reads from stdin and sends whatever is typed to the server
-        TODO: replace with command interpreter
-        '''
-        while 1:
-            input = stdin.readline().rstrip("\n")
-            if input == 'board':
-                connection.Send({"action": "boardState"})
-            elif input == 'me':
-                connection.Send({"action": "me"})
-            elif input == 'dc':
-                connection.Send({"action": "disconnect"})
+            if self.in_play:
+                self.update_game()
             else:
-                connection.Send({"action": "message", "message": input})
+                self.update_selection()
+            sleep(0.001)
 
     def Network(self, data):
         # print 'network:', data
         pass
+
+    def Network_mapState(self, data):
+        '''
+        receive gate data
+        :param data:
+        :return:
+        '''
+        self.gate_data = data['gate_data']
+        self.unit_data = data['unit_data']
 
     def Network_connected(self, data):
         '''
@@ -79,6 +221,38 @@ class CWClient(ConnectionListener):
         '''
         self.statusLabel = "connected"
         self.sprint("Connected to the server")
+
+    def load_resources(self, data):
+        pygame.display.set_caption("Loading Resources...")
+
+        self.img_gate = pygame.image.load(os.path.join(self.resource_dir, 'gate.png'))
+        self.img_gate = pygame.transform.smoothscale(self.img_gate, (32, 32))
+        self.img_gate = self.img_gate.convert_alpha()
+
+        self.img_selectionbg = pygame.image.load(os.path.join(self.resource_dir, 'select_background.png'))
+
+        self.img_selectionbg = pygame.transform.smoothscale(self.img_selectionbg, (self.width, self.height))
+        self.img_selectionbg = self.img_selectionbg.convert()
+
+        for k in self.available_factions:
+            for state in ['active','inactive','selected']:
+                img = os.path.join(self.resource_dir, 'select_%s_%s.png'%(state, k))
+
+                imgsurface = pygame.image.load(img)
+                imgsurface = pygame.transform.smoothscale(imgsurface, (self.width, self.height))
+                imgsurface = imgsurface.convert_alpha()
+
+                self.img_faction_selection[k][state] = imgsurface
+
+        self.img_map_east = pygame.image.load(data['mapImageData'][1])
+        self.img_map_west = pygame.image.load(data['mapImageData'][0])
+
+        west = pygame.transform.smoothscale(self.img_map_west, (self.width / 2, self.height))
+        east = pygame.transform.smoothscale(self.img_map_east, (self.width / 2, self.height))
+        self.img_map_east = east.convert()
+        self.img_map_west = west.convert()
+
+        pygame.display.set_caption("Cthulhu Warz")
 
     def Network_error(self, data):
         '''
@@ -98,22 +272,24 @@ class CWClient(ConnectionListener):
         :param data:
         :return:
         '''
-        available_factions = data['factions']
-        valid = False
-        validVals = []
-        factions = ['cthulhu', 'black_goat', 'crawling_chaos', 'yellow_sign']
+        self.available_factions = data['factions']
+
+        self.load_resources(data)
+        self.connected = True
+        self.in_play = False
+        '''
         while valid is False:
             print ('Select your Great Old One:')
-            if available_factions['cthulhu'] is False:
+            if self.available_factions['cthulhu'] is False:
                 print(Color.TextColor.GREEN + ' [1] The Great Cthulhu' + Color.TextColor.ENDC)
                 validVals.append(1)
-            if available_factions['black_goat'] is False:
+            if self.available_factions['black_goat'] is False:
                 print(Color.TextColor.RED + ' [2] The Black Goat' + Color.TextColor.ENDC)
                 validVals.append(2)
-            if available_factions['crawling_chaos'] is False:
+            if self.available_factions['crawling_chaos'] is False:
                 print(Color.TextColor.BLUE + ' [3] The Crawling Chaos' + Color.TextColor.ENDC)
                 validVals.append(3)
-            if available_factions['yellow_sign'] is False:
+            if self.available_factions['yellow_sign'] is False:
                 print(Color.TextColor.YELLOW + ' [4] The Yellow Sign' + Color.TextColor.ENDC)
                 validVals.append(4)
             selection = int(raw_input("Selection: "))
@@ -122,13 +298,16 @@ class CWClient(ConnectionListener):
                 valid = True
 
         self.faction = factions[selection-1]
+        self.faction_color = self.FactionColor[self.faction]
 
         self.sprint('joined as faction ' + self.faction)
         self.sprint('commands:  \n board = request board state from server \n me = print current player state')
         connection.Send({"action": "faction", "faction": self.faction})
 
-        t = start_new_thread(self.InputLoop, ())
-        #connection.Send({"action": "boardState"})
+        # t = start_new_thread(self.InputLoop, ())
+
+        # connection.Send({"action": "boardState"})
+        '''
 
     def Network_disconnected(self, data):
         self.statusLabel += " - disconnected"
@@ -158,11 +337,12 @@ class CWClient(ConnectionListener):
         :return:
         '''
         msg = data['message']
+        self.available_factions = data['factions']
         print ''.join(msg)
 
     def Network_gameTurn(self, data ):
         self.sprint(data['message'])
-        selection = raw_input("Action (move, attack, build, summon): ")
+        selection = raw_input("Action (move, attack, build, summon, end): ")
         self.sprint('selected %s'%(selection))
 
         return
