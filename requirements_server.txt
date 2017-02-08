@@ -1,1 +1,5 @@
--e git+https://github.com/jbradberry/boardgame-socketserver#egg=BoardServer
+-e git+https://github.com/chr15m/PodSixNet.git#egg=PodSixNet
+enum
+networkx
+matplotlib
+arnold

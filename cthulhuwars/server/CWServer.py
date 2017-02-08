@@ -1,3 +1,8 @@
+import sys
+sys.path.insert(0, '../../')
+sys.path.insert(0, '.')
+sys.path.insert(0, './PodSixNet')
+
 from time import sleep
 from weakref import WeakKeyDictionary
 
