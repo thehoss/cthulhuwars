@@ -273,41 +273,9 @@ class CWClient(ConnectionListener):
         :return:
         '''
         self.available_factions = data['factions']
-
         self.load_resources(data)
         self.connected = True
         self.in_play = False
-        '''
-        while valid is False:
-            print ('Select your Great Old One:')
-            if self.available_factions['cthulhu'] is False:
-                print(Color.TextColor.GREEN + ' [1] The Great Cthulhu' + Color.TextColor.ENDC)
-                validVals.append(1)
-            if self.available_factions['black_goat'] is False:
-                print(Color.TextColor.RED + ' [2] The Black Goat' + Color.TextColor.ENDC)
-                validVals.append(2)
-            if self.available_factions['crawling_chaos'] is False:
-                print(Color.TextColor.BLUE + ' [3] The Crawling Chaos' + Color.TextColor.ENDC)
-                validVals.append(3)
-            if self.available_factions['yellow_sign'] is False:
-                print(Color.TextColor.YELLOW + ' [4] The Yellow Sign' + Color.TextColor.ENDC)
-                validVals.append(4)
-            selection = int(raw_input("Selection: "))
-
-            if selection in validVals:
-                valid = True
-
-        self.faction = factions[selection-1]
-        self.faction_color = self.FactionColor[self.faction]
-
-        self.sprint('joined as faction ' + self.faction)
-        self.sprint('commands:  \n board = request board state from server \n me = print current player state')
-        connection.Send({"action": "faction", "faction": self.faction})
-
-        # t = start_new_thread(self.InputLoop, ())
-
-        # connection.Send({"action": "boardState"})
-        '''
 
     def Network_disconnected(self, data):
         self.statusLabel += " - disconnected"
@@ -342,11 +310,9 @@ class CWClient(ConnectionListener):
 
     def Network_gameTurn(self, data ):
         self.sprint(data['message'])
-        selection = raw_input("Action (move, attack, build, summon, end): ")
-        self.sprint('selected %s'%(selection))
-
+        #selection = raw_input("Action (move, attack, build, summon, end): ")
+        #self.sprint('selected %s'%(selection))
         return
-
 
 if __name__ == "__main__":
     c = CWClient(host=serveraddress[0], port=serveraddress[1])

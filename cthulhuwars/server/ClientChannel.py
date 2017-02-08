@@ -98,7 +98,6 @@ class ClientChannel(Channel):
         with PrintStream() as x:
             self._server.board.player_dict[f]['class'].player_setup()
 
-
         self.player_class = self._server.board.player_dict[f]['class']
         self.faction = f
         self.Network_mapState(data)
