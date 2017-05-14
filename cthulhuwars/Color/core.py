@@ -9,6 +9,13 @@ class TextColor():
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+    FactionColor = {
+        'cthulhu': GREEN,
+        'black_goat': RED,
+        'crawling_chaos': BLUE,
+        'yellow_sign': YELLOW
+    }
+
 
 class NodeColor():
     BLUE = (0.5, 0.5, 0.75)
@@ -17,6 +24,13 @@ class NodeColor():
     RED = (0.75, 0.5, 0.5)
     BLACK = (0.0, 0.0, 0.0)
 
+    FactionColor = {
+        'cthulhu': GREEN,
+        'black_goat': RED,
+        'crawling_chaos': BLUE,
+        'yellow_sign': YELLOW
+    }
+
 
 class NodeColorINT():
     BLUE = (122, 122, 235)
@@ -24,3 +38,10 @@ class NodeColorINT():
     YELLOW = (235, 235, 122)
     RED = (235, 122, 122)
     BLACK = (0, 0, 0)
+
+    FactionColor = {
+        'cthulhu': GREEN,
+        'black_goat': RED,
+        'crawling_chaos': BLUE,
+        'yellow_sign': YELLOW
+    }

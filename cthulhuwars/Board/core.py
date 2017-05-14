@@ -25,10 +25,12 @@ class Phase(Enum):
     annihilation = 'annihilation'
 
 class Board(object):
-    def __init__(self):
-        num_players = 4
+    def __init__(self, num_players = 4, server_mode=True, render_ass = False, draw_map = False):
 
         self.__map = None
+
+        self.draw_map = draw_map
+        self.render_ass = render_ass
 
         self.cthulhu = False
         self._cthulhu = None
@@ -54,11 +56,22 @@ class Board(object):
         self.__num_players = int(num_players)
         self._phase = Phase.gather_power
         self._round = 0
+        self._turn = 0
         self._doom_track = {}
+        self.server_mode = server_mode
+
+        if not server_mode:
+            self.build_map()
+            self.create_players()
+            self.start()
 
     @property
     def players(self):
         return self.__players
+
+    @property
+    def active_players(self):
+        return [p for p in self.__players if self.player_dict[p.short_name]['active'] ]
 
     @property
     def map(self):
@@ -74,7 +87,8 @@ class Board(object):
                      'earth4Pb',
                      'earth5P'
                      ]
-        self.__map = Map(nplayers, map_type[nplayers-1])
+
+        self.__map = Map(nplayers, map_type[nplayers-1], display=self.draw_map)
 
     def show_map(self, image='image'):
         self.__map.show_map(image)
@@ -112,6 +126,11 @@ class Board(object):
 
     def create_players(self):
         assert isinstance(self.__map, Map)
+
+        if int(self.__num_players) == 4:
+            self.create_all_players()
+            return
+
         index = 0
         for p in range(1, int(self.__num_players) + 1):
             # print('Player %s please select a faction:' % p)
@@ -174,21 +193,45 @@ class Board(object):
         else:
             random.shuffle(self.__players)
         t = 0
-        for p in self.__players:
+        for p in self.active_players:
             assert isinstance(p, Player)
             self.player_dict[p.short_name]['turn'] = t
             t += 1
             p.player_setup()
+
+        # play the game
+        # TODO: add pause functionality
+        if not self.server_mode:
+            self.gameLoop()
+
+    def gameLoop(self):
+        i = 1
+        r = 0
+        winner = False
+        while winner is False:
+            self.gather_power_phase()
+            # first player phase
+            while True:
+                print('**Round %s, Turn %s **' % (r, i))
+                self.test_actions()
+                i += 1
+                if not self.is_action_phase():
+                    break
+
+            r += 1
+            winner = self.doom_phase()
+            self.print_state()
 
     def gather_power_phase(self):
         print(TextColor.BOLD + "**Gather Power Phase **" + TextColor.ENDC)
         max_power = 0
         first_player = None
         if self.cthulhu is True:
-            first_player = [player for player in self.__players if isinstance(player, Cthulhu)]
+            first_player = [player for player in self.active_players if isinstance(player, Cthulhu)]
 
         first_player_index = 0
-        for p in self.__players:
+
+        for p in self.active_players:
             assert isinstance(p, Player)
             p.recompute_power()
 
@@ -199,13 +242,19 @@ class Board(object):
         # shift direction can changer here
         self.__players =self.__players[first_player_index:]+self.__players[:first_player_index]
 
+        if self.draw_map:
+            self.__map.show_map(save_image=True, image_prefix='play.%s' % str('%04d' % (self._round + 1001)))
+        if self.render_ass:
+            self.render_map('play.%s' % str('%04d' % (self._round + 1001)))
+        self._round = self._round + 1
+
         print(TextColor.BOLD + "**First Player is %s **"%first_player._name + TextColor.ENDC)
 
     def doom_phase(self):
         max_doom = 0
         win_condition = 30
-        lead = ''
-        for p in self.__players:
+        lead = None
+        for p in self.active_players:
             assert isinstance(p, Player)
             self._doom_track[p._name] += p.doom_points
             if self._doom_track[p._name] > max_doom:
@@ -214,16 +263,18 @@ class Board(object):
 
         print self._doom_track
 
+        if not lead:
+            return False
+
         if self._doom_track[lead] > win_condition:
             print(TextColor.BOLD + "**%s Wins! **" % lead + TextColor.ENDC)
             return True
         else:
             return False
 
-
     def tally_player_power(self):
         total_power = 0
-        for p in self.__players:
+        for p in self.active_players:
             total_power += p.power
         return total_power
 
@@ -235,7 +286,7 @@ class Board(object):
 
     def test_actions(self):
 
-        for p in self.__players:
+        for p in self.active_players:
             assert isinstance(p, Player)
             self.pre_turn_actions()
             if p.power is 0:
@@ -244,19 +295,18 @@ class Board(object):
                 p.brain.execute_action()
             self.post_turn_actions()
 
-
     def post_combat_actions(self):
-        for p in self.__players:
+        for p in self.active_players:
             assert isinstance(p, Player)
             p.post_combat_action()
 
     def pre_turn_actions(self):
-        for p in self.__players:
+        for p in self.active_players:
             assert isinstance(p, Player)
             p.pre_turn_action()
 
     def post_turn_actions(self):
-        for p in self.__players:
+        for p in self.active_players:
             assert isinstance(p, Player)
             p.post_turn_action()
 

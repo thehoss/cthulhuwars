@@ -19,7 +19,7 @@ class CWServer(Server):
     '''
     channelClass = ClientChannel
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, num_players = 4, *args, **kwargs):
         '''
         Init builds the board and map as well as the faction classes.  The factions are not set up until a player connects
         '''
@@ -27,14 +27,15 @@ class CWServer(Server):
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
         self.nPlayers = 0
-        self.maxPlayers = 4
+        self.maxPlayers = num_players
         self.__player_turn = 0
 
-        self.board = Board.Board()
+        self.board = Board.Board(num_players=self.maxPlayers, server_mode=True)
         self.board.build_map()
         self.board.create_all_players()
-
-        self.sprint('Cthulhu Wars Server launched')
+        self.waiting = True
+        self.sprint( str(self.maxPlayers) + ' Player Cthulhu Wars Server launched')
+        self.sprint('Waiting for players to connect...')
 
     def NextId(self):
         self.id += 1
@@ -59,6 +60,7 @@ class CWServer(Server):
     def gameBegin(self):
         with PrintStream() as x:
             self.board.start()
+
         self.SendToAll({"action": "gameMessage", "message": x.data})
 
         i = 1
@@ -69,12 +71,14 @@ class CWServer(Server):
             self.board.gather_power_phase()
         self.SendToAll({"action": "gameMessage", "message": x.data})
 
-        for _p in self.board.players:
-            self.SendToAll({"action": "gameMessage", "message": "%s make your move!"%(_p.name)})
-            for p in self.players:
-                if p.faction == _p.short_name:
-                    p.Send({"action": "gameTurn", "message": "Your Turn"})
+        for p in self.players:
+            p.Send({"action": "gameTurn", "message": p.faction +" Your Turn"})
 
+    def gameLoop(self):
+        if not self.board.doom_phase():
+            with PrintStream() as x:
+                self.board.gather_power_phase()
+                self.board.test_actions()
 
     def AddPlayer(self, player):
         '''
@@ -98,9 +102,10 @@ class CWServer(Server):
                 {"action": "initial", "factions": available_factions, "mapImageData":[westImage, eastImage]}
             )
             if self.nPlayers == self.maxPlayers:
-                self.gameBegin()
+                self.sprint('Maximum Players Reached, Game Beginning!', mode='warning')
+
         else:
-            self.sprint('Maximum Players Reached', mode='warning')
+            self.sprint('Maximum Players Reached, connection denied!', mode='warning')
             del player
 
     def DelPlayer(self, player):
@@ -134,5 +139,5 @@ class CWServer(Server):
             self.Pump()
             sleep(0.0001)
 if __name__ == "__main__":
-    s = CWServer(localaddr=serveraddress)
+    s = CWServer(localaddr=serveraddress, num_players = 2)
     s.Launch()

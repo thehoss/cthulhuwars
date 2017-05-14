@@ -179,14 +179,13 @@ class CWClient(ConnectionListener):
                 return
         print x,y
 
-    def sprint(self, msg, mode='info'):
+    def sprint(self, msg, mode='info', head='[CWClient]: '):
         '''
         for to make pretty printing
         :param msg:
         :param mode:
         :return:
         '''
-        head = '[CWClient]: '
         if mode == 'info':
             print(Color.TextColor.GREEN+Color.TextColor.BOLD+head+msg)
         if mode == 'error':
@@ -293,7 +292,7 @@ class CWClient(ConnectionListener):
         :param data:
         :return:
         '''
-        self.sprint("*** players: " + ", ".join([p for p in data['players']]))
+        self.sprint("*** players: " + ", ".join([p for p in data['players']]), head="[SERVER]: ")
 
     def Network_message(self, data):
         '''
@@ -301,7 +300,7 @@ class CWClient(ConnectionListener):
         :param data:
         :return:
         '''
-        self.sprint(data['who'] + ": " + data['message'], mode='chat')
+        self.sprint( data['message'], mode='chat', head="["+data['who'] + "]: ")
 
     def Network_gameMessage(self, data):
         '''
@@ -310,13 +309,21 @@ class CWClient(ConnectionListener):
         :return:
         '''
         msg = data['message']
-        self.available_factions = data['factions']
-        print ''.join(msg)
+        self.sprint(''.join(msg), head="[SERVER]: ")
 
     def Network_gameTurn(self, data ):
-        self.sprint(data['message'])
-        #selection = raw_input("Action (move, attack, build, summon, end): ")
-        #self.sprint('selected %s'%(selection))
+
+        # self.sprint(data['message'])
+
+        selection = raw_input("Action (msg, move, attack, build, summon, end): ")
+        command_list = selection.split(' ', 1)
+
+        if command_list[0] in ["msg", "m", "message", "/m"]:
+            connection.Send({"action": "message", "message": command_list[1]})
+        if command_list[0] in ["end","x", "exit", "quit", "/x"]:
+            connection.send({"action": "disconnect"})
+            connection.close()
+
         return
 
 if __name__ == "__main__":

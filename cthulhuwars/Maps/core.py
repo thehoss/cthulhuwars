@@ -17,11 +17,17 @@ import matplotlib.pylab as P
 import matplotlib.image as mpimg
 import numpy as np
 from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars import arnoldRender
+from cthulhuwars import arnoldRender, Color
+
+import pygame
 
 import os
 
 class Map:
+
+    # Resolution
+    width, height = 800, 400
+
     # available maps
     # Earth, 3 player, Eastern Hemisphere
     earth3PEH = {
@@ -119,7 +125,8 @@ class Map:
 
     # map_names = ['celaeno', 'dreamlands', 'earth', 'primeval earth', 'yuggoth']
 
-    def __init__(self, num_players=3, map_name='earth3P'):
+
+    def __init__(self, num_players=3, map_name='earth3P', display=False):
         self.num_players = num_players
         self.map_name = map_name
 
@@ -175,6 +182,34 @@ class Map:
         mapping = dict(zip(node_list, zone_list))
          self.map = nx.relabel_nodes(G, mapping)
         '''
+        self.basepath = '../../tex'
+        self.imagepath = '.'
+        self.file_format = '.png'
+        self.west_map_filename = self.earth_map_configs[self.map_name][0] + self.file_format
+        self.west_map_filename = os.path.join(self.basepath, self.west_map_filename)
+        self.east_map_filename = self.earth_map_configs[self.map_name][1] + self.file_format
+        self.east_map_filename = os.path.join(self.basepath, self.east_map_filename)
+
+        self.display = display
+        if display:
+            pygame.init()
+            # initialize the screen
+            self.screen = pygame.display.set_mode((self.width, self.height))
+            #self.clock = pygame.time.Clock()
+
+            self.img_map_east = pygame.image.load(self.east_map_filename)
+            self.img_map_west = pygame.image.load(self.west_map_filename)
+
+            west = pygame.transform.smoothscale(self.img_map_west, (self.width / 2, self.height))
+            east = pygame.transform.smoothscale(self.img_map_east, (self.width / 2, self.height))
+            self.img_map_east = east.convert()
+            self.img_map_west = west.convert()
+
+            self.img_gate = pygame.image.load(os.path.join(self.basepath, 'gate.png'))
+            self.img_gate = pygame.transform.smoothscale(self.img_gate, (32, 32))
+            self.img_gate = self.img_gate.convert_alpha()
+
+
     def zone_by_name(self, zone):
         return self.nx_map.node[zone]['zone']
 
@@ -187,39 +222,50 @@ class Map:
 
     @property
     def eastMapImage(self):
-        basepath = '../../tex'
-        imagepath = '../../img'
-        file_format = '.png'
-        east_map_filename = self.earth_map_configs[self.map_name][1] + file_format
-        img_east_path = os.path.join(basepath, east_map_filename)
-        return img_east_path
+        return self.east_map_filename
 
     @property
     def westMapImage(self):
-        basepath = '../../tex'
-        imagepath = '../../img'
-        file_format = '.png'
-        west_map_filename = self.earth_map_configs[self.map_name][0] + file_format
-        img_west_path = os.path.join(basepath, west_map_filename)
-        return img_west_path
+        return self.west_map_filename
 
-    def show_map(self, image_prefix='image'):
-        basepath = '../../tex'
-        imagepath = '../../img'
-        file_format = '.png'
+    def pygame_coords(self, x, y):
+        x = int(x * (self.width * 0.5) + self.width * 0.5)
+        y = int((1.0 - y) * (self.height))
+        return (x, y)
 
-        print(self.map_name)
-        west_map_filename = self.earth_map_configs[self.map_name][0] + file_format
-        img_west_path = os.path.join(basepath, west_map_filename)
-        print(img_west_path)
-        img_west = mpimg.imread(img_west_path)
-        print(img_west.shape)
+    def show_map(self, save_image = False, image_prefix='image'):
+        if self.display:
+            self.screen.blit(self.img_map_west, (0, 0))
+            self.screen.blit(self.img_map_east, (self.width / 2, 0))
 
-        east_map_filename = self.earth_map_configs[self.map_name][1] + file_format
-        img_east_path = os.path.join(basepath, east_map_filename)
-        print(img_east_path)
-        img_east = mpimg.imread(img_east_path)
-        print(img_east.shape)
+            for node in self.nx_map.node:
+
+                zone = self.nx_map.node[node]['zone']
+                (x,y) = self.earth_gate_positions[zone.name]
+                (x,y) = self.pygame_coords(x, y)
+
+                if zone.gate_state != GateState.noGate:
+                    self.screen.blit(self.img_gate, (x - 16, y - 16))
+                i = 0
+                for unit in zone.occupancy_list:
+                    unit_x = x
+                    if unit.gate_state != GateState.occupied:
+                        unit_x = x + (i * 10)
+                    pygame.draw.circle(self.screen, Color.NodeColorINT.FactionColor[str(unit.faction._faction.value)], (unit_x, y), 7, 0)
+                    pygame.draw.circle(self.screen, (0, 0, 0), (unit_x, y), 8, 1)
+                    i += 1
+
+            if save_image:
+                pygame.image.save(self.screen, image_prefix+self.file_format)
+
+
+    def show_network_map(self, image_prefix='image'):
+
+        img_west = mpimg.imread(self.west_map_filename)
+        #print(img_west.shape)
+
+        img_east = mpimg.imread(self.east_map_filename)
+        #print(img_east.shape)
 
         img = np.concatenate((img_west, img_east), axis=1)
 
@@ -237,7 +283,7 @@ class Map:
         #for p in pos:  # raise text positions
         #    pos[p][1] += 0.07
         #nx.draw_networkx_labels(self.map, pos)
-        img_name = imagepath+'/'+image_prefix+file_format
+        img_name = self.imagepath+'/'+image_prefix+self.file_format
         P.savefig(img_name)
         #P.show()
 

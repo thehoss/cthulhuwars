@@ -2,6 +2,7 @@ from Channel import Channel
 from PrintStream import PrintStream
 from cthulhuwars.Zone import GateState
 
+
 class ClientChannel(Channel):
     """
     This is the server representation of a single connected client.
@@ -40,11 +41,11 @@ class ClientChannel(Channel):
         for p in self._server.board.players:
             units = p.units_in_play
             for unit in units:
-                unit_data.append( (unit.unit_zone.name, unit.faction.short_name, unit.unit_type.value, unit.gate_state.value) )
+                unit_data.append(
+                    (unit.unit_zone.name, unit.faction.short_name, unit.unit_type.value, unit.gate_state.value))
 
         print unit_data
         self._server.SendToAll({"action": "mapState", "gate_data": gate_data, "unit_data": unit_data})
-
 
     def Network_boardState(self, data):
         '''
@@ -55,7 +56,7 @@ class ClientChannel(Channel):
         print "Board State Request"
         with PrintStream() as x:
             self._server.board.print_state()
-        #print x.data
+        # print x.data
         self.Send({"action": "gameMessage", "message": x.data})
 
     def Network_me(self, data):
@@ -69,7 +70,7 @@ class ClientChannel(Channel):
         self.Send({"action": "gameMessage", "message": x.data})
 
     def Network_disconnect(self, data):
-        self._server.SendToAll({"action": "gameMessage", "message": [('%s is disconnecting')%(self.faction)]})
+        self._server.SendToAll({"action": "gameMessage", "message": [('%s is disconnecting') % (self.faction)]})
         self._server.board.player_dict[self.faction]['active'] = False
         self.Close()
 
@@ -79,8 +80,8 @@ class ClientChannel(Channel):
         :param data:
         :return:
         '''
+        self.Network_mapState(data)
         print data
-
 
     def Network_gameTurn(self, data):
         '''
@@ -92,6 +93,7 @@ class ClientChannel(Channel):
         print data
 
     def Network_faction(self, data):
+
         f = data['faction']
         self._server.board.player_dict[f]['active'] = True
 
@@ -108,6 +110,9 @@ class ClientChannel(Channel):
 
         self._server.SendToAll({"action": "gameMessage", "message": x.data, "factions": available_factions})
 
+        if self._server.nPlayers == self._server.maxPlayers:
+            self._server.gameBegin()
+            self._server.waiting = False
 
     def Network_message(self, data):
         '''
