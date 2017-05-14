@@ -98,26 +98,37 @@ class Board(object):
 
     def create_all_players(self):
         assert isinstance(self.__map, Map)
-
+        print("Creating all players")
         index = self.__players.__len__()
         self.player_dict['cthulhu']['class'] = Cthulhu(self.__map.zone_by_name('South Pacific'),self)
+        self.player_dict['cthulhu']['active'] = True
+        self.cthulhu = True
         self.__players.append(self.player_dict['cthulhu']['class'])
 
         try:
             self.player_dict['black_goat']['class'] = BlackGoat(self.__map.zone_by_name('Africa'), self)
+            self.player_dict['black_goat']['active'] = True
+            self.black_goat = True
             self.__players.append(self.player_dict['black_goat']['class'])
         except KeyError:
             self.player_dict['black_goat']['class'] = BlackGoat(self.__map.zone_by_name('West Africa'), self)
+            self.player_dict['black_goat']['active'] = True
+            self.black_goat = True
             self.__players.append(self.player_dict['black_goat']['class'])
-
         try:
             self.player_dict['crawling_chaos']['class'] = CrawlingChaos(self.__map.zone_by_name('Asia'), self)
+            self.player_dict['crawling_chaos']['active'] = True
+            self.crawling_chaos = True
             self.__players.append(self.player_dict['crawling_chaos']['class'])
         except KeyError:
             self.player_dict['crawling_chaos']['class'] = CrawlingChaos(self.__map.zone_by_name('South Asia'), self)
+            self.player_dict['crawling_chaos']['active'] = True
+            self.crawling_chaos = True
             self.__players.append(self.player_dict['crawling_chaos']['class'])
 
         self.player_dict['yellow_sign']['class'] = YellowSign(self.__map.zone_by_name('Europe'), self)
+        self.player_dict['yellow_sign']['active'] = True
+        self.yellow_sign = True
         self.__players.append(self.player_dict['yellow_sign']['class'])
 
         for p in self.__players:
@@ -184,6 +195,7 @@ class Board(object):
         # Rule:  If present, The Great Cthulhu goes first on first turn
         cIndex = 0
         print ('Game Starting: Generating random player turn order...')
+        print self.player_dict
         if self.player_dict['cthulhu']['active']:
             print ('The Great Cthulhu faction holds primacy for the first turn!')
             self.cthulhu = True
@@ -225,9 +237,9 @@ class Board(object):
     def gather_power_phase(self):
         print(TextColor.BOLD + "**Gather Power Phase **" + TextColor.ENDC)
         max_power = 0
-        first_player = None
+        first_player = self.active_players[0]
         if self.cthulhu is True:
-            first_player = [player for player in self.active_players if isinstance(player, Cthulhu)]
+            first_player = [player for player in self.__players if isinstance(player, Cthulhu)]
 
         first_player_index = 0
 
@@ -253,7 +265,7 @@ class Board(object):
     def doom_phase(self):
         max_doom = 0
         win_condition = 30
-        lead = None
+        lead = ''
         for p in self.active_players:
             assert isinstance(p, Player)
             self._doom_track[p._name] += p.doom_points
@@ -262,9 +274,6 @@ class Board(object):
                 lead = p._name
 
         print self._doom_track
-
-        if not lead:
-            return False
 
         if self._doom_track[lead] > win_condition:
             print(TextColor.BOLD + "**%s Wins! **" % lead + TextColor.ENDC)
