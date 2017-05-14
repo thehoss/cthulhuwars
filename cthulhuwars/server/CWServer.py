@@ -71,8 +71,8 @@ class CWServer(Server):
             self.board.gather_power_phase()
         self.SendToAll({"action": "gameMessage", "message": x.data})
 
-        for p in self.players:
-            p.Send({"action": "gameTurn", "message": p.faction +" Your Turn"})
+        #for p in self.players:
+        #    p.Send({"action": "gameTurn", "message": p.faction +" Your Turn"})
 
     def gameLoop(self):
         if not self.board.doom_phase():
