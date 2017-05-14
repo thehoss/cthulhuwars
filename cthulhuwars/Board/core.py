@@ -96,39 +96,39 @@ class Board(object):
     def render_map(self, image='image'):
         self.__map.render_map(image)
 
-    def create_all_players(self):
+    def create_all_players(self, active=True):
         assert isinstance(self.__map, Map)
-        print("Creating all players")
+        print("Creating player classes")
         index = self.__players.__len__()
         self.player_dict['cthulhu']['class'] = Cthulhu(self.__map.zone_by_name('South Pacific'),self)
-        self.player_dict['cthulhu']['active'] = True
-        self.cthulhu = True
+        self.player_dict['cthulhu']['active'] = active
+        self.cthulhu = active
         self.__players.append(self.player_dict['cthulhu']['class'])
 
         try:
             self.player_dict['black_goat']['class'] = BlackGoat(self.__map.zone_by_name('Africa'), self)
-            self.player_dict['black_goat']['active'] = True
-            self.black_goat = True
+            self.player_dict['black_goat']['active'] = active
+            self.black_goat = active
             self.__players.append(self.player_dict['black_goat']['class'])
         except KeyError:
             self.player_dict['black_goat']['class'] = BlackGoat(self.__map.zone_by_name('West Africa'), self)
-            self.player_dict['black_goat']['active'] = True
-            self.black_goat = True
+            self.player_dict['black_goat']['active'] = active
+            self.black_goat = active
             self.__players.append(self.player_dict['black_goat']['class'])
         try:
             self.player_dict['crawling_chaos']['class'] = CrawlingChaos(self.__map.zone_by_name('Asia'), self)
-            self.player_dict['crawling_chaos']['active'] = True
-            self.crawling_chaos = True
+            self.player_dict['crawling_chaos']['active'] = active
+            self.crawling_chaos = active
             self.__players.append(self.player_dict['crawling_chaos']['class'])
         except KeyError:
             self.player_dict['crawling_chaos']['class'] = CrawlingChaos(self.__map.zone_by_name('South Asia'), self)
-            self.player_dict['crawling_chaos']['active'] = True
-            self.crawling_chaos = True
+            self.player_dict['crawling_chaos']['active'] = active
+            self.crawling_chaos = active
             self.__players.append(self.player_dict['crawling_chaos']['class'])
 
         self.player_dict['yellow_sign']['class'] = YellowSign(self.__map.zone_by_name('Europe'), self)
-        self.player_dict['yellow_sign']['active'] = True
-        self.yellow_sign = True
+        self.player_dict['yellow_sign']['active'] = active
+        self.yellow_sign = active
         self.__players.append(self.player_dict['yellow_sign']['class'])
 
         for p in self.__players:

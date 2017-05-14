@@ -32,7 +32,7 @@ class CWServer(Server):
 
         self.board = Board.Board(num_players=self.maxPlayers, server_mode=True)
         self.board.build_map()
-        self.board.create_all_players()
+        self.board.create_all_players(active=False)
         self.waiting = True
         self.sprint( str(self.maxPlayers) + ' Player Cthulhu Wars Server launched')
         self.sprint('Waiting for players to connect...')
