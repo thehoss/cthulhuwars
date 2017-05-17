@@ -8,7 +8,7 @@ setup(
     packages=['cthulhuwars'],
     entry_points={
         'CWServer': 'cthulhuwars.CWServer = cthulhuwars.server:CWServer',
-        'CWClient': 'cthulhuwars.CWClient = cthulhuwars.server:CWClient',,
+        'CWClient': 'cthulhuwars.CWClient = cthulhuwars.server:CWClient',
     },
     license='LICENSE',
     description="An implementation of Cthulhu Wars.",
