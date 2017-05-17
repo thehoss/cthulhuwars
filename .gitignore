@@ -60,3 +60,4 @@ fabric.properties
 # .idea/misc.xml 
 # *.ipr
 /cthulhuwars/cwgame/__pycache__/*.pyc
+*.pyc
