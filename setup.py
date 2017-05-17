@@ -7,8 +7,8 @@ setup(
     author_email='masterblasterofdisaster@gmail.com',
     packages=['cthulhuwars'],
     entry_points={
-        'cw_board.games': 'cthulhuwars = cthulhuwars.Board:Board',
-        'cw_board.players': 'cthulhuwars.cw_mcts = cthulhuwars.mcts:MonteCarlo',
+        'CWServer': 'cthulhuwars.CWServer = cthulhuwars.server:CWServer',
+        'CWClient': 'cthulhuwars.CWClient = cthulhuwars.server:CWClient',
     },
     license='LICENSE',
     description="An implementation of Cthulhu Wars.",
