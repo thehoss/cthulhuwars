@@ -1,8 +1,7 @@
-from core import Player
-from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
-from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars.Color import TextColor, NodeColor
-
+from .player import Player
+from .color import TextColor, NodeColor
+from .unit import Unit, UnitType, UnitState, Faction
+from .zone import Zone, GateState
 
 # Yellow Sign
 # Starts in Europe

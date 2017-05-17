@@ -58,8 +58,8 @@ class MonteCarlo(object):
         # time elapsed.
         self.stats.update(games=games, max_depth=self.max_depth,
                           time=str(time.time() - begin))
-        print self.stats['games'], self.stats['time']
-        print "Maximum depth searched:", self.max_depth
+        print(self.stats['games'], self.stats['time'])
+        print("Maximum depth searched:", self.max_depth)
 
         moves_states = [(p, self.board.next_state(state, p)) for p in legal]
 
@@ -74,7 +74,7 @@ class MonteCarlo(object):
             reverse=True
         )
         for m in self.stats['moves']:
-            print "{move}: {percent:.2f}% ({wins} / {plays})".format(**m)
+            print("{move}: {percent:.2f}% ({wins} / {plays})".format(**m))
 
         # Pick the move with the highest percentage of wins.
         percent_wins, num_moves, move = max(
@@ -101,7 +101,7 @@ class MonteCarlo(object):
         player = self.board.current_player(state)
 
         expand = True
-        for t in xrange(1, self.max_moves + 1):
+        for t in range(1, self.max_moves + 1):
             legal = self.board.legal_plays(states_copy)
             moves_states = [(p, self.board.next_state(state, p)) for p in legal]
 
@@ -201,8 +201,8 @@ class ValueMonteCarlo(object):
         # time elapsed.
         self.stats.update(games=games, max_depth=self.max_depth,
                           time=str(time.time() - begin))
-        print self.stats['games'], self.stats['time']
-        print "Maximum depth searched:", self.max_depth
+        print(self.stats['games'], self.stats['time'])
+        print("Maximum depth searched:", self.max_depth)
 
         moves_states = [(p, self.board.next_state(state, p)) for p in legal]
 
@@ -217,7 +217,7 @@ class ValueMonteCarlo(object):
             reverse=True
         )
         for m in self.stats['moves']:
-            print "{move}: {average:.1f} ({sum} / {plays})".format(**m)
+            print("{move}: {average:.1f} ({sum} / {plays})".format(**m))
 
         # Pick the move with the highest average value.
         average, num_moves, move = max(
@@ -244,7 +244,7 @@ class ValueMonteCarlo(object):
         player = self.board.current_player(state)
 
         expand = True
-        for t in xrange(1, self.max_moves + 1):
+        for t in range(1, self.max_moves + 1):
             legal = self.board.legal_plays(states_copy)
             moves_states = [(p, self.board.next_state(state, p)) for p in legal]
 

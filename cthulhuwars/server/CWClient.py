@@ -6,10 +6,10 @@ sys.path.insert(0, './PodSixNet')
 from time import sleep
 from sys import stdin, exit
 import os
-from PodSixNet.Connection import connection, ConnectionListener
-from thread import *
-from cthulhuwars import Color
-from cthulhuwars.Unit import Faction
+from .PodSixNet.Connection import connection, ConnectionListener
+#from thread import *
+from cwgame import color as Color
+from cwgame.unit import Faction
 import pygame, math
 
 serveraddress=('localhost', int(666))
@@ -169,7 +169,7 @@ class CWClient(ConnectionListener):
         for fac in self.Factions:
             img = self.img_faction_selection[fac]['active']
             bounds = img.get_bounding_rect(min_alpha=1)
-            print bounds
+            #print(bounds)
             if bounds.collidepoint(x,y):
                 self.faction = fac
                 self.faction_color = self.FactionColor[self.faction]
@@ -177,7 +177,7 @@ class CWClient(ConnectionListener):
                 connection.Send({"action": "faction", "faction": self.faction})
                 self.in_play = True
                 return
-        print x,y
+        #print x,y
 
     def sprint(self, msg, mode='info', head='[CWClient]: '):
         '''
@@ -315,7 +315,7 @@ class CWClient(ConnectionListener):
 
         # self.sprint(data['message'])
 
-        selection = raw_input("Action (msg, move, attack, build, summon, end): ")
+        selection = input("Action (msg, move, attack, build, summon, end): ")
         command_list = selection.split(' ', 1)
 
         if command_list[0] in ["msg", "m", "message", "/m"]:

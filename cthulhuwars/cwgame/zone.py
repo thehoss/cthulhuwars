@@ -8,7 +8,7 @@ TODO:
 """
 
 from enum import Enum
-from cthulhuwars.Color import NodeColor
+from .color import NodeColor
 
 class GateState(Enum):
     noGate    = 0

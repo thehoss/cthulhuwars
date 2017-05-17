@@ -1,10 +1,9 @@
-from cthulhuwars.Color import TextColor, NodeColor
-from cthulhuwars.DiceRoller import DiceRoller
-from cthulhuwars.Maps import Map
-from cthulhuwars.PlayerLogic import PlayerLogic
-from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction, Cultist
-from cthulhuwars.Zone import Zone, GateState
-
+from .color import TextColor, NodeColor
+from .diceRoller import DiceRoller
+from .map import Map
+from .playerLogic import PlayerLogic
+from .unit import Unit, UnitType, UnitState, Faction, Cultist
+from .zone import Zone, GateState
 
 # Generic Player class
 # Overridden by faction specific subclasses

@@ -6,11 +6,11 @@ sys.path.insert(0, './PodSixNet')
 from time import sleep
 from weakref import WeakKeyDictionary
 
-from ClientChannel import ClientChannel
+from .ClientChannel import ClientChannel
 from Server import Server
-from cthulhuwars import Color, Board
-from PrintStream import PrintStream
-
+from cwgame import color as Color
+from .PrintStream import PrintStream
+from cwgame.board import Board
 serveraddress=('localhost', int(666))
 
 class CWServer(Server):
@@ -30,7 +30,7 @@ class CWServer(Server):
         self.maxPlayers = num_players
         self.__player_turn = 0
 
-        self.board = Board.Board(num_players=self.maxPlayers, server_mode=True)
+        self.board = Board(num_players=self.maxPlayers, server_mode=True)
         self.board.build_map()
         self.board.create_all_players(active=False)
         self.waiting = True

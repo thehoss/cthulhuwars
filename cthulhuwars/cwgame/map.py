@@ -16,9 +16,10 @@ import networkx as nx
 import matplotlib.pylab as P
 import matplotlib.image as mpimg
 import numpy as np
-from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars import arnoldRender, Color
-
+import math as m
+from .zone import Zone, GateState
+import cwgame.color as Color
+import cwgame.arnoldRender as arnoldRender
 import pygame
 
 import os
@@ -182,7 +183,7 @@ class Map:
         mapping = dict(zip(node_list, zone_list))
          self.map = nx.relabel_nodes(G, mapping)
         '''
-        self.basepath = '../../tex'
+        self.basepath = './cwgame/tex'
         self.imagepath = '.'
         self.file_format = '.png'
         self.west_map_filename = self.earth_map_configs[self.map_name][0] + self.file_format
@@ -200,8 +201,8 @@ class Map:
             self.img_map_east = pygame.image.load(self.east_map_filename)
             self.img_map_west = pygame.image.load(self.west_map_filename)
 
-            west = pygame.transform.smoothscale(self.img_map_west, (self.width / 2, self.height))
-            east = pygame.transform.smoothscale(self.img_map_east, (self.width / 2, self.height))
+            west = pygame.transform.smoothscale(self.img_map_west, (m.floor(self.width / 2), self.height))
+            east = pygame.transform.smoothscale(self.img_map_east, (m.floor(self.width / 2), self.height))
             self.img_map_east = east.convert()
             self.img_map_west = west.convert()
 

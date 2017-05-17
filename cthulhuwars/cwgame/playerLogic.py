@@ -1,8 +1,8 @@
 from enum import Enum
-from cthulhuwars.Maps import Map
-from cthulhuwars.Unit import Unit, UnitState, UnitType
+from .map import Map
+from .unit import Unit, UnitState, UnitType
 from numpy.random import choice
-from cthulhuwars.Color import TextColor
+from .color import TextColor
 
 class Methods(Enum):
     random = 0
@@ -222,7 +222,7 @@ class PlayerLogic(object):
                 key_list = []
                 p_dist = []
 
-                for k, v in action_probability.iteritems():
+                for k, v in action_probability.items():
                     p_dist.append(v[0])
                     key_list.append(k)
                 p_norm = [float(i) / sum(p_dist) for i in p_dist]

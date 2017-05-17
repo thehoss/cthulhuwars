@@ -3,12 +3,11 @@
  Starts in South Pacific
 """
 
-from core import Player
-from cthulhuwars.Color import TextColor, NodeColor
-from cthulhuwars.DiceRoller import DiceRoller
-from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
-from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars.Maps import Map
+from .player import Player
+from .color import TextColor, NodeColor
+from .unit import Unit, UnitType, UnitState, Faction
+from .zone import Zone, GateState
+from .diceRoller import DiceRoller
 
 class Cthulhu(Player):
     def __init__(self, home_zone, board, name='Great Cthulhu'):

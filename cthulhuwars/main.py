@@ -1,8 +1,8 @@
-from core import Board, Actions, Phase
+from cwgame.board import Board
 
-if __name__ == "__main__":
-
+def main():
     numPlayers = int(input('number of players: '))
     B = Board(num_players=numPlayers, server_mode=False, draw_map=True)
 
-
+if __name__ == "__main__":
+    main()

@@ -17,8 +17,8 @@ you will need to add /usr/local/solidangle/arnold/bin to the path
 '''
 import random
 from arnold import *
-from cthulhuwars.Zone import Zone, GateState
-from cthulhuwars.Unit import Unit, UnitState, UnitType
+from .zone import Zone, GateState
+from .unit import Unit, UnitState, UnitType
 
 class ArnoldRender(object):
     earth_gate_positions = {'Arctic Ocean': [0.03, 0.9], 'North Atlantic': [-0.23, 0.57],

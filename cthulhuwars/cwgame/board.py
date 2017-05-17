@@ -1,10 +1,13 @@
 import random
-
 from enum import Enum
 
-from cthulhuwars.Color import TextColor
-from cthulhuwars.Maps import Map
-from cthulhuwars.Player import Player, BlackGoat, CrawlingChaos, Cthulhu, YellowSign
+from .color import TextColor
+from .map import Map
+from .player import Player
+from .blackGoat import BlackGoat
+from .crawlingChaos import CrawlingChaos
+from .yellowSign import YellowSign
+from .cthulhu import Cthulhu
 
 class Actions(Enum):
     move = 0
@@ -100,7 +103,7 @@ class Board(object):
         assert isinstance(self.__map, Map)
         print("Creating player classes")
         index = self.__players.__len__()
-        self.player_dict['cthulhu']['class'] = Cthulhu(self.__map.zone_by_name('South Pacific'),self)
+        self.player_dict['cthulhu']['class'] = Cthulhu(self.__map.zone_by_name('South Pacific'), self)
         self.player_dict['cthulhu']['active'] = active
         self.cthulhu = active
         self.__players.append(self.player_dict['cthulhu']['class'])
@@ -154,13 +157,13 @@ class Board(object):
                 print(TextColor.BLUE + ' [3] The Crawling Chaos' + TextColor.ENDC)
             if self.yellow_sign is False:
                 print(TextColor.YELLOW + ' [4] The Yellow Sign' + TextColor.ENDC)
-            selection = int(raw_input("Selection: "))
+            selection = int(input("Selection: "))
 
             if selection is 1:
                 self.cthulhu = True
                 self.player_dict['cthulhu']['active'] = True
                 index = self.__players.__len__()
-                self.__players.append(Cthulhu(self.__map.zone_by_name('South Pacific'),self))
+                self.__players.append(Cthulhu(self.__map.zone_by_name('South Pacific'), self))
             elif selection is 2:
                 self.black_goat = True
                 self.player_dict['black_goat']['active'] = True
@@ -194,8 +197,8 @@ class Board(object):
         # Returns a representation of the starting state of the game.
         # Rule:  If present, The Great Cthulhu goes first on first turn
         cIndex = 0
-        print ('Game Starting: Generating random player turn order...')
-        print self.player_dict
+        print('Game Starting: Generating random player turn order...')
+        print(self.player_dict)
         if self.player_dict['cthulhu']['active']:
             print ('The Great Cthulhu faction holds primacy for the first turn!')
             self.cthulhu = True
@@ -273,7 +276,7 @@ class Board(object):
                 max_doom = self._doom_track[p._name]
                 lead = p._name
 
-        print self._doom_track
+        print(self._doom_track)
 
         if self._doom_track[lead] > win_condition:
             print(TextColor.BOLD + "**%s Wins! **" % lead + TextColor.ENDC)

@@ -9,10 +9,10 @@ from __future__ import print_function
 # TODO: implement spell conditions
 # TODO: implement Avatar ability for shub-niggurath
 # TODO: implement Fertility Cult in summoning logic
-from core import Player
-from cthulhuwars.Color import TextColor, NodeColor
-from cthulhuwars.Unit import Unit, UnitType, UnitState, Faction
-from cthulhuwars.Zone import Zone, GateState
+from .player import Player
+from .color import TextColor, NodeColor
+from .unit import Unit, UnitType, UnitState, Faction
+from .zone import Zone, GateState
 from enum import Enum
 
 class BlackGoat(Player):

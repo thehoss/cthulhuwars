@@ -1,5 +1,5 @@
 from enum import Enum
-from cthulhuwars.Zone import Zone, GateState
+from .zone import Zone, GateState
 
 
 class UnitType(Enum):

@@ -25,7 +25,7 @@ class Channel(asynchat.async_chat):
         if type(dict()) == type(data) and data.has_key('action'):
             [getattr(self, n)(data) for n in ('Network', 'Network_' + data['action']) if hasattr(self, n)]
         else:
-            print "OOB data (no such Network_action):", data
+            print("OOB data (no such Network_action):", data)
 
     def Pump(self):
         [asynchat.async_chat.push(self, d) for d in self.sendqueue]
@@ -41,7 +41,7 @@ class Channel(asynchat.async_chat):
         if hasattr(self, "Connected"):
             self.Connected()
         else:
-            print "Unhandled Connected()"
+            print("Unhandled Connected()")
 
     def handle_error(self):
         try:
