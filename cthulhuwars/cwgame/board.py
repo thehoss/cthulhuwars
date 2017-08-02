@@ -1,5 +1,6 @@
 import random
 from enum import Enum
+from numpy.random import choice
 
 from .color import TextColor
 from .map import Map
@@ -62,6 +63,7 @@ class Board(object):
         self._turn = 0
         self._doom_track = {}
         self.server_mode = server_mode
+        self._elder_sign_bag = [15, 10, 5]
 
         if not server_mode:
             self.build_map()
@@ -265,6 +267,15 @@ class Board(object):
         self._round = self._round + 1
 
         print(TextColor.BOLD + "**First Player is %s **"%first_player._name + TextColor.ENDC)
+
+    def draw_elder_sign(self):
+        total_tokens = sum(self._elder_sign_bag)
+        normalized_weights = [float(s) / total_tokens for s in self._elder_sign_bag]
+        result = choice(range(len(self._elder_sign_bag)), 1, p=normalized_weights)[0]
+        self._elder_sign_bag[result] -= 1
+        result += 1
+        print("Draw elder sign: ", result)
+        return result
 
     def doom_phase(self):
         max_doom = 0

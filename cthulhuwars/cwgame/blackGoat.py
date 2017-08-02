@@ -247,6 +247,7 @@ class BlackGoat(Player):
                         self._shub_niggurath.set_unit_zone(unit_zone)
                         self._shub_niggurath.set_unit_state(UnitState.in_play)
                         self.spend_power(unit_cost)
+                        self.draw_elder_sign()
                         if not self.awakened_shub_niggurath:
                             self.take_spell_book()
                         print(

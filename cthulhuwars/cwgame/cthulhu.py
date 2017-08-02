@@ -121,7 +121,7 @@ class Cthulhu(Player):
                         cthulhu.set_unit_state(UnitState.in_play)
                         cthulhu.set_unit_zone(self._home_zone)
                         self._immortal = True
-                        self._elder_points += DiceRoller(1, 3).roll_dice()[0]
+                        self.draw_elder_sign()
                         return True
         return False
 

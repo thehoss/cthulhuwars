@@ -247,6 +247,11 @@ class Player(object):
         dp = self.current_gates
         self._doom_points += dp
         return dp
+
+    @property
+    def elder_points(self):
+        return self._elder_points
+
     '''
     abandon_gate
     unit occupying the gate leaves the gate, presumably to move to another zone
@@ -519,6 +524,17 @@ class Player(object):
             self.capture_gate(unit)
             return True
         return False
+
+    '''
+    draw_elder_sign
+    draw one of three valued elder signs
+    '''
+
+    def draw_elder_sign(self):
+        result = self._board.draw_elder_sign()
+        self._elder_points += result
+        return result
+
 
     '''
     combat_action
