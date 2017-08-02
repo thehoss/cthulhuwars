@@ -245,6 +245,7 @@ class Player(object):
     @property
     def doom_points(self):
         dp = self.current_gates
+        self._doom_points += dp
         return dp
     '''
     abandon_gate
@@ -549,8 +550,8 @@ class Player(object):
                 attack_rolls = attack_dice.interpret_dice()
                 defence_rolls = defence_dice.interpret_dice()
 
-                print ('    attacker rolled: %s' % attack_rolls)
-                print ('    defender rolled: %s' % defence_rolls)
+                # print ('    attacker rolled: %s' % attack_rolls)
+                # print ('    defender rolled: %s' % defence_rolls)
 
                 for _ in range(attack_rolls['kill']):
                     # TODO: kill an enemy monster

@@ -225,9 +225,10 @@ class Board(object):
         winner = False
         while winner is False:
             self.gather_power_phase()
+            self.print_state()
             # first player phase
             while True:
-                print('**Round %s, Turn %s **' % (r, i))
+                # print('**Round %s, Turn %s **' % (r, i))
                 self.test_actions()
                 i += 1
                 if not self.is_action_phase():
@@ -235,10 +236,10 @@ class Board(object):
 
             r += 1
             winner = self.doom_phase()
-            self.print_state()
+
 
     def gather_power_phase(self):
-        print(TextColor.BOLD + "**Gather Power Phase **" + TextColor.ENDC)
+        # print(TextColor.BOLD + "**Gather Power Phase **" + TextColor.ENDC)
         max_power = 0
         first_player = self.active_players[0]
         if self.cthulhu is True:
@@ -276,10 +277,11 @@ class Board(object):
                 max_doom = self._doom_track[p._name]
                 lead = p._name
 
-        print(self._doom_track)
+        # print(self._doom_track)
 
         if self._doom_track[lead] > win_condition:
             print(TextColor.BOLD + "**%s Wins! **" % lead + TextColor.ENDC)
+            self.print_state();
             return True
         else:
             return False
@@ -302,7 +304,7 @@ class Board(object):
             assert isinstance(p, Player)
             self.pre_turn_actions()
             if p.power is 0:
-                print(TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
+                print(p._color + TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
                 p.brain.execute_action()
             self.post_turn_actions()
