@@ -1,7 +1,6 @@
 from Channel import Channel
 from PrintStream import PrintStream
-from cthulhuwars.Zone import GateState
-
+from cthulhuwars.cwgame.zone import GateState
 
 class ClientChannel(Channel):
     """
@@ -23,7 +22,8 @@ class ClientChannel(Channel):
         self._server.SendToAll(data)
 
     def Close(self):
-        self._server.board.player_dict[self.faction]['active'] = False
+        if self.faction in self._server.board.player_dict:
+            self._server.board.player_dict[self.faction]['active'] = False
         self._server.DelPlayer(self)
 
     ##################################
@@ -44,7 +44,7 @@ class ClientChannel(Channel):
                 unit_data.append(
                     (unit.unit_zone.name, unit.faction.short_name, unit.unit_type.value, unit.gate_state.value))
 
-        print unit_data
+        print(unit_data)
         self._server.SendToAll({"action": "mapState", "gate_data": gate_data, "unit_data": unit_data})
 
     def Network_boardState(self, data):
@@ -53,7 +53,7 @@ class ClientChannel(Channel):
         :param data:
         :return:
         '''
-        print "Board State Request"
+        print("Board State Request")
         with PrintStream() as x:
             self._server.board.print_state()
         # print x.data
@@ -81,7 +81,7 @@ class ClientChannel(Channel):
         :return:
         '''
         self.Network_mapState(data)
-        print data
+        # print(data)
 
     def Network_gameTurn(self, data):
         '''
@@ -90,7 +90,7 @@ class ClientChannel(Channel):
         :return:
         '''
         self.Network_mapState(data)
-        print data
+        # print(data)
 
     def Network_faction(self, data):
 

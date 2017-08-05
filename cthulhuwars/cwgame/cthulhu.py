@@ -148,7 +148,7 @@ class DeepOne(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -164,7 +164,7 @@ class Shoggoth(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -180,7 +180,7 @@ class Starspawn(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self) )],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -196,7 +196,7 @@ class GreatCthulhu(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cthulhu_goo.obj"),
+            "params": [("string", "dso", "cthulhu_goo.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition

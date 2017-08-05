@@ -6,13 +6,13 @@ sys.path.insert(0, './PodSixNet')
 from time import sleep
 from sys import stdin, exit
 import os
-from .PodSixNet.Connection import connection, ConnectionListener
+from PodSixNet.Connection import connection, ConnectionListener
 #from thread import *
-from cwgame import color as Color
-from cwgame.unit import Faction
+from cthulhuwars.cwgame import color as Color
+from cthulhuwars.cwgame.unit import Faction
 import pygame, math
 
-serveraddress=('localhost', int(666))
+serveraddress=('localhost', int(10666))
 
 class CWClient(ConnectionListener):
     earth_gate_positions = {'Arctic Ocean': [0.03, 0.9], 'North Atlantic': [-0.23, 0.57],
@@ -61,7 +61,7 @@ class CWClient(ConnectionListener):
         self.Connect((host, port))
         self.in_play = False
 
-        self.resource_dir = '../../tex'
+        self.resource_dir = '../cwgame/tex'
         self.img_map_west = None
         self.img_map_east = None
         self.img_selectionbg = None
@@ -205,7 +205,7 @@ class CWClient(ConnectionListener):
             sleep(0.001)
 
     def Network(self, data):
-        # print 'network:', data
+        # print('network:', data)
         pass
 
     def Network_mapState(self, data):
@@ -251,8 +251,8 @@ class CWClient(ConnectionListener):
         self.img_map_east = pygame.image.load(data['mapImageData'][1])
         self.img_map_west = pygame.image.load(data['mapImageData'][0])
 
-        west = pygame.transform.smoothscale(self.img_map_west, (self.width / 2, self.height))
-        east = pygame.transform.smoothscale(self.img_map_east, (self.width / 2, self.height))
+        west = pygame.transform.smoothscale(self.img_map_west, (int(self.width / 2), self.height))
+        east = pygame.transform.smoothscale(self.img_map_east, (int(self.width / 2), self.height))
         self.img_map_east = east.convert()
         self.img_map_west = west.convert()
 
@@ -264,7 +264,8 @@ class CWClient(ConnectionListener):
         :param data:
         :return:
         '''
-        self.sprint('error:'+data['error'], mode='error')
+        self.sprint('error:'+str(data['error']), mode='error')
+
         import traceback
         traceback.print_exc()
         connection.Close()

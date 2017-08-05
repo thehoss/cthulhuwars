@@ -94,7 +94,7 @@ class Undead(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -121,7 +121,7 @@ class Byakhee(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -139,7 +139,7 @@ class Hastur(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -156,7 +156,7 @@ class KingInYellow(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition

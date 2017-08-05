@@ -231,7 +231,7 @@ class Nightgaunt(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self) )],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -246,7 +246,7 @@ class FlyingPolyp(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -262,7 +262,7 @@ class HuntingHorror(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
@@ -276,7 +276,7 @@ class Nyarlathotep(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["%s_%s_%s"%(self.faction._name, self._unit_type.value, id(self))],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition

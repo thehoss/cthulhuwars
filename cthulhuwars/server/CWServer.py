@@ -1,3 +1,5 @@
+#!/usr/bin/sudo python
+
 import sys
 sys.path.insert(0, '../../')
 sys.path.insert(0, '.')
@@ -6,12 +8,12 @@ sys.path.insert(0, './PodSixNet')
 from time import sleep
 from weakref import WeakKeyDictionary
 
-from .ClientChannel import ClientChannel
+from ClientChannel import ClientChannel
 from Server import Server
-from cwgame import color as Color
-from .PrintStream import PrintStream
-from cwgame.board import Board
-serveraddress=('localhost', int(666))
+import cthulhuwars.cwgame.color as Color
+from PrintStream import PrintStream
+import cthulhuwars.cwgame.board as Board
+serveraddress=('localhost', int(10666))
 
 class CWServer(Server):
     '''
@@ -30,7 +32,7 @@ class CWServer(Server):
         self.maxPlayers = num_players
         self.__player_turn = 0
 
-        self.board = Board(num_players=self.maxPlayers, server_mode=True)
+        self.board = Board.Board(num_players=self.maxPlayers, server_mode=True)
         self.board.build_map()
         self.board.create_all_players(active=False)
         self.waiting = True
@@ -115,7 +117,7 @@ class CWServer(Server):
         :return:
         '''
         self.sprint("Deleting Player" + str(player.addr), mode='warning')
-        del self.players[player]
+        self.players[player] = None
         self.nPlayers -= 1
         self.SendPlayers()
 
@@ -138,6 +140,7 @@ class CWServer(Server):
         while True:
             self.Pump()
             sleep(0.0001)
+
 if __name__ == "__main__":
     s = CWServer(localaddr=serveraddress, num_players = 2)
     s.Launch()

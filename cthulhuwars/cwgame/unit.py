@@ -131,7 +131,7 @@ class Cultist(Unit):
         render_definition = {
             "nodetype": ["procedural"],
             "name": ["cultist_object"],
-            "params": [("string", "dso", "c:/Users/Adam Martinez/PycharmProjects/cthulhuwars/obj/cultist.obj"),
+            "params": [("string", "dso", "cultist.obj"),
                        ("bool", "load_at_init", 1)]
         }
         return render_definition
