@@ -313,14 +313,13 @@ class CWClient(ConnectionListener):
         self.sprint(''.join(msg), head="[SERVER]: ")
 
     def Network_gameTurn(self, data ):
-
         # self.sprint(data['message'])
-
         selection = input("Action (msg, move, attack, build, summon, end): ")
         command_list = selection.split(' ', 1)
 
         if command_list[0] in ["msg", "m", "message", "/m"]:
-            connection.Send({"action": "message", "message": command_list[1]})
+            if len(command_list) > 1:
+                connection.Send({"action": "message", "message": command_list[1]})
         if command_list[0] in ["end","x", "exit", "quit", "/x"]:
             connection.send({"action": "disconnect"})
             connection.close()

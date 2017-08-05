@@ -44,7 +44,7 @@ class ClientChannel(Channel):
                 unit_data.append(
                     (unit.unit_zone.name, unit.faction.short_name, unit.unit_type.value, unit.gate_state.value))
 
-        print(unit_data)
+        print("unit state request :" ,unit_data)
         self._server.SendToAll({"action": "mapState", "gate_data": gate_data, "unit_data": unit_data})
 
     def Network_boardState(self, data):

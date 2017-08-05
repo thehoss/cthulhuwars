@@ -35,7 +35,8 @@ class BlackGoat(Player):
         self.units_in_six_zones = False
         self.units_in_eight_zones = False
         self.share_zones_with_all_factions = False
-        self.sacrifice_two_cultists = False
+        self.sacrificed_two_cultists = False
+        self.sacrifice_action_taken = False
         '''
         spell flags
         True = spell has been acquired by player
@@ -77,7 +78,7 @@ class BlackGoat(Player):
             'recruit': 0.1,
             'combat': 0.1,
             'awaken': 0,
-            'special': 0
+            'special': 0.5
         }
         self.brain.set_probabilities(self.probability_dict)
 
@@ -107,7 +108,7 @@ class BlackGoat(Player):
 
     @property
     def goo_in_play(self):
-        return self._shub_niggurath.__len__()
+        return self._shub_niggurath.unit_state is UnitState.in_play
 
     def player_setup(self):
         super(BlackGoat, self).player_setup()
@@ -292,16 +293,19 @@ class BlackGoat(Player):
         nzones = len(self.occupied_zones)
         if nzones >= 4 and self.units_in_four_zones is False:
             self.units_in_four_zones = True
+            self.pprint("Units in four zones")
             self.brain.select_spell(self.spells)
         if nzones >= 6 and self.units_in_six_zones is False:
             self.units_in_six_zones = True
+            self.pprint("Units in six zones")
             # pick a spell
             self.brain.select_spell(self.spells)
         if nzones >= 8 and self.units_in_eight_zones is False:
             self.units_in_eight_zones = True
+            self.pprint("Units in eight zones")
             # pick a spell
             self.brain.select_spell(self.spells)
-        if self._shub_niggurath is not None and self.awakened_shub_niggurath is False:
+        if self.goo_in_play and self.awakened_shub_niggurath is False:
             self.awakened_shub_niggurath = True
             # pick a spell
             self.brain.select_spell(self.spells)
@@ -315,11 +319,19 @@ class BlackGoat(Player):
                     shared = False
             if shared is True:
                 self.share_zones_with_all_factions = True
+                self.pprint("Share zones with all opponents")
                 # Pick a spell
                 self.brain.select_spell(self.spells)
+        if self.sacrifice_action_taken and self.sacrificed_two_cultists is False:
+            self.pprint("Sacrificed two cultists")
+            self.sacrificed_two_cultists = True
+            self.brain.select_spell(self.spells)
+
         pass
 
-    def sacrifice_two_cultists(self):
+    def action_sacrifice_two_cultists(self):
+        if self.sacrifice_action_taken is True:
+            return False
         candidates = []
         for cultist in self._cultists:
             assert isinstance(cultist, Unit)
@@ -328,15 +340,29 @@ class BlackGoat(Player):
                     candidates.append(cultist)
 
         if candidates.__len__() >= 2:
+            print(
+                self._color + TextColor.BOLD + 'Black Goat Sacrifices Two Cultists!' + TextColor.ENDC)
             # Kills off the first two found
             # TODO: figure out least valuable cultists in candidate list and sacrifice them
             for n in range(0, 2):
-                self.kill_unit(candidates[n])
-            self.sacrifice_two_cultists = True
+                self.sacrifice_unit(candidates[n])
+            self.sacrifice_action_taken = True
             # Pick a Spell
             return True
         else:
             return False
+
+    def find_special_actions(self):
+        special_actions = []
+        if self.sacrifice_action_taken is False:
+            special_actions.append( (self.action_sacrifice_two_cultists, None, None) )
+        return special_actions
+
+    def special_action(self, arguments):
+        self.action_sacrifice_two_cultists()
+        self.take_spell_book()
+        self.probability_dict['special'] = 0.0
+        self.brain.set_probabilities(self.probability_dict)
 
     def summon_action(self, monster, unit_zone):
         assert isinstance(monster, Unit)

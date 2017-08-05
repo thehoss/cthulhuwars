@@ -76,6 +76,7 @@ class PlayerLogic(object):
         possible_summons = self.player.find_summon_actions()
         possible_recruits = self.player.find_recruit_actions()
         possible_combat = self.player.find_combat_actions()
+        possible_special = self.player.find_special_actions()
 
         action_func = {
             'capture': [],
@@ -119,6 +120,11 @@ class PlayerLogic(object):
             action_probability['combat'] = []
             action_probability['combat'].append(self._probability_dict['combat'])
             action_func['combat'] = possible_combat
+
+        if len(possible_special) > 0:
+            action_probability['special'] = []
+            action_probability['special'].append(self._probability_dict['special'])
+            action_func['special'] = possible_special
 
         action_success = False
         while action_success is False:
@@ -157,6 +163,9 @@ class PlayerLogic(object):
                 if key_list[action] is 'combat':
                     action_success = self.player.combat_action(action_params[0], action_params[1], action_params[2])
 
+                if key_list[action] is 'special':
+                    action_success = self.player.special_action(action_params[0])
+
             else:
                 print("No Possible Actions!")
                 self.player.spend_power(self.player.power)
@@ -172,6 +181,7 @@ class PlayerLogic(object):
         possible_summons = self.player.find_summon_actions()
         possible_recruits = self.player.find_recruit_actions()
         possible_combat = self.player.find_combat_actions()
+        possible_special = self.player.find_special_actions()
 
         action_func = {
             'capture': [],
@@ -215,6 +225,11 @@ class PlayerLogic(object):
             action_probability['combat'] = []
             action_probability['combat'].append(self._probability_dict['combat'])
             action_func['combat'] = possible_combat
+
+        if len(possible_special) > 0:
+            action_probability['special'] = []
+            action_probability['special'].append(self._probability_dict['special'])
+            action_func['special'] = possible_special
 
         action_success = False
         while action_success is False:
@@ -258,6 +273,9 @@ class PlayerLogic(object):
 
                 if key_list[action] is 'combat':
                     action_success = self.player.combat_action(action_params[0], action_params[1], action_params[2])
+
+                if key_list[action] is 'special':
+                    action_success = self.player.special_action(action_params[0])
 
             else:
                 print("No Possible Actions!")

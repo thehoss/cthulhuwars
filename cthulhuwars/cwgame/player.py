@@ -80,6 +80,7 @@ class Player(object):
 
         self._spells = 0
         self._spell_requirement_met = [False] * 6
+
         self._units = set()
         self._cultists = set()
         self._monsters = set()
@@ -102,6 +103,20 @@ class Player(object):
             self.add_unit(new_cultist)
             self._cultists.add(new_cultist)
         self.build_gate_action(list(self._cultists)[0], self._home_zone)
+
+    def pprint(self, msg):
+        print(self._color + TextColor.BOLD + msg + TextColor.ENDC)
+
+    '''
+     sacrifice_unit
+     remove a unit from the map and place it in the owners pool
+     '''
+
+    def sacrifice_unit(self, unit):
+        assert isinstance(unit, Unit)
+        unit.set_unit_state(UnitState.in_reserve)
+        unit.set_unit_zone(self._pool)
+        return True
 
     '''
     remove_unit
@@ -481,6 +496,14 @@ class Player(object):
         return combat_actions
 
     '''
+    find_special_actions
+    stub for special faction actions, e.g. blood sacrifice
+    '''
+
+    def find_special_actions(self):
+        return []
+
+    '''
       summon_action
       boilerplate summon method.  each faction will override this to specific needs based on unit populations
       '''
@@ -495,6 +518,8 @@ class Player(object):
                     monster.unit_type.value, monster.unit_zone.name) + TextColor.ENDC)
                 return True
         return False
+
+
 
     '''
     awaken_goo
@@ -665,6 +690,9 @@ class Player(object):
                             self._faction.value, unit_zone.name) + TextColor.ENDC)
                         return True
         return False
+
+    def special_action(self, arguments):
+        pass
 
     def take_spell_book(self):
         pass
