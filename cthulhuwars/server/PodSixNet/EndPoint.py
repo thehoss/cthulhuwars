@@ -2,8 +2,8 @@
 import socket
 import sys
 
-from PodSixNet.async import poll
-from PodSixNet.Channel import Channel
+from .async import poll
+from .Channel import Channel
 
 class EndPoint(Channel):
 	"""

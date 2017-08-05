@@ -1,8 +1,8 @@
 import socket
 import sys
 
-from PodSixNet.async import poll, asyncore
-from PodSixNet.Channel import Channel
+from .async import poll, asyncore
+from .Channel import Channel
 
 class Server(asyncore.dispatcher):
 	channelClass = Channel

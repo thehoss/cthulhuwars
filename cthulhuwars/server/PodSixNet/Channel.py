@@ -1,7 +1,7 @@
 import sys, traceback
 
-from PodSixNet.async import asynchat
-from PodSixNet.rencode import loads, dumps
+from .async import asynchat
+from .rencode import loads, dumps
 
 class Channel(asynchat.async_chat):
 	endchars = '\0---\0'

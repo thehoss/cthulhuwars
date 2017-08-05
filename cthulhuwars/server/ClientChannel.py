@@ -1,5 +1,5 @@
-from Channel import Channel
-from PrintStream import PrintStream
+from .PodSixNet.Channel import Channel
+from .PrintStream import PrintStream
 from cthulhuwars.cwgame.zone import GateState
 
 class ClientChannel(Channel):

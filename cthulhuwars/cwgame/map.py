@@ -185,7 +185,7 @@ class Map:
         mapping = dict(zip(node_list, zone_list))
          self.map = nx.relabel_nodes(G, mapping)
         '''
-        self.basepath = '../cwgame/tex'
+        self.basepath = './tex'
         self.imagepath = '.'
         self.file_format = '.png'
         self.west_map_filename = self.earth_map_configs[self.map_name][0] + self.file_format
