@@ -11,6 +11,7 @@ Replace string nodes with a zone class (TBD)
 Add traversal methods
 Flesh out graph visualization to represent class data
 """
+ARNOLD = 0
 
 import networkx as nx
 import matplotlib.pylab as P
@@ -18,8 +19,9 @@ import matplotlib.image as mpimg
 import numpy as np
 import math as m
 from .zone import Zone, GateState
-import cwgame.color as Color
-import cwgame.arnoldRender as arnoldRender
+import cthulhuwars.cwgame.color as Color
+if ARNOLD:
+    import cthulhuwars.cwgame.arnoldRender as arnoldRender
 import pygame
 
 import os
@@ -289,8 +291,11 @@ class Map:
         #P.show()
 
     def render_map(self, image_prefix='image'):
-        ar = arnoldRender.ArnoldRender(image_prefix)
-        ar.do_render(1, self.nx_map)
+        if ARNOLD:
+            ar = arnoldRender.ArnoldRender(image_prefix)
+            ar.do_render(1, self.nx_map)
+        else:
+            pass
 
     @property
     def empty_gates(self):
