@@ -61,7 +61,7 @@ class CWClient(ConnectionListener):
         self.Connect((host, port))
         self.in_play = False
 
-        self.resource_dir = '../cwgame/tex'
+        self.resource_dir = './tex'
         self.img_map_west = None
         self.img_map_east = None
         self.img_selectionbg = None
