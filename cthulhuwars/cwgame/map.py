@@ -305,3 +305,15 @@ class Map:
             if zone.gate_state is GateState.emptyGate:
                 results.append(zone)
         return results
+
+    @property
+    def map_state(self):
+        results = []
+        for node in self.nx_map.node:
+            zone = self.nx_map.node[node]['zone']
+            results.append(zone.get_zone_state())
+        return results
+
+
+
+

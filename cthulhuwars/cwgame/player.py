@@ -4,6 +4,7 @@ from .map import Map
 from .playerLogic import PlayerLogic
 from .unit import Unit, UnitType, UnitState, Faction, Cultist
 from .zone import Zone, GateState
+import itertools
 
 # Generic Player class
 # Overridden by faction specific subclasses
@@ -433,7 +434,6 @@ class Player(object):
     This method scores each move according to desirability in the field
     this list is a tuple: (the unit that can move, the zone in which the unit currently resides, the destination zone, score)
     '''
-
     def find_move_actions(self, map):
         assert isinstance(map, Map)
         # we need to know who can move and to where
@@ -717,6 +717,9 @@ class Player(object):
 
     def post_turn_action(self):
         pass
+
+    def faction_state(self):
+        return (self._faction, self._power, self._spells, self._doom_points, self._elder_points)
 
     def print_state(self):
         print (self._color)

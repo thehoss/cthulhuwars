@@ -29,6 +29,10 @@ class Phase(Enum):
     annihilation = 'annihilation'
 
 class Board(object):
+    # 3 to 8 player ritual tracks
+    ritual_tracks = ((5,6,7,8,9,10), (5,6,7,7,8,8,9,10), (5,6,6,7,7,8,8,9,9,10), (5,6,6,7,7,7,8,8,8,9,9,10),
+                     (5,6,6,6,7,7,7,8,8,8,9,9,9,10), (5,6,6,6,7,7,7,7,8,8,8,8,9,9,9,10))
+
     def __init__(self, num_players = 4, server_mode=True, render_ass = False, draw_map = False):
 
         self.__map = None
@@ -64,6 +68,11 @@ class Board(object):
         self._doom_track = {}
         self.server_mode = server_mode
         self._elder_sign_bag = [15, 10, 5]
+        self._ritual_track = None
+        self._ritual_track_counter = 0
+        self._ritual_cost = None
+        self._state = None
+
 
         if not server_mode:
             self.build_map()
@@ -198,6 +207,7 @@ class Board(object):
     def start(self):
         # Returns a representation of the starting state of the game.
         # Rule:  If present, The Great Cthulhu goes first on first turn
+
         cIndex = 0
         print('Game Starting: Generating random player turn order...')
         print(self.player_dict)
@@ -216,6 +226,9 @@ class Board(object):
             t += 1
             p.player_setup()
 
+        self._ritual_track = self.ritual_tracks[min(0, self.__num_players - 3)]
+        self._ritual_cost = self._ritual_track[0]
+
         # play the game
         # TODO: add pause functionality
         if not self.server_mode:
@@ -231,6 +244,8 @@ class Board(object):
             # first player phase
             while True:
                 # print('**Round %s, Turn %s **' % (r, i))
+                self.pack_state
+                print('board state: %s' % (self._state,))
                 self.test_actions()
                 i += 1
                 if not self.is_action_phase():
@@ -241,6 +256,7 @@ class Board(object):
 
 
     def gather_power_phase(self):
+        self._phase = Phase.gather_power
         # print(TextColor.BOLD + "**Gather Power Phase **" + TextColor.ENDC)
         max_power = 0
         first_player = self.active_players[0]
@@ -278,6 +294,7 @@ class Board(object):
         return result
 
     def doom_phase(self):
+        self._phase = Phase.doom
         max_doom = 0
         win_condition = 30
         lead = ''
@@ -296,6 +313,14 @@ class Board(object):
             return True
         else:
             return False
+
+    def update_ritual_track(self):
+        self._ritual_track_counter += 1
+        try:
+            self._ritual_cost = self._ritual_track[self._ritual_track_counter]
+        except IndexError:
+            print('INSTANT DEATH!')
+
 
     def tally_player_power(self):
         total_power = 0
@@ -334,6 +359,15 @@ class Board(object):
         for p in self.active_players:
             assert isinstance(p, Player)
             p.post_turn_action()
+
+    @property
+    def pack_state(self):
+        map_state = self.__map.map_state
+        factions_state = []
+        for p in self.active_players:
+            assert isinstance(p, Player)
+            factions_state.append(p.faction_state())
+        self._state = (self._ritual_cost, tuple(map_state), tuple(factions_state))
 
     def current_player(self, state):
         # Takes the game state and returns the current player's
