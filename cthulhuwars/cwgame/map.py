@@ -160,6 +160,10 @@ class Map:
         self.nx_map = nx.compose(self._east_map, self._west_map)
         self.nx_map.graph['name'] = self.map_name
 
+        self.basepath = './tex'
+        self.imagepath = '.'
+        self.file_format = '.png'
+
         # relable nodes with zone objects
         node_list = self.nx_map.nodes()
 
@@ -169,25 +173,24 @@ class Map:
                 is_ocean = True
             self.nx_map.node[node_name]['zone'] = Zone(node_name, is_ocean)
             self.nx_map.node[node_name]['pos'] = [0.5, 0.5]
-        # ^ map.nodes(data=True) will show the attributes of node label 'blah'
-        '''
-        # optionally, swap labeled nodes with name-tagged zone objects
-        # warning: you might have to retype this to experiment
-        # 'cos I may have drunkenly added some weird characters
-        node_list = G.nodes()
-        zone_list = []
+            self.nx_map.node[node_name]['matte'] = os.path.join(self.basepath, str.lower(node_name.replace(" ", "_"))) + self.file_format
 
-        for node_name in node_list: 
-            is_ocean = False 
-            if node_name in self.earth_oceans: 
-                is_ocean = True 
-            zone_list.append(Zone(node_name, is_ocean))  
-        mapping = dict(zip(node_list, zone_list))
-         self.map = nx.relabel_nodes(G, mapping)
-        '''
-        self.basepath = './tex'
-        self.imagepath = '.'
-        self.file_format = '.png'
+        # precomputed centrality measures
+        eigenvector_centrality = nx.eigenvector_centrality(self.nx_map)
+        closeness_centrality   = nx.closeness_centrality(self.nx_map)
+        betweenness_centrality = nx.betweenness_centrality(self.nx_map)
+
+        for key, value in eigenvector_centrality.items():
+            self.nx_map.node[key]['zone'].set_eigenvector_centrality(value)
+
+        for key, value in closeness_centrality.items():
+            self.nx_map.node[key]['zone'].set_closeness_centrality(value)
+
+        for key, value in betweenness_centrality.items():
+            self.nx_map.node[key]['zone'].set_betweenness_centrality(value)
+
+        # ^ map.nodes(data=True) will show the attributes of node label 'blah'
+
         self.west_map_filename = self.earth_map_configs[self.map_name][0] + self.file_format
         self.west_map_filename = os.path.join(self.basepath, self.west_map_filename)
         self.east_map_filename = self.earth_map_configs[self.map_name][1] + self.file_format
@@ -216,12 +219,32 @@ class Map:
     def zone_by_name(self, zone):
         return self.nx_map.node[zone]['zone']
 
+    @property
+    def list_zone_names(self):
+        return list(nx.map)
+
+    @property
+    def all_map_zones(self):
+        zone_names = self.list_zone_names
+        zones = list()
+        for zone in zone_names:
+            zones.append(self.zone_by_name(zone))
+        return zones
+
     def find_neighbors(self, zone, radius=1):
         if radius == 1:
             return self.nx_map.neighbors(zone)
         if radius == 2:
             ego_graph = nx.ego_graph(self.nx_map, zone, 2, center=False, undirected=True)
             return ego_graph.nodes()
+
+    def neighborhood(self, zone, n=1):
+        # returns list of n-degree neighbors
+        path_lengths = nx.single_source_dijkstra_path_length(self.nx_map, zone)
+        return [zone for zone, length in path_lengths.iteritems() if length == n]
+
+    def distance(self, zone1, zone2):
+        return nx.shortest_path_length(source=zone1, target=zone2)
 
     @property
     def eastMapImage(self):

@@ -1,11 +1,11 @@
 from enum import Enum
 from .zone import Zone, GateState
 
-
 class UnitType(Enum):
     cultist = 'cultist'
     monster = 'monster'
     GOO = 'Great Old One'
+    terror = 'terror'
     dark_young = 'dark young'
     ghoul = 'ghoul'
     fungi = 'fungi'
@@ -52,7 +52,7 @@ class Unit(object):
         self._unit_zone = unit_zone
         self._unit_gate_state = GateState.noGate
 
-        #self.set_unit_zone(unit_zone)
+        self.set_unit_zone(unit_zone)
         #print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
 
     @property

@@ -244,7 +244,7 @@ class Board(object):
             # first player phase
             while True:
                 # print('**Round %s, Turn %s **' % (r, i))
-                self.pack_state
+                self.pack_state()
                 print('board state: %s' % (self._state,))
                 self.test_actions()
                 i += 1
@@ -360,7 +360,6 @@ class Board(object):
             assert isinstance(p, Player)
             p.post_turn_action()
 
-    @property
     def pack_state(self):
         map_state = self.__map.map_state
         factions_state = []

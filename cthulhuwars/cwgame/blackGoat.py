@@ -11,7 +11,7 @@ from __future__ import print_function
 # TODO: implement Fertility Cult in summoning logic
 from .player import Player
 from .color import TextColor, NodeColor
-from .unit import Unit, UnitType, UnitState, Faction
+from .unit import Unit, UnitType, UnitState, Faction, Monster, GreatOldOne
 from .zone import Zone, GateState
 from enum import Enum
 
@@ -383,7 +383,7 @@ class BlackGoat(Player):
             self._power += self.dark_young_in_play
 
 
-class Ghoul(Unit):
+class Ghoul(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Ghoul, self).__init__(unit_parent, unit_zone, UnitType.ghoul, combat_power=0, cost=unit_cost,
                                     base_movement=1,
@@ -399,7 +399,7 @@ class Ghoul(Unit):
         return render_definition
 
 
-class Fungi(Unit):
+class Fungi(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Fungi, self).__init__(unit_parent, unit_zone, UnitType.fungi, combat_power=1, cost=unit_cost,
                                     base_movement=1,
@@ -415,7 +415,7 @@ class Fungi(Unit):
         return render_definition
 
 
-class DarkYoung(Unit):
+class DarkYoung(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(DarkYoung, self).__init__(unit_parent, unit_zone, UnitType.dark_young, combat_power=2, cost=unit_cost,
                                         base_movement=1,
@@ -431,7 +431,7 @@ class DarkYoung(Unit):
         return render_definition
 
 
-class ShubNiggurath(Unit):
+class ShubNiggurath(GreatOldOne):
     def __init__(self, unit_parent, unit_zone, unit_cost=8):
         super(ShubNiggurath, self).__init__(unit_parent, unit_zone, UnitType.shub_niggurath, combat_power=0, cost=unit_cost,
                                             base_movement=1,
