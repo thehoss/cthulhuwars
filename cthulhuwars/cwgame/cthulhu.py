@@ -5,7 +5,7 @@
 
 from .player import Player
 from .color import TextColor, NodeColor
-from .unit import Unit, UnitType, UnitState, Faction
+from .unit import Unit, UnitType, UnitState, Faction, Monster, GreatOldOne
 from .zone import Zone, GateState
 from .diceRoller import DiceRoller
 
@@ -138,7 +138,7 @@ class Cthulhu(Player):
                 return self.summon_starspawn(unit_zone)
         return False
 
-class DeepOne(Unit):
+class DeepOne(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(DeepOne, self).__init__(unit_parent, unit_zone, UnitType.deep_one, combat_power=1, cost=unit_cost,
                                       base_movement=1,
@@ -154,7 +154,7 @@ class DeepOne(Unit):
         return render_definition
 
 
-class Shoggoth(Unit):
+class Shoggoth(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Shoggoth, self).__init__(unit_parent, unit_zone, UnitType.shoggoth, combat_power=2, cost=unit_cost,
                                        base_movement=1,
@@ -170,7 +170,7 @@ class Shoggoth(Unit):
         return render_definition
 
 
-class Starspawn(Unit):
+class Starspawn(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Starspawn, self).__init__(unit_parent, unit_zone, UnitType.star_spawn, combat_power=3, cost=unit_cost,
                                         base_movement=1,
@@ -186,7 +186,7 @@ class Starspawn(Unit):
         return render_definition
 
 
-class GreatCthulhu(Unit):
+class GreatCthulhu(GreatOldOne):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(GreatCthulhu, self).__init__(unit_parent, unit_zone, UnitType.cthulhu, combat_power=6, cost=unit_cost,
                                            base_movement=1,

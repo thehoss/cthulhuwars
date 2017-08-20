@@ -29,7 +29,7 @@ import os
 class Map:
 
     # Resolution
-    width, height = 800, 400
+    width, height = 1000, 500
 
     # available maps
     # Earth, 3 player, Eastern Hemisphere
@@ -196,6 +196,9 @@ class Map:
         self.display = display
         if display:
             pygame.init()
+            pygame.font.init()
+            # self.font = pygame.font.Font('display.ttf', 10)
+            self.font = pygame.font.SysFont(None, 16)
             # initialize the screen
             self.screen = pygame.display.set_mode((self.width, self.height))
             #self.clock = pygame.time.Clock()
@@ -253,9 +256,30 @@ class Map:
                 for unit in zone.occupancy_list:
                     unit_x = x
                     if unit.gate_state != GateState.occupied:
-                        unit_x = x + (i * 10)
-                    pygame.draw.circle(self.screen, Color.NodeColorINT.FactionColor[str(unit.faction._faction.value)], (unit_x, y), 7, 0)
-                    pygame.draw.circle(self.screen, (0, 0, 0), (unit_x, y), 8, 1)
+                        unit_x = x + (i * 20)
+
+                    unit_color = Color.NodeColorINT.FactionColor[str(unit.faction._faction.value)]
+                    pygame.draw.circle(self.screen, unit_color, (unit_x, y), 7, 0)
+                    pygame.draw.circle(self.screen, (0, 0, 0), (unit_x, y), 8, 1)  # Black Border
+
+                    textsurface = self.font.render(unit.unit_type.value, True, unit_color)
+                    textsurface = pygame.transform.rotate(textsurface, 45)
+                    shadowsurface = self.font.render(unit.unit_type.value, True, (0,0,0, 0.25))
+                    shadowsurface = pygame.transform.rotate(shadowsurface, 45)
+
+                    self.screen.blit(shadowsurface, (m.floor(unit_x - shadowsurface.get_width() * 0.5),
+                                                     m.floor(y - shadowsurface.get_height() * 0.5) + 1))
+                    self.screen.blit(shadowsurface, (m.floor(unit_x - shadowsurface.get_width() * 0.5),
+                                                     m.floor(y - shadowsurface.get_height() * 0.5) - 1))
+
+                    self.screen.blit(shadowsurface, (m.floor(unit_x - shadowsurface.get_width() * 0.5) + 1,
+                                                     m.floor(y - shadowsurface.get_height() * 0.5)))
+                    self.screen.blit(shadowsurface, (m.floor(unit_x - shadowsurface.get_width() * 0.5) - 1,
+                                                     m.floor(y - shadowsurface.get_height() * 0.5) + 1))
+
+                    self.screen.blit(textsurface, (m.floor(unit_x - textsurface.get_width()*0.5), m.floor(y-textsurface.get_height()*0.5)) )
+
+
                     i += 1
 
             if save_image:

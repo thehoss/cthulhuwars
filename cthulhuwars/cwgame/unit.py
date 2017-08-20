@@ -52,7 +52,7 @@ class Unit(object):
         self._unit_zone = unit_zone
         self._unit_gate_state = GateState.noGate
 
-        #self.set_unit_zone(unit_zone)
+        self.set_unit_zone(unit_zone)
         #print('New %s unit in %s' % (self.__unit_type, self.__unit_zone.name))
 
     @property
@@ -137,10 +137,10 @@ class Cultist(Unit):
         return render_definition
 
 class Monster(Unit):
-    def __init__(self, faction, unit_zone, unit_state):
-        super(Monster, self).__init__(faction, unit_zone, UnitType.monster, 0, 1, 1, unit_state)
+    def __init__(self, faction, unit_zone, unit_type = UnitType.monster, combat_power=0, cost=1, base_movement=1, unit_state = UnitState.in_reserve):
+        super(Monster, self).__init__(faction, unit_zone, unit_type, combat_power, cost, base_movement, unit_state)
 
 
 class GreatOldOne(Unit):
-    def __init__(self, faction, unit_zone, unit_state):
-        super(GreatOldOne, self).__init__(faction, unit_zone, UnitType.GOO, 0, 1, 1, unit_state)
+    def __init__(self, faction, unit_zone, unit_type = UnitType.GOO, combat_power=0, cost=1, base_movement=1, unit_state = UnitState.in_reserve):
+        super(GreatOldOne, self).__init__(faction, unit_zone, unit_type, combat_power, cost, base_movement, unit_state)

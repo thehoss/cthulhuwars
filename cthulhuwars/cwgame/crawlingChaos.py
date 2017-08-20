@@ -7,7 +7,7 @@
 import random
 from .player import Player
 from .color import TextColor, NodeColor
-from .unit import Unit, UnitType, UnitState, Faction
+from .unit import Unit, UnitType, UnitState, Faction, Monster, GreatOldOne
 from .zone import Zone, GateState
 
 class CrawlingChaos(Player):
@@ -221,7 +221,7 @@ class CrawlingChaos(Player):
         super(CrawlingChaos, self).recompute_power()
 
 
-class Nightgaunt(Unit):
+class Nightgaunt(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Nightgaunt, self).__init__(unit_parent, unit_zone, UnitType.nightgaunt, combat_power=0, cost=unit_cost,
                                          base_movement=2,
@@ -236,7 +236,7 @@ class Nightgaunt(Unit):
         }
         return render_definition
 
-class FlyingPolyp(Unit):
+class FlyingPolyp(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(FlyingPolyp, self).__init__(unit_parent, unit_zone, UnitType.flying_polyp, combat_power=1, cost=unit_cost,
                                           base_movement=2,
@@ -251,7 +251,7 @@ class FlyingPolyp(Unit):
         }
         return render_definition
 
-class HuntingHorror(Unit):
+class HuntingHorror(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(HuntingHorror, self).__init__(unit_parent, unit_zone, UnitType.hunting_horror, combat_power=2, cost=unit_cost,
                                             base_movement=2,
@@ -267,7 +267,7 @@ class HuntingHorror(Unit):
         }
         return render_definition
 
-class Nyarlathotep(Unit):
+class Nyarlathotep(GreatOldOne):
     def __init__(self, unit_parent, unit_zone, unit_cost=10):
         super(Nyarlathotep, self).__init__(unit_parent, unit_zone, UnitType.nyarlathotep, combat_power=0, cost=unit_cost,
                                            base_movement=2,

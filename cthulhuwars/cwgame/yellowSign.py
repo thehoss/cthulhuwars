@@ -1,6 +1,6 @@
 from .player import Player
 from .color import TextColor, NodeColor
-from .unit import Unit, UnitType, UnitState, Faction
+from .unit import Unit, UnitType, UnitState, Faction, Monster, GreatOldOne
 from .zone import Zone, GateState
 
 # Yellow Sign
@@ -72,7 +72,7 @@ class YellowSign(Player):
 
         return total_combat_power
 
-class Undead(Unit):
+class Undead(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=1):
         super(Undead, self).__init__(unit_parent, unit_zone, UnitType.undead, combat_power=1, cost=unit_cost,
                                      base_movement=1,
@@ -99,7 +99,7 @@ class Undead(Unit):
         }
         return render_definition
 
-class Byakhee(Unit):
+class Byakhee(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=2):
         super(Byakhee, self).__init__(unit_parent, unit_zone, UnitType.byakhee, combat_power=1, cost=unit_cost,
                                       base_movement=1,
@@ -126,7 +126,7 @@ class Byakhee(Unit):
         }
         return render_definition
 
-class Hastur(Unit):
+class Hastur(GreatOldOne):
     def __init__(self, unit_parent, unit_zone, unit_cost=10):
         super(Hastur, self).__init__(unit_parent, unit_zone, UnitType.hastur, combat_power=5, cost=unit_cost,
                                       base_movement=1,
@@ -144,7 +144,7 @@ class Hastur(Unit):
         }
         return render_definition
 
-class KingInYellow(Unit):
+class KingInYellow(GreatOldOne):
     def __init__(self, unit_parent, unit_zone, unit_cost=4):
         super(KingInYellow, self).__init__(unit_parent, unit_zone, UnitType.king_in_yellow, combat_power=0,
                                       cost=unit_cost,
