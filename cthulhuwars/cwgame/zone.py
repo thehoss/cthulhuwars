@@ -25,6 +25,16 @@ class Zone:
         self.occupancy_list = set()
         self.color = NodeColor.BLACK
 
+        # these values are set at map construction and do not change
+        # (however, they would change on the Primeval map and Shaggai)
+        self.closeness_centrality = 0.0
+        self.betweenness_centrality = 0.0
+        self.eigenvector_centrality = 0.0
+
+        # two buffers as dicts of lists containing faction influence values
+        self.faction_influence_dictA = dict()
+        self.faction_influence_dictA = dict()
+
     def set_gate_state(self, gateState):
         self.gate_state = gateState
 
@@ -48,6 +58,34 @@ class Zone:
             self.occupancy_list.discard(unit)
         except ValueError:
             pass
+
+    def set_betweenness_centrality(self, value):
+        self.betweenness_centrality = value
+
+    def set_closeness_centrality(self, value):
+        self.closeness_centrality = value
+
+    def set_eigenvector_centrality(self, value):
+        self.eigenvector_centrality = value
+
+    # influence uses two buffers to compute
+    # result is read from buffer A
+    def reset_influence(self, faction):
+        self.faction_influence_dictA.clear()
+        self.faction_influence_dictB.clear()
+
+    def set_influenceA(self, faction, type, value):
+        # set influence value for influence type
+        type_value = {type: value}
+        self.faction_influence_dictA[faction] = type_value
+
+    def set_influenceB(self, faction, type, value):
+        # set influence value for influence type
+        type_value = {type: value}
+        self.faction_influence_dictB[faction] = type_value
+
+    def get_influence(self, faction, type):
+        return self.faction_influence_dictA[faction][type]
 
     def compute_color(self):
         col = (0,0,0)

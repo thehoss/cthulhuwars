@@ -4,11 +4,29 @@ from .map import Map
 from .playerLogic import PlayerLogic
 from .unit import Unit, UnitType, UnitState, Faction, Cultist
 from .zone import Zone, GateState
+import itertools
+from collections import defaultdict
+from .combinatorics import unlabeled_balls_in_labeled_boxes
+
 
 # Generic Player class
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
 # Zone class instance from the map construction
+
+'''
+    AStarks:
+    For moving Cultists? Only move into areas lacking both a gate and a cultist belonging 
+    to a faction with 3+ power, that also aren't within reach of an enemy Monster/Terror/GOO 
+    who's owner has enough power to reach said Cultist in 1 Turn (that is to say, Submerge 
+    doesn't factor in) Though that means once Hastur and King in Yellow are in play, no area is safe
+    Plus, Dreams makes the gate construction dangerous
+    So, for both of those, you'd also have the restriction of needing to move 2 Cultists in
+
+    All factions have a movement or "movement" cheapener.
+    Avatar, necrophagy, ice age, burrow, submerge, etc
+'''
+
 
 class Player(object):
     def __init__(self, faction, home_zone, board, name='Player1'):
@@ -95,11 +113,11 @@ class Player(object):
         self._current_gates = 0
         self._occupied_zones = set()
 
-        movement_max_radius = 1
+        self._base_movement = 1
         if self._faction == Faction.crawling_chaos:
-            movement_max_radius = 2
+            self._base_movement = 2
         for _ in range(self._starting_cultists):
-            new_cultist = Cultist(self, self._home_zone, movement_max_radius, UnitState.in_play)
+            new_cultist = Cultist(self, self._home_zone, self._base_movement, UnitState.in_play)
             self.add_unit(new_cultist)
             self._cultists.add(new_cultist)
         self.build_gate_action(list(self._cultists)[0], self._home_zone)
@@ -358,6 +376,80 @@ class Player(object):
         pass
 
     '''
+    recompute_influence_graphs
+    an influence graph is analogous to an influence map
+    the method computes: 
+        my_influence
+        opponent(s)_influence
+        influence        (my_influence - sum(opponents_influence))
+        tension          (my_influence + sum(opponents_influence))
+        vulnerability    (tension - abs(influence))
+        
+        to consider:
+        n-way influence  (my_influence - opponent[n]_influence)        
+        n-way tension    (my_influence + opponent[n]_influence)
+    '''
+
+    def compute_influence_map(self, map):
+        assert isinstance(map, Map)
+
+        my_zones = self.occupied_zones
+        falloff_rate = 2
+
+        for zone in my_zones:
+            candidate_units = self.my_units_in_zone(zone)
+
+            # tally units by base class
+            tally_unit_supers = defaultdict(int)
+            for unit in candidate_units:
+                tally_unit_supers[unit.__bases__[0]] += 1
+                #tally_unit_types[unit._unit_type] += 1
+
+            for unit_super, value in tally_unit_supers.items():
+                zone.set_influenceA(self.faction, unit_super, value)
+
+        for zone in map.all_map_zones:
+            map.neighborhood(zone, self._base_movement)
+
+
+
+            '''
+            # build list of neighboring zones and apply influence diffusion
+            neighbors = map.find_neighbors(zone.name, self._base_movement)
+            for n in neighbors:
+                neighboring_zone = map.zone_by_name(n) 
+                assert isinstance(neighboring_zone, Zone)
+
+                for unit_type, value in tally_unit_types.items():
+                    # maybe limit influence with power.  distance <= min(2, power)
+                    influence_value = value  * 1.0 / pow(map.distance(zone, n), falloff_rate)
+                    n.set_influenceA(self.faction, unit_type, influence_value)
+
+            '''
+
+        '''
+        # loop over every zone and diffuse into bufferB, then add back to buffer A
+        for zone in map.all_map_zones:
+
+            # build list of neighboring zones
+            neighbors = map.find_neighbors(zone.name, self._base_movement)
+            for n in neighbors:
+                neighboring_zone = map.zone_by_name(n)
+                assert isinstance(neighboring_zone, Zone)
+
+                for unit_type, value in tally_unit_types.items():
+                    influence_value = zone.get_influence(self.faction, unit_type)  * 1.0 / pow(map.distance(zone, n), falloff_rate)
+                    n.set_influenceB(self.faction, unit_type, influence_value)
+        '''
+
+
+
+
+
+
+
+
+    '''
     find_recruit_actions
     returns a list of all possible recruit actions based on current state of units on the board
     this list is a tuple: (the cultist unit to be recruited, the zone in which to recruit, None)
@@ -454,7 +546,7 @@ class Player(object):
                         destination_zone = map.zone_by_name(n)
                         assert isinstance(destination_zone, Zone)
                         if destination_zone.gate_state is GateState.emptyGate:
-                            score += 2
+                            score += 2 
                         for occupant in destination_zone.occupancy_list:
                             assert isinstance(occupant, Unit)
                             if occupant.unit_type is UnitType.cultist and unit.unit_type is not UnitType.cultist:
@@ -471,6 +563,68 @@ class Player(object):
                     # print(self._color + '%s %s in %s is maintaining a gate' % (
                     #    self._faction.value, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
         return all_possible_moves
+
+    '''
+    def find_move_actions(self, map):
+        assert isinstance(map, Map)
+        all_possible_moves = []
+
+        if self.power >= 1:
+            unit_type_dict = defaultdict(int)
+            my_zones = self.occupied_zones
+            unit_partitions = []
+
+            for zone in my_zones:
+                candidate_units = self.my_units_in_zone(zone)
+                # count unit types
+                for unit in candidate_units:
+                    unit_type_dict[unit._unit_type] += 1
+
+                # build list of accessible neighboring zones
+                # and determine desirability of neighboring zones as destinations
+                neighbors = map.find_neighbors(zone.name, self._base_movement)
+                for neighboring_zone in neighbors:
+                    # is there an occupied or unoccupied gate?
+                    candidate_zone = map.zone_by_name(neighboring_zone)
+
+                    # if candidate zone contains enemy units
+                    if candidate_zone.occupancy_list.__len__() > 0:
+                        # if enemy monsters present
+
+                        if candidate_zone.gate_state is GateState.occupied:
+                            if candidate_zone.gate_unit.faction is not self._faction:
+                                neighbors.remove(neighboring_zone)
+                    else:
+                        pass
+
+                # action moves list size is based on combinations of available
+                # units per unit class as limited by available power
+                # here, we're trying to figure out how to partition power
+                        
+
+                neighbor_count = neighbors.__len__()
+
+                for unit_type, unit_type_count in unit_type_dict.items():
+                    print('unit type: %s  neighboring zone count: %s' % (unit_type, neighbor_count))
+                    # compute all move possibilities for current unit type in current zone
+                    # starting at min power spent to max power that can be spent, or max units that
+                    # can be moved, whichever is the limiting factor...
+                    n_max = min(unit_type_count, self.power) + 1
+                    print('unit type count: %s  n_max: %s' % (unit_type_count, n_max))
+
+                    for total_units_to_move in range(1, n_max):
+                        print('total_units_to_move: %s' % (total_units_to_move))
+                        # this is just a list that says how many units fit in each neighboring zone
+                        zone_boxes = [total_units_to_move] * neighbor_count
+                        # how many different ways can we put k indistinguishable units into n distinguishable zones?
+                        unit_partitions.append(unlabeled_balls_in_labeled_boxes(total_units_to_move, zone_boxes))
+
+        for combination in unit_partitions:
+            taco = list(combination)
+            print(taco)
+            print(len(taco))
+
+    '''
 
     '''
      find_combat_action
@@ -717,6 +871,9 @@ class Player(object):
 
     def post_turn_action(self):
         pass
+
+    def faction_state(self):
+        return (self._faction, self._power, self._spells, self._doom_points, self._elder_points)
 
     def print_state(self):
         print (self._color)
