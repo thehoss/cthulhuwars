@@ -1,5 +1,5 @@
 from .color import TextColor, NodeColor
-from .diceRoller import DiceRoller
+from .diceRoller import DiceRoller, roll_combat_dice
 from .map import Map
 from .playerLogic import PlayerLogic
 from .unit import Unit, UnitType, UnitState, Faction, Cultist
@@ -585,11 +585,8 @@ class Player(object):
                 print(self._color + TextColor.BOLD + '     ' + ', '.join(
                     d.unit_type.value for d in defenders) + ' : %s' % total_defense_power + TextColor.ENDC)
 
-                attack_dice = DiceRoller(total_attack_power)
-                defence_dice = DiceRoller(total_defense_power)
-
-                attack_rolls = attack_dice.interpret_dice()
-                defence_rolls = defence_dice.interpret_dice()
+                attack_rolls = roll_combat_dice(total_attack_power)
+                defence_rolls = roll_combat_dice(total_defense_power)
 
                 # print ('    attacker rolled: %s' % attack_rolls)
                 # print ('    defender rolled: %s' % defence_rolls)

@@ -31,3 +31,9 @@ class DiceRoller:
                 results['kill'] += 1
 
         return results
+
+def roll_combat_dice(nDice):
+    dice = DiceRoller(num_dice=nDice, num_sides=6)
+    result = dice.interpret_dice()
+    return result
+
