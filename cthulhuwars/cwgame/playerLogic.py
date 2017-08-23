@@ -11,6 +11,22 @@ class Methods(Enum):
 
 def clamp(n, smallest, largest): return max(smallest, min(n, largest))
 
+"""
+NOTES:
+Black Goat - Tactical Economy
+Crawling Chaos - Tactical Combat
+Great Cthulhu - Strategic Combat
+Opener of the Way - Tactical Combat
+Sleeper - Strategic Economy
+Tcho-Tcho - Tactical Economy
+Windwalker - Strategic Combat
+Yellow Sign - Strategic Economy
+
+Of course, that's all up for debate. For instance, Windwalker and Crawling Chaos can, in certain games, win via Tactical (or even Strategic) economy.
+
+Getting the 1st Gnoph-Keh early in the game is definitely a good thing
+Like Sleeper's Spend-3 Spellbooks, it's best to get them over multiple turns, rather than powering through at the end. 
+"""
 
 class PlayerLogic(object):
     def __init__(self, player, the_map):

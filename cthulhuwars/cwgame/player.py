@@ -4,11 +4,29 @@ from .map import Map
 from .playerLogic import PlayerLogic
 from .unit import Unit, UnitType, UnitState, Faction, Cultist
 from .zone import Zone, GateState
+import itertools
+from collections import defaultdict
+from .combinatorics import unlabeled_balls_in_labeled_boxes
+
 
 # Generic Player class
 # Overridden by faction specific subclasses
 # home_zone left intentionally without default since the Board needs to pass in the
 # Zone class instance from the map construction
+
+'''
+    AStarks:
+    For moving Cultists? Only move into areas lacking both a gate and a cultist belonging 
+    to a faction with 3+ power, that also aren't within reach of an enemy Monster/Terror/GOO 
+    who's owner has enough power to reach said Cultist in 1 Turn (that is to say, Submerge 
+    doesn't factor in) Though that means once Hastur and King in Yellow are in play, no area is safe
+    Plus, Dreams makes the gate construction dangerous
+    So, for both of those, you'd also have the restriction of needing to move 2 Cultists in
+
+    All factions have a movement or "movement" cheapener.
+    Avatar, necrophagy, ice age, burrow, submerge, etc
+'''
+
 
 class Player(object):
     def __init__(self, faction, home_zone, board, name='Player1'):
@@ -95,14 +113,15 @@ class Player(object):
         self._current_gates = 0
         self._occupied_zones = set()
 
-        movement_max_radius = 1
+        self._base_movement = 1
         if self._faction == Faction.crawling_chaos:
-            movement_max_radius = 2
+            self._base_movement = 2
         for _ in range(self._starting_cultists):
-            new_cultist = Cultist(self, self._home_zone, movement_max_radius, UnitState.in_play)
+            new_cultist = Cultist(self, self._home_zone, self._base_movement, UnitState.in_play)
             self.add_unit(new_cultist)
             self._cultists.add(new_cultist)
         self.build_gate_action(list(self._cultists)[0], self._home_zone)
+        self.compute_influence_map(self._board.map)
 
     def pprint(self, msg):
         print(self._color + TextColor.BOLD + msg + TextColor.ENDC)
@@ -358,6 +377,80 @@ class Player(object):
         pass
 
     '''
+    compute_influence_map
+    
+    influence:
+        my_influence
+        opponent(s)_influence
+        
+        derived:
+        influence        (my_influence - sum(opponents_influence))
+                                         max(opponents_influence)
+                                         min(opponents_influence)
+                                         mean(opponents_influence)
+                                         ...
+        tension          (my_influence + sum(opponents_influence))
+                          ...
+                          
+        vulnerability    (tension - abs(influence))
+                         (tension - abs(...))
+        
+        ...
+        one of n-way influence  (my_influence - opponent[n]_influence)        
+        one of n-way tension    (my_influence + opponent[n]_influence)
+    '''
+
+    def compute_influence_map(self, map):
+        assert isinstance(map, Map)
+
+        # here, self.power-1 assumes a single zone move, with 1 power remaining to initiate battle
+        # thus, with remaining power of 2, influence can only extend to immediately neighboring zones
+        # might wanna just use self.power... dunno
+        neighborhood_expansion = self._base_movement * min(max(self.power-1, 1), 2)
+
+        all_zones = map.all_map_zones
+        #print(self._faction)
+
+        for zone in all_zones:
+            zone.reset_influence(self.faction)
+
+        my_zones = self.occupied_zones
+        for zone in my_zones:
+            candidate_units = self.my_units_in_zone(zone)
+            #print(candidate_units)
+            # tally units by base class
+            tally_unit_supers = defaultdict(int)
+            for unit in candidate_units:
+                tally_unit_supers[type(unit).__bases__] += 1
+                #tally_unit_supers[unit._unit_type] += 1
+
+        for unit_super, value in tally_unit_supers.items():
+            #print('unit super tally: %s  %s' % (unit_super, value))
+            zone.set_influenceA(self.faction, unit_super, value)
+
+        falloff_rate = 2
+        for zone in my_zones:
+            for n in range(1, neighborhood_expansion+1):
+                neighbors_list = map.neighborhood(zone.name, n)
+                for neighbor_zone_name in neighbors_list:
+                    neighbor_zone = map.zone_by_name(neighbor_zone_name)
+                    for unit_super, value in tally_unit_supers.items():
+                        try:
+                            influence_valueA = zone.get_influenceA(self.faction, unit_super) * 1.0 / pow(n+1, falloff_rate)
+                        except KeyError:
+                            influence_valueA = 0
+                        try:
+                            influence_valueB = neighbor_zone.get_influenceB(self.faction, unit_super)
+                        except KeyError:
+                            influence_valueB = 0
+                        influence = influence_valueA + influence_valueB
+                        #print(neighbor_zone, unit_super, influence)
+                        neighbor_zone.set_influenceB(self.faction, unit_super, influence)
+
+        for zone in all_zones:
+            zone.copy_to_influenceA()
+
+    '''
     find_recruit_actions
     returns a list of all possible recruit actions based on current state of units on the board
     this list is a tuple: (the cultist unit to be recruited, the zone in which to recruit, None)
@@ -454,7 +547,7 @@ class Player(object):
                         destination_zone = map.zone_by_name(n)
                         assert isinstance(destination_zone, Zone)
                         if destination_zone.gate_state is GateState.emptyGate:
-                            score += 2
+                            score += 2 
                         for occupant in destination_zone.occupancy_list:
                             assert isinstance(occupant, Unit)
                             if occupant.unit_type is UnitType.cultist and unit.unit_type is not UnitType.cultist:
@@ -713,7 +806,11 @@ class Player(object):
         pass
 
     def post_turn_action(self):
+        self.compute_influence_map(self._board.map)
         pass
+
+    def faction_state(self):
+        return (self._faction, self._power, self._spells, self._doom_points, self._elder_points)
 
     def print_state(self):
         print (self._color)

@@ -1,11 +1,11 @@
 from enum import Enum
 from .zone import Zone, GateState
 
-
 class UnitType(Enum):
     cultist = 'cultist'
     monster = 'monster'
     GOO = 'Great Old One'
+    terror = 'terror'
     dark_young = 'dark young'
     ghoul = 'ghoul'
     fungi = 'fungi'
