@@ -224,7 +224,7 @@ class Map:
 
     @property
     def list_zone_names(self):
-        return list(nx.map)
+        return list(self.nx_map)
 
     @property
     def all_map_zones(self):
@@ -241,10 +241,10 @@ class Map:
             ego_graph = nx.ego_graph(self.nx_map, zone, 2, center=False, undirected=True)
             return ego_graph.nodes()
 
-    def neighborhood(self, zone, n=1):
+    def neighborhood(self, zone_name, n=1):
         # returns list of n-degree neighbors
-        path_lengths = nx.single_source_dijkstra_path_length(self.nx_map, zone)
-        return [zone for zone, length in path_lengths.iteritems() if length == n]
+        path_lengths = nx.single_source_dijkstra_path_length(self.nx_map, zone_name)
+        return [zone_name for zone_name, length in path_lengths.items() if length == n]
 
     def distance(self, zone1, zone2):
         return nx.shortest_path_length(source=zone1, target=zone2)

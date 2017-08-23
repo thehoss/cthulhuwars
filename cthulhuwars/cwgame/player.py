@@ -121,6 +121,7 @@ class Player(object):
             self.add_unit(new_cultist)
             self._cultists.add(new_cultist)
         self.build_gate_action(list(self._cultists)[0], self._home_zone)
+        self.compute_influence_map(self._board.map)
 
     def pprint(self, msg):
         print(self._color + TextColor.BOLD + msg + TextColor.ENDC)
@@ -376,78 +377,78 @@ class Player(object):
         pass
 
     '''
-    recompute_influence_graphs
-    an influence graph is analogous to an influence map
-    the method computes: 
+    compute_influence_map
+    
+    influence:
         my_influence
         opponent(s)_influence
-        influence        (my_influence - sum(opponents_influence))
-        tension          (my_influence + sum(opponents_influence))
-        vulnerability    (tension - abs(influence))
         
-        to consider:
-        n-way influence  (my_influence - opponent[n]_influence)        
-        n-way tension    (my_influence + opponent[n]_influence)
+        derived:
+        influence        (my_influence - sum(opponents_influence))
+                                         max(opponents_influence)
+                                         min(opponents_influence)
+                                         mean(opponents_influence)
+                                         ...
+        tension          (my_influence + sum(opponents_influence))
+                          ...
+                          
+        vulnerability    (tension - abs(influence))
+                         (tension - abs(...))
+        
+        ...
+        one of n-way influence  (my_influence - opponent[n]_influence)        
+        one of n-way tension    (my_influence + opponent[n]_influence)
     '''
 
     def compute_influence_map(self, map):
         assert isinstance(map, Map)
 
-        my_zones = self.occupied_zones
-        falloff_rate = 2
+        # here, self.power-1 assumes a single zone move, with 1 power remaining to initiate battle
+        # thus, with remaining power of 2, influence can only extend to immediately neighboring zones
+        # might wanna just use self.power... dunno
+        neighborhood_expansion = self._base_movement * min(max(self.power-1, 1), 2)
 
+        all_zones = map.all_map_zones
+        #print(self._faction)
+
+        for zone in all_zones:
+            zone.reset_influence(self.faction)
+
+        my_zones = self.occupied_zones
         for zone in my_zones:
             candidate_units = self.my_units_in_zone(zone)
-
+            #print(candidate_units)
             # tally units by base class
             tally_unit_supers = defaultdict(int)
             for unit in candidate_units:
-                tally_unit_supers[unit.__bases__[0]] += 1
-                #tally_unit_types[unit._unit_type] += 1
+                tally_unit_supers[type(unit).__bases__] += 1
+                #tally_unit_supers[unit._unit_type] += 1
 
-            for unit_super, value in tally_unit_supers.items():
-                zone.set_influenceA(self.faction, unit_super, value)
+        for unit_super, value in tally_unit_supers.items():
+            #print('unit super tally: %s  %s' % (unit_super, value))
+            zone.set_influenceA(self.faction, unit_super, value)
 
-        for zone in map.all_map_zones:
-            map.neighborhood(zone, self._base_movement)
+        falloff_rate = 2
+        for zone in my_zones:
+            for n in range(1, neighborhood_expansion+1):
+                neighbors_list = map.neighborhood(zone.name, n)
+                for neighbor_zone_name in neighbors_list:
+                    neighbor_zone = map.zone_by_name(neighbor_zone_name)
+                    for unit_super, value in tally_unit_supers.items():
+                        try:
+                            influence_valueA = zone.get_influenceA(self.faction, unit_super) * 1.0 / pow(n+1, falloff_rate)
+                        except KeyError:
+                            influence_valueA = 0
+                        try:
+                            influence_valueB = neighbor_zone.get_influenceB(self.faction, unit_super)
+                        except KeyError:
+                            influence_valueB = 0
+                        influence = influence_valueA + influence_valueB
+                        #print(neighbor_zone, unit_super, influence)
+                        neighbor_zone.set_influenceB(self.faction, unit_super, influence)
 
-
-
-            '''
-            # build list of neighboring zones and apply influence diffusion
-            neighbors = map.find_neighbors(zone.name, self._base_movement)
-            for n in neighbors:
-                neighboring_zone = map.zone_by_name(n) 
-                assert isinstance(neighboring_zone, Zone)
-
-                for unit_type, value in tally_unit_types.items():
-                    # maybe limit influence with power.  distance <= min(2, power)
-                    influence_value = value  * 1.0 / pow(map.distance(zone, n), falloff_rate)
-                    n.set_influenceA(self.faction, unit_type, influence_value)
-
-            '''
-
-        '''
-        # loop over every zone and diffuse into bufferB, then add back to buffer A
-        for zone in map.all_map_zones:
-
-            # build list of neighboring zones
-            neighbors = map.find_neighbors(zone.name, self._base_movement)
-            for n in neighbors:
-                neighboring_zone = map.zone_by_name(n)
-                assert isinstance(neighboring_zone, Zone)
-
-                for unit_type, value in tally_unit_types.items():
-                    influence_value = zone.get_influence(self.faction, unit_type)  * 1.0 / pow(map.distance(zone, n), falloff_rate)
-                    n.set_influenceB(self.faction, unit_type, influence_value)
-        '''
-
-
-
-
-
-
-
+        for zone in all_zones:
+            zone.copy_to_influenceA()
 
     '''
     find_recruit_actions
@@ -563,68 +564,6 @@ class Player(object):
                     # print(self._color + '%s %s in %s is maintaining a gate' % (
                     #    self._faction.value, unit.unit_type.value, unit.unit_zone.name) + TextColor.ENDC)
         return all_possible_moves
-
-    '''
-    def find_move_actions(self, map):
-        assert isinstance(map, Map)
-        all_possible_moves = []
-
-        if self.power >= 1:
-            unit_type_dict = defaultdict(int)
-            my_zones = self.occupied_zones
-            unit_partitions = []
-
-            for zone in my_zones:
-                candidate_units = self.my_units_in_zone(zone)
-                # count unit types
-                for unit in candidate_units:
-                    unit_type_dict[unit._unit_type] += 1
-
-                # build list of accessible neighboring zones
-                # and determine desirability of neighboring zones as destinations
-                neighbors = map.find_neighbors(zone.name, self._base_movement)
-                for neighboring_zone in neighbors:
-                    # is there an occupied or unoccupied gate?
-                    candidate_zone = map.zone_by_name(neighboring_zone)
-
-                    # if candidate zone contains enemy units
-                    if candidate_zone.occupancy_list.__len__() > 0:
-                        # if enemy monsters present
-
-                        if candidate_zone.gate_state is GateState.occupied:
-                            if candidate_zone.gate_unit.faction is not self._faction:
-                                neighbors.remove(neighboring_zone)
-                    else:
-                        pass
-
-                # action moves list size is based on combinations of available
-                # units per unit class as limited by available power
-                # here, we're trying to figure out how to partition power
-                        
-
-                neighbor_count = neighbors.__len__()
-
-                for unit_type, unit_type_count in unit_type_dict.items():
-                    print('unit type: %s  neighboring zone count: %s' % (unit_type, neighbor_count))
-                    # compute all move possibilities for current unit type in current zone
-                    # starting at min power spent to max power that can be spent, or max units that
-                    # can be moved, whichever is the limiting factor...
-                    n_max = min(unit_type_count, self.power) + 1
-                    print('unit type count: %s  n_max: %s' % (unit_type_count, n_max))
-
-                    for total_units_to_move in range(1, n_max):
-                        print('total_units_to_move: %s' % (total_units_to_move))
-                        # this is just a list that says how many units fit in each neighboring zone
-                        zone_boxes = [total_units_to_move] * neighbor_count
-                        # how many different ways can we put k indistinguishable units into n distinguishable zones?
-                        unit_partitions.append(unlabeled_balls_in_labeled_boxes(total_units_to_move, zone_boxes))
-
-        for combination in unit_partitions:
-            taco = list(combination)
-            print(taco)
-            print(len(taco))
-
-    '''
 
     '''
      find_combat_action
@@ -870,6 +809,7 @@ class Player(object):
         pass
 
     def post_turn_action(self):
+        self.compute_influence_map(self._board.map)
         pass
 
     def faction_state(self):

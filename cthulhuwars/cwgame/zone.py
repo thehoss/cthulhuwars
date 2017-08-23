@@ -26,14 +26,15 @@ class Zone:
         self.color = NodeColor.BLACK
 
         # these values are set at map construction and do not change
-        # (however, they would change on the Primeval map and Shaggai)
+        # (however, they would change on the Primeval map and Shaggai
+        #  because zones are effectively removed from the board during gameplay)
         self.closeness_centrality = 0.0
         self.betweenness_centrality = 0.0
         self.eigenvector_centrality = 0.0
 
         # two buffers as dicts of lists containing faction influence values
         self.faction_influence_dictA = dict()
-        self.faction_influence_dictA = dict()
+        self.faction_influence_dictB = dict()
 
     def set_gate_state(self, gateState):
         self.gate_state = gateState
@@ -71,8 +72,11 @@ class Zone:
     # influence uses two buffers to compute
     # result is read from buffer A
     def reset_influence(self, faction):
-        self.faction_influence_dictA.clear()
-        self.faction_influence_dictB.clear()
+        try:
+            self.faction_influence_dictA[faction].clear()
+            self.faction_influence_dictB[faction].clear()
+        except KeyError:
+            pass
 
     def set_influenceA(self, faction, type, value):
         # set influence value for influence type
@@ -84,8 +88,17 @@ class Zone:
         type_value = {type: value}
         self.faction_influence_dictB[faction] = type_value
 
+    def get_influenceA(self, faction, type):
+        return self.faction_influence_dictA[faction][type]
+
+    def get_influenceB(self, faction, type):
+        return self.faction_influence_dictB[faction][type]
+
     def get_influence(self, faction, type):
         return self.faction_influence_dictA[faction][type]
+
+    def copy_to_influenceA(self):
+        self.faction_influence_dictA = self.faction_influence_dictB
 
     def compute_color(self):
         col = (0,0,0)
