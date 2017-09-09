@@ -42,16 +42,14 @@ class BlackGoat(Player):
         True = spell has been acquired by player
         '''
         self.spells = [
-
-        {'name': "Thousand Young", 'state': False, 'method': self.spell_play_thousand_young, 'weight': 0.2 },
-        {'name': "Frenzy", 'state': False, 'method': self.spell_play_frenzy, 'weight': 0.2},
-        {'name': "Necrophagy", 'state': False, 'method': self.spell_play_necrophagy, 'weight': 0.2},
-        {'name': "Ghroth", 'state': False, 'method': self.spell_play_ghroth, 'weight': 0.2},
-        {'name': "The Red Sign", 'state': False, 'method': self.spell_play_red_sign, 'weight': 0.2},
-        {'name': "Blood Sacrifice", 'state': False, 'method': self.spell_play_blood_sacrifice, 'weight': 0.2}
-
+            {'name': "Thousand Young", 'state': False, 'method': self.spell_play_thousand_young, 'weight': 0.2 },
+            {'name': "Frenzy", 'state': False, 'method': self.spell_play_frenzy, 'weight': 0.2},
+            {'name': "Necrophagy", 'state': False, 'method': self.spell_play_necrophagy, 'weight': 0.2},
+            {'name': "Ghroth", 'state': False, 'method': self.spell_play_ghroth, 'weight': 0.2},
+            {'name': "The Red Sign", 'state': False, 'method': self.spell_play_red_sign, 'weight': 0.2},
+            {'name': "Blood Sacrifice", 'state': False, 'method': self.spell_play_blood_sacrifice, 'weight': 0.2}
         ]
-        self.brain.set_spells(self.spells)
+        self._brain.set_spells(self.spells)
 
         self.spell_thousand_young = False
         self.spell_frenzy = False
@@ -80,7 +78,7 @@ class BlackGoat(Player):
             'awaken': 0,
             'special': 0.5
         }
-        self.brain.set_probabilities(self.probability_dict)
+        self._brain.set_probabilities(self.probability_dict)
 
     @property
     def dark_young_in_play(self):
@@ -294,21 +292,21 @@ class BlackGoat(Player):
         if nzones >= 4 and self.units_in_four_zones is False:
             self.units_in_four_zones = True
             self.pprint("Units in four zones")
-            self.brain.select_spell(self.spells)
+            self._brain.select_spell(self.spells)
         if nzones >= 6 and self.units_in_six_zones is False:
             self.units_in_six_zones = True
             self.pprint("Units in six zones")
             # pick a spell
-            self.brain.select_spell(self.spells)
+            self._brain.select_spell(self.spells)
         if nzones >= 8 and self.units_in_eight_zones is False:
             self.units_in_eight_zones = True
             self.pprint("Units in eight zones")
             # pick a spell
-            self.brain.select_spell(self.spells)
+            self._brain.select_spell(self.spells)
         if self.goo_in_play and self.awakened_shub_niggurath is False:
             self.awakened_shub_niggurath = True
             # pick a spell
-            self.brain.select_spell(self.spells)
+            self._brain.select_spell(self.spells)
         # check for shared areas condition
         if self.share_zones_with_all_factions is False:
             shared = True
@@ -321,11 +319,11 @@ class BlackGoat(Player):
                 self.share_zones_with_all_factions = True
                 self.pprint("Share zones with all opponents")
                 # Pick a spell
-                self.brain.select_spell(self.spells)
+                self._brain.select_spell(self.spells)
         if self.sacrifice_action_taken and self.sacrificed_two_cultists is False:
             self.pprint("Sacrificed two cultists")
             self.sacrificed_two_cultists = True
-            self.brain.select_spell(self.spells)
+            self._brain.select_spell(self.spells)
 
         pass
 
@@ -362,7 +360,7 @@ class BlackGoat(Player):
         self.action_sacrifice_two_cultists()
         self.take_spell_book()
         self.probability_dict['special'] = 0.0
-        self.brain.set_probabilities(self.probability_dict)
+        self._brain.set_probabilities(self.probability_dict)
 
     def summon_action(self, monster, unit_zone):
         assert isinstance(monster, Unit)

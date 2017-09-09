@@ -6,7 +6,7 @@ from .unit import Unit, UnitType, UnitState, Faction, Cultist
 from .zone import Zone, GateState
 import itertools
 from collections import defaultdict
-from .combinatorics import unlabeled_balls_in_labeled_boxes
+# from .combinatorics import unlabeled_balls_in_labeled_boxes
 
 
 # Generic Player class
@@ -53,9 +53,9 @@ class Player(object):
         self._color = TextColor.GREEN
         self._node_color = NodeColor.GREEN
 
-        self.brain = PlayerLogic(self, board.map)
+        self._brain = PlayerLogic(self, board.map)
 
-        self.brain.use_method_wc()
+        self._brain.use_method_wc()
         '''
             probability_dict
             This dictionary sets up the probability that a player will execute a
@@ -73,7 +73,7 @@ class Player(object):
             'awaken': 0.0,
             'special': 0.0
         }
-        self.brain.set_probabilities(self.probability_dict)
+        self._brain.set_probabilities(self.probability_dict)
 
         '''
             board
@@ -126,6 +126,13 @@ class Player(object):
     def pprint(self, msg):
         print(self._color + TextColor.BOLD + msg + TextColor.ENDC)
 
+    @property
+    def board(self):
+        return self._board
+
+    @property
+    def brain(self):
+        return self._brain
     '''
      sacrifice_unit
      remove a unit from the map and place it in the owners pool
@@ -686,17 +693,17 @@ class Player(object):
 
                 for _ in range(attack_rolls['kill']):
                     # TODO: kill an enemy monster
-                    defenders = self.brain.kill_from_selection(defenders)
+                    defenders = self._brain.kill_from_selection(defenders)
                 for _ in range(attack_rolls['pain']):
                     # TODO: force an enemy to move, defenders choice
-                    defenders = self.brain.pain_from_selection(defenders)
+                    defenders = self._brain.pain_from_selection(defenders)
 
                 for _ in range(defence_rolls['kill']):
-                    attackers = self.brain.kill_from_selection(attackers)
+                    attackers = self._brain.kill_from_selection(attackers)
                     # TODO: kill an attackers monster
                 for _ in range(defence_rolls['pain']):
                     # TODO: force an attacker to move, attackers choice
-                    attackers = self.brain.pain_from_selection(attackers)
+                    attackers = self._brain.pain_from_selection(attackers)
 
                 return True
 

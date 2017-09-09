@@ -342,7 +342,7 @@ class Board(object):
             if p.power is 0:
                 print(p._color + TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
-                p.brain.execute_action()
+                p._brain.execute_action()
             self.post_turn_actions()
 
     def post_combat_actions(self):

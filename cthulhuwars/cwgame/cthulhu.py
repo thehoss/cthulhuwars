@@ -41,7 +41,7 @@ class Cthulhu(Player):
             'awaken': 0,
             'special': 0
         }
-        self.brain.set_probabilities(self.probability_dict)
+        self._brain.set_probabilities(self.probability_dict)
 
     def player_setup(self):
         super(Cthulhu, self).player_setup()
