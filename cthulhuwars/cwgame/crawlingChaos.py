@@ -10,6 +10,8 @@ from .color import TextColor, NodeColor
 from .unit import Unit, UnitType, UnitState, Faction, Monster, GreatOldOne
 from .zone import Zone, GateState
 
+BASE_MOVE = 2
+
 class CrawlingChaos(Player):
     def __init__(self, home_zone, board, name='The Crawling Chaos'):
         super(CrawlingChaos, self).__init__(Faction.crawling_chaos, home_zone, board, name)
@@ -25,18 +27,45 @@ class CrawlingChaos(Player):
         spell flags
         True = spell has been acquired by player
         '''
-        self._spell_emissary_of_the_outer_gods = False
-        self._spell_abduct = False
-        self._spell_madness = False
-        self._spell_the_thousand_forms = False
-        self._spell_seek_and_destroy = False
-        self._spell_invisibility = False
+        self.spells = [
+            {'name': "Emissary of the Outer Gods", 'state': False, 'method': self.spell_play_emissary_of_the_outer_gods, 'weight': 0.2},
+            {'name': "Abduct", 'state': False, 'method': self.spell_play_abduct, 'weight': 0.2},
+            {'name': "Madness", 'state': False, 'method': self.spell_play_madness, 'weight': 0.2},
+            {'name': "The Thousand Forms", 'state': False, 'method': self.spell_play_the_thousand_forms, 'weight': 0.2},
+            {'name': "Seek and Destroy", 'state': False, 'method': self.spell_play_seek_and_destroy, 'weight': 0.2},
+            {'name': "Invisibility", 'state': False, 'method': self.spell_play_invisibility, 'weight': 0.2}
+        ]
+        self._brain.set_spells(self.spells)
+
+        self.spell_emissary_of_the_outer_gods = False
+        self.spell_abduct = False
+        self.spell_madness = False
+        self.spell_the_thousand_forms = False
+        self.spell_seek_and_destroy = False
+        self.spell_invisibility = False
         '''
         drawing colors
         '''
         self._color = TextColor.BLUE
         self._node_color = NodeColor.BLUE
         self.awakened_nyarlathotep = False
+
+        '''
+        probability_dict overrides the probabilities in the Player class
+        these are used to govern the weighted choices for actions in the 'wc'
+        PlayerLogic methods
+        '''
+        self.probability_dict = {
+            'capture': 0.2,
+            'build': 0.3,
+            'move': 0.2,
+            'summon': 0.1,
+            'recruit': 0.1,
+            'combat': 0.1,
+            'awaken': 0,
+            'special': 0.5
+        }
+        self._brain.set_probabilities(self.probability_dict)
 
     @property
     def nightgaunt_in_play(self):
@@ -152,28 +181,29 @@ class CrawlingChaos(Player):
         return False
 
 
-    def spell_emissary_of_the_outer_gods(self):
-        self._spell_emissary_of_the_outer_gods = True
+    def spell_play_emissary_of_the_outer_gods(self):
+        self.spell_emissary_of_the_outer_gods = True
+        self._spells += 1
 
-
-    def spell_abduct(self):
+    def spell_play_abduct(self):
         self.spell_abduct = True
+        self._spells += 1
 
-
-    def spell_madness(self):
+    def spell_play_madness(self):
         self.spell_madness = True
+        self._spells += 1
 
-
-    def spell_the_thousand_forms(self):
+    def spell_play_the_thousand_forms(self):
         self.spell_the_thousand_forms = True
+        self._spells += 1
 
-
-    def spell_seek_and_destroy(self):
+    def spell_play_seek_and_destroy(self):
         self.spell_seek_and_destroy = True
+        self._spells += 1
 
-
-    def spell_invisibility(self):
-        self._spell_invisibility = True
+    def spell_play_invisibility(self):
+        self.spell_invisibility = True
+        self._spells += 1
 
 
     def take_new_spell(self):
@@ -224,7 +254,7 @@ class CrawlingChaos(Player):
 class Nightgaunt(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(Nightgaunt, self).__init__(unit_parent, unit_zone, UnitType.nightgaunt, combat_power=0, cost=unit_cost,
-                                         base_movement=2,
+                                         base_movement=BASE_MOVE,
                                          unit_state=UnitState.in_reserve)
 
     def render_unit(self):
@@ -239,7 +269,7 @@ class Nightgaunt(Monster):
 class FlyingPolyp(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(FlyingPolyp, self).__init__(unit_parent, unit_zone, UnitType.flying_polyp, combat_power=1, cost=unit_cost,
-                                          base_movement=2,
+                                          base_movement=BASE_MOVE,
                                           unit_state=UnitState.in_reserve)
 
     def render_unit(self):
@@ -254,7 +284,7 @@ class FlyingPolyp(Monster):
 class HuntingHorror(Monster):
     def __init__(self, unit_parent, unit_zone, unit_cost=0):
         super(HuntingHorror, self).__init__(unit_parent, unit_zone, UnitType.hunting_horror, combat_power=2, cost=unit_cost,
-                                            base_movement=2,
+                                            base_movement=BASE_MOVE,
                                             unit_state=UnitState.in_reserve)
 
 
@@ -270,7 +300,7 @@ class HuntingHorror(Monster):
 class Nyarlathotep(GreatOldOne):
     def __init__(self, unit_parent, unit_zone, unit_cost=10):
         super(Nyarlathotep, self).__init__(unit_parent, unit_zone, UnitType.nyarlathotep, combat_power=0, cost=unit_cost,
-                                           base_movement=2,
+                                           base_movement=BASE_MOVE,
                                            unit_state=UnitState.in_reserve)
     def render_unit(self):
         render_definition = {

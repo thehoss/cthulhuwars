@@ -16,7 +16,7 @@ from .zone import Zone, GateState
 from enum import Enum
 
 class BlackGoat(Player):
-    def __init__(self, home_zone, board, name='The Black Goat'):
+    def __init__(self, home_zone=None, board=None, name='The Black Goat'):
         super(BlackGoat, self).__init__(Faction.black_goat, home_zone, board, name)
         '''
         Unit Lists

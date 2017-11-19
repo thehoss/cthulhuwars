@@ -29,7 +29,7 @@ from collections import defaultdict
 
 
 class Player(object):
-    def __init__(self, faction, home_zone, board, name='Player1'):
+    def __init__(self, faction=None, home_zone=None, board=None, name='Player1'):
         assert isinstance(home_zone, Zone)
 
         self._name = name

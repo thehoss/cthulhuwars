@@ -1,130 +1,58 @@
 from enum import Enum
 from .player import Player
 from .playerLogic import PlayerLogic
+from flags import Flags
+from .blackGoat import BlackGoat
 
 from .board import Board
 from .color import TextColor, NodeColor
 from .unit import Unit, UnitType, UnitState, Faction
 from .zone import Zone, GateState
 
+from weakref import WeakKeyDictionary
+
+# primes
+class SpellStates(Enum):
+    ongoing = 1
+    prebattle = 2
+    postbattle = 3
+    battle = 4
+    action = 5
+    movement = 6
+    placement = 7
+    summon = 8
+    recruit = 9
+    unit = 10
+    affect_opponent = 11
+    affect_self = 12
+    neutral = 13
+    used = 14
+    acquired = 15
+    one_use = 16
+
+class StateDict(dict):
+    def __init__(self):
+        for state in SpellStates:
+            self[state.name] = False
+
+    def __getattr__(self, attr):
+        return self[attr]
+
+    def __setattr__(self, attr, value):
+        self[attr] = value
 
 class Spell(object):
-    def __init__(self, name, method=[], cost=0):
-        self.name = name
+
+    def __init__(self, title, methods={}, cost=0):
+        self.name = title
         self.requirements = []
         self.effects = []
-        self._status = {"ongoing": False, "prebattle": False, "postbattle": False, "action": False, "movement": False,
-                        "placement": False, "summon": False, "recruit": False,
-                        "affect_opponent": False, "affect_self": False, "neutral": False, "used": False,
-                        "one_use": False,
-                        'acquired': False}
+        self.state = StateDict()
         self.cost = cost
-        self.method = method
-
-    @property
-    def ongoing(self):
-        return self._status["ongoing"]
-
-    @ongoing.setter
-    def ongoing(self, v):
-        self._status["ongoing"] = v
-
-    @property
-    def one_use(self):
-        return self._status["one_use"]
-
-    @one_use.setter
-    def one_use(self, v):
-        self._status["one_use"] = v
-
-    @property
-    def usable(self):
-        if (self._status["one_use"] & self._status["used"]):
-            return False
-        return True
-
-    @usable.setter
-    def usable(self, v):
-        self._status["usable"] = v
-
-    @property
-    def acquired(self):
-        return self._status["acquired"]
-
-    @acquired.setter
-    def acquired(self, v):
-        self._status["acquired"] = v
-
-    @property
-    def affect_self(self):
-        return self._status["affect_self"]
-
-    @affect_self.setter
-    def affect_self(self, v):
-        self._status["affect_self"] = v
-
-    @property
-    def affect_opponent(self):
-        return self._status["affect_opponent"]
-
-    @affect_opponent.setter
-    def affect_opponent(self, v):
-        self._status["affect_opponent"] = v
-
-    @property
-    def prebattle(self):
-        return self._status["prebattle"]
-
-    @prebattle.setter
-    def prebattle(self, v):
-        self._status["prebattle"] = v
-
-    @property
-    def postbattle(self):
-        return self._status["postbattle"]
-
-    @postbattle.setter
-    def postbattle(self, v):
-        self._status["postbattle"] = v
-
-    @property
-    def summon(self):
-        return self._status["summon"]
-
-    @summon.setter
-    def summon(self, v):
-        self._status["summon"] = v
-
-    @property
-    def action(self):
-        return self._status["action"]
-
-    @action.setter
-    def action(self, v):
-        self._status["action"] = v
-
-    @property
-    def movement(self):
-        return self._status["movement"]
-
-    @movement.setter
-    def movement(self, v):
-        self._status["movement"] = v
-
-    @property
-    def placement(self):
-        return self._status["placement"]
-
-    @placement.setter
-    def placement(self, v):
-        self._status["placement"] = v
-
-    def set_status(self, key, value):
-        self._status[key] = value
-
+        self._methods = methods
 
 class Grimoire(object):
-    def __init__(self, player):
+    def __init__(self, player=None):
         assert isinstance(player, Player)
 
         self._total_spells = 0
@@ -187,21 +115,21 @@ class Grimoire(object):
 # test conditional functions
 def condition_4zones(self):
     nzones = len(self.p.occupied_zones)
-    if nzones >= 4:
+    if nzones>=4:
         return True
     return False
 
 
 def condition_6zones(self):
     nzones = len(self.p.occupied_zones)
-    if nzones >= 6:
+    if nzones>=6:
         return True
     return False
 
 
 def condition_8zones(self):
     nzones = len(self.p.occupied_zones)
-    if nzones >= 8:
+    if nzones>=8:
         return True
     return False
 
@@ -231,17 +159,28 @@ def spell_play_thousand_young(player):
     pass
 
 
-# test harness for grimoire class
-def __test__():
-    grim = Grimoire(Player())
-    thousand_young_spell = Spell("Thousand Young", method=[spell_play_thousand_young], cost=0)
-    thousand_young_spell.ongoing = True
-    thousand_young_spell.summon = True
-    grim.add_spell(thousand_young_spell)
+def spell_play_frenzy(player):
+    assert isinstance(player, Player)
+    for cultist in player._cultists:
+        cultist.set_combat_power(1)
 
-    grim.add_condition("units in 4 zones", condition_4zones)
-    grim.add_condition("units in 6 zones", condition_6zones)
-    grim.add_condition("units in 8 zones", condition_8zones)
-    grim.add_condition("shared zones with all opponents", condition_sharezones)
-    grim.add_condition("goo summoned", condition_goo)
-    grim.add_condition("sacrifice 2 cultists", condition_sacrifice)
+
+# test harness for grimoire class
+# grim = Grimoire(BlackGoat())
+# thousand_young_spell = Spell("Thousand Young", methods={"ongoing": spell_play_thousand_young}, cost=0)
+# thousand_young_spell.ongoing = True
+# thousand_young_spell.summon = True
+# grim.add_spell(thousand_young_spell)
+
+frenzy_spell = Spell("Frenzy", methods={"ongoing": spell_play_frenzy}, cost=0)
+frenzy_spell.state.ongoing = True
+frenzy_spell.state.unit = True
+print(frenzy_spell.state)
+# grim.add_spell(frenzy_spell)
+
+# grim.add_condition("units in 4 zones", condition_4zones)
+# grim.add_condition("units in 6 zones", condition_6zones)
+# grim.add_condition("units in 8 zones", condition_8zones)
+# grim.add_condition("shared zones with all opponents", condition_sharezones)
+# grim.add_condition("goo summoned", condition_goo)
+# grim.add_condition("sacrifice 2 cultists", condition_sacrifice)
