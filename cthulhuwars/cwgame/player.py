@@ -421,12 +421,12 @@ class Player(object):
         for zone in all_zones:
             zone.reset_influence(self.faction)
 
+        tally_unit_supers = defaultdict(int)
         my_zones = self.occupied_zones
         for zone in my_zones:
             candidate_units = self.my_units_in_zone(zone)
             #print(candidate_units)
             # tally units by base class
-            tally_unit_supers = defaultdict(int)
             for unit in candidate_units:
                 tally_unit_supers[type(unit).__bases__] += 1
                 #tally_unit_supers[unit._unit_type] += 1
