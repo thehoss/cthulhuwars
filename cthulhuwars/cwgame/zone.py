@@ -7,13 +7,17 @@ TODO:
 
 """
 
-from enum import Enum
+from enum import Enum, auto
 from .color import NodeColor
 
-class GateState(Enum):
-    noGate    = 0
-    emptyGate = 1
-    occupied  = 2
+class AutoName(Enum):
+     def _generate_next_value_(name, start, count, last_values):
+         return name
+
+class GateState(AutoName):
+    noGate    = auto()
+    emptyGate = auto()
+    occupied  = auto()
 
 class Zone:
 

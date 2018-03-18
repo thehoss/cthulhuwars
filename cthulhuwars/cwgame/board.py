@@ -203,6 +203,7 @@ class Board(object):
         for p in self.__players:
             assert isinstance(p, Player)
             p.print_state()
+        self.__map.show_map(save_image=True, image_prefix='play.%s' % str('%04d' % (self._round + 1001)))
 
     def start(self):
         # Returns a representation of the starting state of the game.
@@ -276,8 +277,8 @@ class Board(object):
         # shift direction can changer here
         self.__players =self.__players[first_player_index:]+self.__players[:first_player_index]
 
-        if self.draw_map:
-            self.__map.show_map(save_image=True, image_prefix='play.%s' % str('%04d' % (self._round + 1001)))
+        #if self.draw_map:
+        #    self.__map.show_map(save_image=True, image_prefix='play.%s' % str('%04d' % (self._round + 1001)))
         if self.render_ass:
             self.render_map('play.%s' % str('%04d' % (self._round + 1001)))
         self._round = self._round + 1
@@ -343,7 +344,7 @@ class Board(object):
                 print(p._color + TextColor.BOLD + "Player %s is out of power!" % p.faction.value + TextColor.ENDC)
             else:
                 print(p._color + TextColor.BOLD + "It is %s turn" % p.faction.value + TextColor.ENDC)
-                p._brain.execute_action()
+                p.execute_action()
             self.post_turn_actions()
 
     def post_combat_actions(self):

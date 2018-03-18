@@ -133,6 +133,11 @@ class Player(object):
     @property
     def brain(self):
         return self._brain
+
+    def execute_action(self):
+        self.brain.execute_action()
+        return
+
     '''
      sacrifice_unit
      remove a unit from the map and place it in the owners pool
@@ -421,8 +426,8 @@ class Player(object):
         for zone in all_zones:
             zone.reset_influence(self.faction)
 
-        tally_unit_supers = defaultdict(int)
         my_zones = self.occupied_zones
+        tally_unit_supers = defaultdict(int)
         for zone in my_zones:
             candidate_units = self.my_units_in_zone(zone)
             #print(candidate_units)

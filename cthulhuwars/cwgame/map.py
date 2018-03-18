@@ -239,11 +239,6 @@ class Map:
     def westMapImage(self):
         return self.west_map_filename
 
-    def pygame_coords(self, x, y):
-        x = int(x * (self.width * 0.5) + self.width * 0.5)
-        y = int((1.0 - y) * (self.height))
-        return (x, y)
-
     def show_map(self, save_image = False, image_prefix='image'):
         if self.display:
             DISPLAY.show_map(save_image=save_image, image_prefix=image_prefix)

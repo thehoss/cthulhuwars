@@ -1,4 +1,4 @@
-from cwgame.board import Board
+import cwgame.board as Board
 import server.CWServer as CWServer
 import server.CWClient as CWClient
 

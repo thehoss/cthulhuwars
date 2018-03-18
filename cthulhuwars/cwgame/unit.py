@@ -73,6 +73,10 @@ class Unit(object):
     def unit_type(self):
         return self._unit_type
 
+    @property
+    def type(self):
+        return self._unit_type
+
     def set_unit_type(self, unit_type):
         self._unit_type = unit_type
 
