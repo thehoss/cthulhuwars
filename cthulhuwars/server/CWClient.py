@@ -60,8 +60,9 @@ class CWClient(ConnectionListener):
         self.connected = False
         self.Connect((host, port))
         self.in_play = False
+        cwd = os.path.dirname(os.path.abspath(__file__))        
 
-        self.resource_dir = './tex'
+        self.resource_dir = os.path.join(cwd, '..', 'cwgame', 'tex')
         self.img_map_west = None
         self.img_map_east = None
         self.img_selectionbg = None
@@ -248,8 +249,8 @@ class CWClient(ConnectionListener):
 
                 self.img_faction_selection[k][state] = imgsurface
 
-        self.img_map_east = pygame.image.load(data['mapImageData'][1])
-        self.img_map_west = pygame.image.load(data['mapImageData'][0])
+        self.img_map_east = pygame.image.load( os.path.join(self.resource_dir, data['mapImageData'][1]+'.png'))
+        self.img_map_west = pygame.image.load( os.path.join(self.resource_dir, data['mapImageData'][0]+'.png'))
 
         west = pygame.transform.smoothscale(self.img_map_west, (int(self.width / 2), self.height))
         east = pygame.transform.smoothscale(self.img_map_east, (int(self.width / 2), self.height))
