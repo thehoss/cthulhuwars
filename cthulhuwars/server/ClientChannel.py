@@ -1,4 +1,4 @@
-from .PodSixNet.Channel import Channel
+from PodSixNet.Channel import Channel
 from .PrintStream import PrintStream
 from cthulhuwars.cwgame.zone import GateState
 

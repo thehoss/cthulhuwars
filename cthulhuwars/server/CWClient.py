@@ -1,12 +1,11 @@
 import sys
 sys.path.insert(0, '../../')
 sys.path.insert(0, '.')
-sys.path.insert(0, './PodSixNet')
 
 from time import sleep
 from sys import stdin, exit
 import os
-from .PodSixNet.Connection import connection, ConnectionListener
+from PodSixNet.Connection import connection, ConnectionListener
 #from thread import *
 from cthulhuwars.cwgame import color as Color
 from cthulhuwars.cwgame.unit import Faction

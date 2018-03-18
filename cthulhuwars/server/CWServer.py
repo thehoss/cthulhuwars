@@ -4,13 +4,12 @@ import sys
 sys.path.insert(0, '../../')
 sys.path.insert(0, '../')
 sys.path.insert(0, '.')
-sys.path.insert(0, './PodSixNet')
 
 from time import sleep
 from weakref import WeakKeyDictionary
 
 from .ClientChannel import ClientChannel
-from .PodSixNet.Server import Server
+from PodSixNet.Server import Server
 import cthulhuwars.cwgame.color as Color
 from .PrintStream import PrintStream
 import cthulhuwars.cwgame.board as Board
