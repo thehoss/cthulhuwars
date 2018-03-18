@@ -16,8 +16,9 @@ class Display(object):
         self.img_map_east = None
         self.img_map_west = None
         self.nx_map = None
-        self.basepath = cwd+'\\..\\tex'
-        self.imagepath = '.'
+        self.basepath = os.path.join(cwd, 'tex')
+        self.fontpath = os.path.join(cwd, 'fonts')
+        self.imagepath = cwd
         self.file_format = '.png'
         self.width, self.height = 2000, 1000
         self.unit_size = 10
@@ -29,15 +30,15 @@ class Display(object):
     def init(self, east_map_filename, west_map_filename, map):
         pygame.init()
         pygame.font.init()
-        #self.font = pygame.font.Font('abaddon.ttf', self.text_size)
+        self.font = pygame.font.Font( os.path.join(self.fontpath, 'abaddon.ttf'), self.text_size)
         #self.font = pygame.font.Font('display.ttf', 16)
-        self.font = pygame.font.SysFont(None, 18)
+        #self.font = pygame.font.SysFont(None, 18)
         # initialize the screen
         self.screen = pygame.display.set_mode((self.width, self.height))
         # self.clock = pygame.time.Clock()
 
-        self.img_map_east = pygame.image.load(east_map_filename)
-        self.img_map_west = pygame.image.load(west_map_filename)
+        self.img_map_east = pygame.image.load( os.path.join(self.basepath, east_map_filename + self.file_format))
+        self.img_map_west = pygame.image.load( os.path.join(self.basepath, west_map_filename + self.file_format))
 
         west = pygame.transform.smoothscale(self.img_map_west, (m.floor(self.width / 2), self.height))
         east = pygame.transform.smoothscale(self.img_map_east, (m.floor(self.width / 2), self.height))

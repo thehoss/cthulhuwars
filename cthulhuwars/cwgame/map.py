@@ -160,10 +160,6 @@ class Map:
         # construct combined node graph with compose()
         self.nx_map = nx.compose(self._east_map, self._west_map)
         self.nx_map.graph['name'] = self.map_name
-        cwd = os.path.dirname(os.path.abspath(__file__))
-        self.basepath = cwd+'\\..\\tex'
-        self.imagepath = cwd
-        self.file_format = '.png'
 
         # relable nodes with zone objects
         node_list = self.nx_map.nodes()
@@ -174,7 +170,7 @@ class Map:
                 is_ocean = True
             self.nx_map.node[node_name]['zone'] = Zone(node_name, is_ocean)
             self.nx_map.node[node_name]['pos'] = [0.5, 0.5]
-            self.nx_map.node[node_name]['matte'] = os.path.join(self.basepath, str.lower(node_name.replace(" ", "_"))) + self.file_format
+            self.nx_map.node[node_name]['matte'] = str.lower(node_name.replace(" ", "_"))
 
         # precomputed centrality measures
         eigenvector_centrality = nx.eigenvector_centrality(self.nx_map)
@@ -192,10 +188,10 @@ class Map:
 
         # ^ map.nodes(data=True) will show the attributes of node label 'blah'
 
-        self.west_map_filename = self.earth_map_configs[self.map_name][0] + self.file_format
-        self.west_map_filename = os.path.join(self.basepath, self.west_map_filename)
-        self.east_map_filename = self.earth_map_configs[self.map_name][1] + self.file_format
-        self.east_map_filename = os.path.join(self.basepath, self.east_map_filename)
+        self.west_map_filename = self.earth_map_configs[self.map_name][0]
+        # self.west_map_filename = os.path.join(self.basepath, self.west_map_filename)
+        self.east_map_filename = self.earth_map_configs[self.map_name][1]
+        # self.east_map_filename = os.path.join(self.basepath, self.east_map_filename)
 
         self.display = display
         DISPLAY.init(east_map_filename=self.east_map_filename, west_map_filename=self.west_map_filename, map=self)
@@ -268,7 +264,7 @@ class Map:
         #for p in pos:  # raise text positions
         #    pos[p][1] += 0.07
         #nx.draw_networkx_labels(self.map, pos)
-        img_name = self.imagepath+'/'+image_prefix+self.file_format
+        img_name = image_prefix+'.png'
         P.savefig(img_name)
         #P.show()
 
