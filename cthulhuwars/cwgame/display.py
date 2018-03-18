@@ -40,8 +40,8 @@ class Display(object):
         self.img_map_east = pygame.image.load( os.path.join(self.basepath, east_map_filename + self.file_format))
         self.img_map_west = pygame.image.load( os.path.join(self.basepath, west_map_filename + self.file_format))
 
-        west = pygame.transform.smoothscale(self.img_map_west, (m.floor(self.width / 2), self.height))
-        east = pygame.transform.smoothscale(self.img_map_east, (m.floor(self.width / 2), self.height))
+        west = pygame.transform.smoothscale(self.img_map_west, (int(m.floor(self.width / 2)), int(self.height)))
+        east = pygame.transform.smoothscale(self.img_map_east, (int(m.floor(self.width / 2)), int(self.height)))
         self.img_map_east = east.convert()
         self.img_map_west = west.convert()
 
