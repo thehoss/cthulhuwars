@@ -1,6 +1,7 @@
-import cwgame.board as Board
+from cwgame.board import Board
 import server.CWServer as CWServer
 import server.CWClient as CWClient
+import sys, os
 
 serveraddress=('localhost', int(10666))
 
@@ -17,8 +18,10 @@ def server():
     s.Launch()
 
 if __name__ == "__main__":
+    cwd = os.path.dirname(os.path.abspath(__file__))
+    sys.path.extend([cwd])
     selection = int( input (" (1) Launch Server \n (2) Launch Client \n (3) Launch Self-Playing Game\n") )
-
+    
     if (selection == 1):
         server()
     elif(selection == 2):

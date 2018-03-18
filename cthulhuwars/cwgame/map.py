@@ -19,13 +19,13 @@ import matplotlib.image as mpimg
 import numpy as np
 import math as m
 from .zone import Zone, GateState
-import cthulhuwars.cwgame.display as disp
+from .display import Display
 if ARNOLD:
     import cthulhuwars.cwgame.arnoldRender as arnoldRender
 
 import os
 
-DISPLAY = disp.Display()
+DISPLAY = Display()
 
 class Map:
 
@@ -160,9 +160,9 @@ class Map:
         # construct combined node graph with compose()
         self.nx_map = nx.compose(self._east_map, self._west_map)
         self.nx_map.graph['name'] = self.map_name
-
-        self.basepath = './tex'
-        self.imagepath = '.'
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        self.basepath = cwd+'\\..\\tex'
+        self.imagepath = cwd
         self.file_format = '.png'
 
         # relable nodes with zone objects

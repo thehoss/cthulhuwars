@@ -1,13 +1,14 @@
 import os
-
+import sys
 import pygame
 import math as m
-import cthulhuwars.cwgame.color as Color
+from .color import NodeColor, NodeColorINT, TextColor
 from .unit import Unit, UnitType, UnitState, Faction, Cultist
 from .zone import Zone, GateState
 
 class Display(object):
     def __init__(self):
+        cwd = os.path.dirname(os.path.abspath(__file__))        
         self.font = None
         self.screen = None
         self.display = True
@@ -15,7 +16,7 @@ class Display(object):
         self.img_map_east = None
         self.img_map_west = None
         self.nx_map = None
-        self.basepath = './tex'
+        self.basepath = cwd+'\\..\\tex'
         self.imagepath = '.'
         self.file_format = '.png'
         self.width, self.height = 2000, 1000
@@ -28,9 +29,9 @@ class Display(object):
     def init(self, east_map_filename, west_map_filename, map):
         pygame.init()
         pygame.font.init()
-        self.font = pygame.font.Font('abaddon.ttf', self.text_size)
+        #self.font = pygame.font.Font('abaddon.ttf', self.text_size)
         #self.font = pygame.font.Font('display.ttf', 16)
-        #self.font = pygame.font.SysFont(None, 18)
+        self.font = pygame.font.SysFont(None, 18)
         # initialize the screen
         self.screen = pygame.display.set_mode((self.width, self.height))
         # self.clock = pygame.time.Clock()
@@ -73,7 +74,7 @@ class Display(object):
                         unit_x = x + (i * self.unit_spacing)
                         i += 1;
 
-                    unit_color = Color.NodeColorINT.FactionColor[str(unit.faction._faction.value)]
+                    unit_color = NodeColorINT.FactionColor[str(unit.faction._faction.value)]
                     pygame.draw.circle(self.screen, unit_color, (unit_x, y), self.unit_size, 0)
                     pygame.draw.circle(self.screen, (0, 0, 0, 0.25), (unit_x, y), self.unit_size + 1, 1)  # Black Border
 
