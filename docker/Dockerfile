@@ -1,6 +1,8 @@
 FROM python:2.7
 RUN apt-get update
-RUN apt-get install -y vim-nox build-essential
+RUN apt-get install -y vim-nox build-essential python-pygame
 ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-WORKDIR /opt/project
+ENV PYTHONPATH=/opt/project
+RUN apt-get install telnet
+WORKDIR /opt/project/cthulhuwars
