@@ -61,3 +61,4 @@ fabric.properties
 # *.ipr
 /cthulhuwars/cwgame/__pycache__/*.pyc
 *.pyc
+.vscode/settings.json
