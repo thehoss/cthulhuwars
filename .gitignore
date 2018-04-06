@@ -63,3 +63,4 @@ fabric.properties
 **.pyc
 
 cthulhuwars/play.*.png
+.vscode/settings.json
