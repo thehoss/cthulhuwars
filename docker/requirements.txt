@@ -1,7 +1,6 @@
-PodSixNet
-enum
+-e git+https://github.com/chr15m/PodSixNet.git@python3#egg=PodSixNet
 networkx
 matplotlib
 arnold
 pygame
-enum34
+#enum34

@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.6
 RUN apt-get update
 RUN apt-get install -y vim-nox build-essential python-pygame
 ADD requirements.txt requirements.txt
