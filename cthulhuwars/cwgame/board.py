@@ -33,9 +33,17 @@ class Board(object):
     ritual_tracks = ((5,6,7,8,9,10), (5,6,7,7,8,8,9,10), (5,6,6,7,7,8,8,9,9,10), (5,6,6,7,7,7,8,8,8,9,9,10),
                      (5,6,6,6,7,7,7,8,8,8,9,9,9,10), (5,6,6,6,7,7,7,7,8,8,8,8,9,9,9,10))
 
-    def __init__(self, num_players = 4, server_mode=True, render_ass = False, draw_map = False):
+    def __init__(self, num_players = 4, server_mode=True, render_ass = False, draw_map = False,
+                 player1 = None, player2 = None, player3 = None, player4 = None):
 
         self.__map = None
+
+        self._preselected_players = {
+            1: player1,
+            2: player2,
+            3: player3,
+            4: player4,
+        }
 
         self.draw_map = draw_map
         self.render_ass = render_ass
@@ -157,6 +165,13 @@ class Board(object):
             return
 
         index = 0
+        faction_choice_map = {
+            'cthulu': 1,
+            'black_goat': 2,
+            'crawling_chaos': 3,
+            'yellow_sign': 4,
+        }
+        print(self._preselected_players)
         for p in range(1, int(self.__num_players) + 1):
             # print('Player %s please select a faction:' % p)
             print ('Please the select the factions that will be in play...')
@@ -168,7 +183,10 @@ class Board(object):
                 print(TextColor.BLUE + ' [3] The Crawling Chaos' + TextColor.ENDC)
             if self.yellow_sign is False:
                 print(TextColor.YELLOW + ' [4] The Yellow Sign' + TextColor.ENDC)
-            selection = int(input("Selection: "))
+            if self._preselected_players[p]:
+                selection = faction_choice_map[self._preselected_players[p]]
+            else:
+                selection = int(input("Selection: "))
 
             if selection is 1:
                 self.cthulhu = True
@@ -193,7 +211,6 @@ class Board(object):
                 self.player_dict['yellow_sign']['active'] = True
                 self.yellow_sign = True
                 self.__players.append(YellowSign(self.__map.zone_by_name('Europe'), self))
-
         for p in self.__players:
             assert isinstance(p, Player)
             self._doom_track[p._name] = 0
@@ -246,7 +263,7 @@ class Board(object):
             while True:
                 # print('**Round %s, Turn %s **' % (r, i))
                 self.pack_state()
-                print('board state: %s' % (self._state,))
+#                print('board state: %s' % (self._state,))
                 self.test_actions()
                 i += 1
                 if not self.is_action_phase():

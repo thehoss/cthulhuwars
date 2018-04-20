@@ -194,7 +194,8 @@ class Map:
         # self.east_map_filename = os.path.join(self.basepath, self.east_map_filename)
 
         self.display = display
-        DISPLAY.init(east_map_filename=self.east_map_filename, west_map_filename=self.west_map_filename, map=self)
+        if self.display:
+            DISPLAY.init(east_map_filename=self.east_map_filename, west_map_filename=self.west_map_filename, map=self)
 
 
     def zone_by_name(self, zone):
